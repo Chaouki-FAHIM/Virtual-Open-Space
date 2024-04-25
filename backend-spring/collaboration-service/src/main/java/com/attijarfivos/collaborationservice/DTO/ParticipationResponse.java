@@ -1,6 +1,5 @@
 package com.attijarfivos.collaborationservice.DTO;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;

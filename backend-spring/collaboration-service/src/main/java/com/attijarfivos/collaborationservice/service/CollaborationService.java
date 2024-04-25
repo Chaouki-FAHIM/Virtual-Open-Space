@@ -2,6 +2,7 @@ package com.attijarfivos.collaborationservice.service;
 
 import com.attijarfivos.collaborationservice.DTO.CollaborationRequest;
 import com.attijarfivos.collaborationservice.DTO.CollaborationResponse;
+import com.attijarfivos.collaborationservice.exception.NotFoundDataException;
 import com.attijarfivos.collaborationservice.exception.RequiredDataException;
 import com.attijarfivos.collaborationservice.mapper.CollaborationMapper;
 import com.attijarfivos.collaborationservice.model.Collaboration;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service("collaboration")
 @RequiredArgsConstructor
@@ -25,7 +27,8 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
     @Override
     public CollaborationResponse create(CollaborationRequest collaborationRequest) throws RequiredDataException {
 
-        if(collaborationRequest.getTitre() == null  || Objects.equals(collaborationRequest.getTitre(), "")) {
+        if(collaborationRequest.getTitre() == null || Objects.equals(collaborationRequest.getTitre(), "")) {
+            log.warn("Titre est obligatoire pour l'ajout d'un nouveau collaboration en ligne");
             throw new RequiredDataException("Titre est obligatoire pour l'ajout d'un nouveau collaboration en ligne");
         }
 
@@ -43,21 +46,30 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
 
     @Override
     public List<CollaborationResponse> getAll() {
+        List<Collaboration> collaborations = collaborationRepository.findAll();
+        log.info("Collaborations tourvées sont : {}",collaborations);
+        return collaborations.stream().map(collaborationMapper::fromCollaborationToRes).toList();
+    }
+
+    @Override
+    public CollaborationResponse getOne(Long id) throws NotFoundDataException {
+        Optional<Collaboration> collaboration = collaborationRepository.findById(id);
+        log.info("Collaboration tourvée est : {}",collaboration);
+        if(collaboration.isEmpty()) throw new NotFoundDataException(id);
+        return collaboration.map(collaborationMapper::fromCollaborationToRes).orElse(null);
+    }
+
+    @Override
+    public CollaborationResponse update(Long id, CollaborationRequest collaborationRequest) {
         return null;
     }
 
     @Override
-    public CollaborationResponse getOne(Long aLong) {
-        return null;
-    }
+    public void delete(Long id) throws NotFoundDataException {
+        Optional<Collaboration> collaboration = collaborationRepository.findById(id);
 
-    @Override
-    public CollaborationResponse update(Long aLong, CollaborationRequest collaborationRequest) {
-        return null;
-    }
-
-    @Override
-    public CollaborationResponse update(Long aLong) {
-        return null;
+        if(collaboration.isEmpty()) throw new NotFoundDataException(id);
+        collaborationRepository.delete(collaboration.get());
+        log.info("Collaboration d'id est bien supprimée : {}",id);
     }
 }
