@@ -18,19 +18,25 @@ public class Collaboration {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotNull
+
+    @Column(nullable = false)
     private String titre;
-    @NotNull
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreation;
-    @NotNull
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDepart;
-    @NotNull
+
+    @Column(nullable = false)
     private Boolean confidentielle;
-    @NotNull
+
+    @Column(nullable = false)
     private Long proprietaire;
+
     private Long invites;
-    @NotNull
+
+    @Column(columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean visible;
+
 }

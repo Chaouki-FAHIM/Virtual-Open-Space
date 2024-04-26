@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,19 +28,35 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
     @Override
     public CollaborationResponse create(CollaborationRequest collaborationRequest) throws RequiredDataException {
 
+        // vérification l'existance de la valeur de titre
         if(collaborationRequest.getTitre() == null || Objects.equals(collaborationRequest.getTitre(), "")) {
-            log.warn("Titre est obligatoire pour l'ajout d'un nouveau collaboration en ligne");
-            throw new RequiredDataException("Titre est obligatoire pour l'ajout d'un nouveau collaboration en ligne");
+            log.warn("Titre est obligatoire pour l'ajout d'une nouvelle collaboration en ligne");
+            throw new RequiredDataException("Titre est obligatoire pour l'ajout d'une nouvelle collaboration en ligne");
         }
 
+        // vérification l'existance de la valeur de confidentielle
         if(collaborationRequest.getConfidentielle() == null) {
-            throw new RequiredDataException("Confidentialité de collaboration est obligatoire pour leur ajout");
+            throw new RequiredDataException("Confidentialité de la collaboration est obligatoire pour leur ajout");
         }
+
+        // vérification les emails de membre
+
 
         Collaboration collaboration = collaborationMapper.fromReqToCollaboration (collaborationRequest);
+
+
+        // insertion les valeurs par défaut de colonne
+        collaboration.setDateCreation(new Date());
+        collaboration.setVisible(true);
+
+        // vérifier l'existance de date de départ
+        if (collaboration.getDateDepart() == null || Objects.equals(collaboration.getDateDepart(), ""))
+            collaboration.setDateDepart(collaboration.getDateCreation());
+
+
         collaborationRepository.save(collaboration);
 
-        log.info("Collaboration d'id {} est enregistré!!",collaboration.getId());
+        log.info("Collaboration d'id {} est enregistrée!!",collaboration.getId());
 
         return collaborationMapper.fromCollaborationToRes(collaboration);
     }

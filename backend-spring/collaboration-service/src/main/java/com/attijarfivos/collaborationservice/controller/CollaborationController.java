@@ -5,7 +5,6 @@ import com.attijarfivos.collaborationservice.DTO.CollaborationResponse;
 import com.attijarfivos.collaborationservice.exception.NotFoundDataException;
 import com.attijarfivos.collaborationservice.exception.RequiredDataException;
 import com.attijarfivos.collaborationservice.service.IService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ public class CollaborationController implements IController<CollaborationRequest
 
     @Autowired
     @Qualifier("collaboration")
-
     private final IService<CollaborationRequest,CollaborationResponse,Long> collaborationService;
 
 
