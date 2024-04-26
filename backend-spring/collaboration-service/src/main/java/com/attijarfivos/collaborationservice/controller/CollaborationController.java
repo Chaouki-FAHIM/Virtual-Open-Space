@@ -65,7 +65,15 @@ public class CollaborationController implements IController<CollaborationRequest
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<?> update(@PathVariable Long id,@RequestBody CollaborationRequest collaborationRequest) {
-        return null;
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(collaborationService.update(id,collaborationRequest));
+        } catch (NotFoundDataException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RequiredDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -73,7 +81,7 @@ public class CollaborationController implements IController<CollaborationRequest
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             collaborationService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de collaboration en ligne d'id : "+id);
+            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de la collaboration en ligne d'id : "+id);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

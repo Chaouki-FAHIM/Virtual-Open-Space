@@ -1,11 +1,9 @@
 package com.attijarfivos.collaborationservice.controller;
 
-import com.attijarfivos.collaborationservice.model.Collaboration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
-public interface IController <Request, ID>{
+
+public interface IController <Request,ID>{
 
     ResponseEntity<?> create(Request request);
     ResponseEntity<?> getAll();

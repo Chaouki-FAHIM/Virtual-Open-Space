@@ -6,17 +6,17 @@ import lombok.*;
 import java.util.Date;
 
 @Entity
-@Table(name="participation")
+@Table(name="invitation")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @Builder
-public class Participation {
+public class Invitation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long membre;
     private Long collaboration;
-    private Date date;
+    private Date dateParticiaption;
 }

@@ -30,20 +30,22 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
 
         // vérification l'existance de la valeur de titre
         if(collaborationRequest.getTitre() == null || Objects.equals(collaborationRequest.getTitre(), "")) {
-            log.warn("Titre est obligatoire pour l'ajout d'une nouvelle collaboration en ligne");
-            throw new RequiredDataException("Titre est obligatoire pour l'ajout d'une nouvelle collaboration en ligne");
+            String errorMsg = "Titre est obligatoire pour l'ajout d'une nouvelle collaboration en ligne";
+            log.warn(errorMsg);
+            throw new RequiredDataException(errorMsg);
         }
 
         // vérification l'existance de la valeur de confidentielle
         if(collaborationRequest.getConfidentielle() == null) {
-            throw new RequiredDataException("Confidentialité de la collaboration est obligatoire pour leur ajout");
+            String errorMsg = "Confidentialité de la collaboration est obligatoire pour leur ajout";
+            log.warn(errorMsg);
+            throw new RequiredDataException(errorMsg);
         }
 
         // vérification les emails de membre
 
 
         Collaboration collaboration = collaborationMapper.fromReqToCollaboration (collaborationRequest);
-
 
         // insertion les valeurs par défaut de colonne
         collaboration.setDateCreation(new Date());
@@ -54,11 +56,11 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
             collaboration.setDateDepart(collaboration.getDateCreation());
 
 
-        collaborationRepository.save(collaboration);
+        log.info("Collaboration en ligne enregsitrer est enregistrée : "+collaboration.toString());
 
-        log.info("Collaboration d'id {} est enregistrée!!",collaboration.getId());
-
-        return collaborationMapper.fromCollaborationToRes(collaboration);
+        return collaborationMapper.fromCollaborationToRes(
+                collaborationRepository.save(collaboration)
+        );
     }
 
     @Override
@@ -77,8 +79,46 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
     }
 
     @Override
-    public CollaborationResponse update(Long id, CollaborationRequest collaborationRequest) {
-        return null;
+    public CollaborationResponse update(Long id, CollaborationRequest collaborationRequest) throws RequiredDataException, NotFoundDataException {
+
+        Optional<Collaboration> collaborationSearched = collaborationRepository.findById(id);
+        log.info("Collaboration tourvée est : {}",collaborationSearched);
+
+        if(collaborationSearched.isEmpty()) throw new NotFoundDataException(id);
+
+        // vérification l'existance de la valeur de titre
+        if(collaborationRequest.getTitre() == null || Objects.equals(collaborationRequest.getTitre(), "")) {
+            String errorMsg = "Titre est obligatoire pour le mise à jour d'une nouvelle collaboration en ligne";
+            log.warn(errorMsg);
+            throw new RequiredDataException(errorMsg);
+        }
+
+        // vérification l'existance de la valeur de confidentielle
+        if(collaborationRequest.getConfidentielle() == null) {
+            String errorMsg = "Confidentialité de la collaboration est obligatoire pour leur mise à jour";
+            log.warn(errorMsg);
+            throw new RequiredDataException(errorMsg);
+        }
+
+        // vérification les emails de membre
+
+
+        // update les valeurs
+        collaborationSearched.get().setTitre(collaborationRequest.getTitre());
+        collaborationSearched.get().setConfidentielle(collaborationRequest.getConfidentielle());
+        collaborationSearched.get().setDateDepart(collaborationRequest.getDateDepart());
+
+
+        // vérifier l'existance de date de départ
+        if (collaborationRequest.getDateDepart() == null || Objects.equals(collaborationRequest.getDateDepart(), ""))
+            collaborationSearched.get().setDateDepart(collaborationSearched.get().getDateCreation());
+
+
+        log.info("Collaboration en ligne est modifiée : "+collaborationSearched.get());
+
+        return collaborationMapper.fromCollaborationToRes(
+                collaborationRepository.save(collaborationSearched.get())
+        );
     }
 
     @Override
