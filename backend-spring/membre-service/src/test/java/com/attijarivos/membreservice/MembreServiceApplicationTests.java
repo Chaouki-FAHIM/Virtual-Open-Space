@@ -53,8 +53,8 @@ class MembreServiceApplicationTests {
 
 	private MembreRequest getMembreResquest() {
 		return MembreRequest.builder()
-				.nom("KHAROUBI")
-				.prenom("Amine")
+				.nom("FAHIM")
+				.prenom("Chaouki")
 				.roleHabilation(RoleHabilation.TEST)
 				.build();
 	}
