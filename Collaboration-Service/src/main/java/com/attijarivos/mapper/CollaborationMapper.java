@@ -14,10 +14,9 @@ public class CollaborationMapper {
 
         return Collaboration.builder()
                 .titre(collaborationRequest.getTitre())
-                .proprietaire(collaborationRequest.getProprietaire())
+                .IdProprietaire(collaborationRequest.getIdProprietaire())
                 .dateDepart(collaborationRequest.getDateDepart())
                 .confidentielle(collaborationRequest.getConfidentielle())
-                .invites(collaborationRequest.getInvites())
                 .build();
     }
 

@@ -17,7 +17,6 @@ public class CollaborationResponse {
     private Date dateCreation;
     private Date dateDepart;
     private Boolean confidentielle;
-    private Long proprietaire;
-    private Long invites;
+    private String idProprietaire;
     private Boolean visible;
 }

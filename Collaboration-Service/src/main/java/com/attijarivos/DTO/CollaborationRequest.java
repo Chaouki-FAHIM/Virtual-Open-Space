@@ -13,6 +13,5 @@ public class CollaborationRequest {
     private String titre;
     private Date dateDepart;
     private Boolean confidentielle;
-    private Long proprietaire;
-    private Long invites;
+    private String idProprietaire;
 }

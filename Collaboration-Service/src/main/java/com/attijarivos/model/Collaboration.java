@@ -22,7 +22,7 @@ public class Collaboration {
     private String titre;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreation;
+    private Date dateCreationCollaboration;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDepart;
@@ -30,12 +30,9 @@ public class Collaboration {
     @Column(nullable = false)
     private Boolean confidentielle;
 
-    @Column(nullable = false)
-    private Long proprietaire;
-
-    private Long invites;
+    @Column(name = "id_proprietaire",nullable = false)
+    private String IdProprietaire;
 
     @Column(columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean visible;
-
 }

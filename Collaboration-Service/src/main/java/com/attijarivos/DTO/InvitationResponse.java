@@ -11,8 +11,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Builder
-public class ParticipationRequest {
-    private Long membre;
+public class InvitationResponse {
+    private Long idInvitation;
+    private String invite;
     private Long collaboration;
     private Date date;
 }
