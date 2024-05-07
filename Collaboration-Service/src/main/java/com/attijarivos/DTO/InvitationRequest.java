@@ -12,7 +12,6 @@ import java.util.Date;
 @Data
 @Builder
 public class InvitationRequest {
-    private String invite;
-    private Long collaboration;
-    private Date date;
+    private String idInvite;
+    private Long idCollaboration;
 }

@@ -23,7 +23,7 @@ import java.util.List;
 public class CollaborationController implements IController<CollaborationRequest,Long>{
 
     @Autowired
-    @Qualifier("collaboration")
+    @Qualifier("service-layer-collaboration")
     private final IService<CollaborationRequest,CollaborationResponse,Long> collaborationService;
 
 

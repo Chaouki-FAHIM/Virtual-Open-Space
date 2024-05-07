@@ -16,7 +16,7 @@ import java.util.Date;
 public class Collaboration {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long idCollaboration;
 
     @Column(nullable = false)
     private String titre;

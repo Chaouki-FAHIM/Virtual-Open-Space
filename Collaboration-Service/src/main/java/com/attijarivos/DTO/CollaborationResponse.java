@@ -12,9 +12,9 @@ import java.util.Date;
 @Data
 @Builder
 public class CollaborationResponse {
-    private Long id;
+    private Long idCollaboration;
     private String titre;
-    private Date dateCreation;
+    private Date dateCreationCollaboration;
     private Date dateDepart;
     private Boolean confidentielle;
     private String idProprietaire;

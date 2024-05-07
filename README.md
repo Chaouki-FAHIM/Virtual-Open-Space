@@ -1,3 +1,4 @@
 Create Collaboration Service :
 Connect to database with Spring Data JPA Data base H2 => Completed
-Create and manually test endpoints => Two proprieties Not Completed  (Invitation)
+Create and manually test endpoints for collaboration => Completed
+Create and manually test endpoints for invitation => Just a template for a multi-layer 

@@ -4,6 +4,7 @@ package com.attijarivos.service;
 import com.attijarivos.DTO.CollaborationRequest;
 import com.attijarivos.DTO.CollaborationResponse;
 import com.attijarivos.DTO.MembreResponse;
+import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.NotValidDataException;
 import com.attijarivos.exception.RequiredDataException;
@@ -21,7 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 
-@Service("collaboration")
+@Service("service-layer-collaboration")
 @RequiredArgsConstructor
 @Slf4j
 public class CollaborationService implements IService<CollaborationRequest, CollaborationResponse,Long> {
@@ -29,14 +30,12 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
     private final CollaborationRepository collaborationRepository;
     private final CollaborationMapper collaborationMapper;
     private final WebClient webClient;
-    private final String MEMBRE_SERVICE_URL = "http://localhost:8081/membres";
 
-    private Boolean isMembre(String membreId) {
-       Optional<MembreResponse> membreResponse =
-               Optional.ofNullable(
-                       webClient.get().uri(MEMBRE_SERVICE_URL + "/"+ membreId).retrieve().bodyToFlux(MembreResponse.class).blockLast()
-               );
-       return membreResponse.isPresent();
+    private Optional<MembreResponse> receiveMembreById(String membreId) {
+
+       return Optional.ofNullable(
+               webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ membreId).retrieve().bodyToFlux(MembreResponse.class).blockLast()
+       );
     }
 
     private Boolean isNotNullValue(Object value) {
@@ -67,7 +66,7 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
 
         log.info("Identifiant de proriétaire est : "+collaborationRequest.getIdProprietaire());
         // vérification le membre
-        if(!isMembre(collaborationRequest.getIdProprietaire()))
+        if(receiveMembreById(collaborationRequest.getIdProprietaire()).isEmpty())
             throw new NotValidDataException("Proriétaire est introuvable");
 
         Collaboration collaboration = collaborationMapper.fromReqToCollaboration (collaborationRequest);

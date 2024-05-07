@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CollaborationMapper {
 
-    public Collaboration fromReqToCollaboration(CollaborationRequest collaborationRequest) {
 
+    public Collaboration fromReqToCollaboration(CollaborationRequest collaborationRequest) {
         return Collaboration.builder()
                 .titre(collaborationRequest.getTitre())
                 .IdProprietaire(collaborationRequest.getIdProprietaire())
