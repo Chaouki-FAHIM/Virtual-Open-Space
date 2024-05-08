@@ -7,11 +7,11 @@ import com.attijarivos.model.Collaboration;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
-@Component
-public class CollaborationMapper {
+@Component("mapper-layer-collaboration")
+public class CollaborationMapper implements IMapper<Collaboration,CollaborationRequest,CollaborationResponse> {
 
-
-    public Collaboration fromReqToCollaboration(CollaborationRequest collaborationRequest) {
+    @Override
+    public Collaboration fromReqToModel(CollaborationRequest collaborationRequest) {
         return Collaboration.builder()
                 .titre(collaborationRequest.getTitre())
                 .IdProprietaire(collaborationRequest.getIdProprietaire())
@@ -20,7 +20,8 @@ public class CollaborationMapper {
                 .build();
     }
 
-    public CollaborationResponse fromCollaborationToRes(Collaboration collaboration) {
+    @Override
+    public CollaborationResponse fromModelToRes(Collaboration collaboration) {
         CollaborationResponse collaborationResponse = new CollaborationResponse();
         BeanUtils.copyProperties(collaboration, collaborationResponse);
         return collaborationResponse;

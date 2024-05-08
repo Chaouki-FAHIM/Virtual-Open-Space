@@ -28,6 +28,6 @@ public class Invitation {
     @JoinColumn(name = "id_collaboration", referencedColumnName = "idCollaboration")
     private Collaboration collaboration;
 
-    @Column(name = "id_membre",nullable = false,length = 20)
+    @Column(name = "id_membre",nullable = false,length = 30)
     private String idInvite;
 }

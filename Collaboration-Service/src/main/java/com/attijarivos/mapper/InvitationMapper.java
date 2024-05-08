@@ -4,30 +4,31 @@ package com.attijarivos.mapper;
 import com.attijarivos.DTO.InvitationRequest;
 import com.attijarivos.DTO.InvitationResponse;
 
-import com.attijarivos.model.Collaboration;
+
 import com.attijarivos.model.Invitation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
-@Component
+@Component("mapper-layer-invitation")
 @RequiredArgsConstructor
-public class InvitationMapper  {
+public class InvitationMapper implements IMapper<Invitation,InvitationRequest,InvitationResponse>  {
 
     private final CollaborationMapper collaborationMapper;
 
 
-    public Invitation fromReqToInvitation(InvitationRequest invitationRequest, Collaboration collaboration) {
+    @Override
+    public Invitation fromReqToModel(InvitationRequest invitationRequest) {
         return Invitation.builder()
-                .collaboration(collaboration)
                 .idInvite(invitationRequest.getIdInvite())
                 .build();
     }
 
-    public InvitationResponse fromInvitationToRes(Invitation invitation) {
+    @Override
+    public InvitationResponse fromModelToRes(Invitation invitation) {
         return InvitationResponse.builder()
                 .idInvitation(invitation.getIdInvitation())
-                .collaboration(collaborationMapper.fromCollaborationToRes(invitation.getCollaboration()))
+                .collaboration(collaborationMapper.fromModelToRes(invitation.getCollaboration()))
                 .idInvite(invitation.getIdInvite())
                 .dateCreationInvitation(invitation.getDateCreationInvitation())
                 .dateParticiaption(invitation.getDateParticiaption())
