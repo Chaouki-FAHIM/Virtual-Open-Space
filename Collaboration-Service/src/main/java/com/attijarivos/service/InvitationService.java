@@ -31,23 +31,27 @@ public class InvitationService implements IService<InvitationRequest, Invitation
     private final WebClient webClient;
     private final CollaborationRepository collaborationRepository;
 
-    private Optional<MembreResponse> receiveInviteById(String membreId) {
-
-        return Optional.ofNullable(
-                webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ membreId).retrieve().bodyToFlux(MembreResponse.class).blockLast()
-        );
+    private Optional<MembreResponse> receiveInviteById(String idInvite) {
+        try {
+            return Optional.ofNullable(
+                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idInvite).retrieve().bodyToFlux(MembreResponse.class).blockLast()
+            );
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return Optional.empty();
+        }
     }
 
     private void verifyDataInvitation(InvitationRequest invitationRequest, String context) throws RequiredDataException {
 
         if(isNotNullValue(invitationRequest.getIdInvite())) {
-            String errorMsg = "Identifiant d'invité (membre) est obligatoire pour "+context+" d'une invitation à la collaboration en ligne";
+            String errorMsg = "Identifiant d'invité (membre) est obligatoire pour "+context+" d'une invitation";
             log.warn(errorMsg);
             throw new RequiredDataException(errorMsg);
         }
 
         if(isNotNullValue(invitationRequest.getIdCollaboration())) {
-            String errorMsg = "Identifiant d'invité est obligatoire pour "+context+" d'une invitation à la collaboration en ligne";
+            String errorMsg = "Identifiant de la collaboration est obligatoire pour "+context+" d'une invitation";
             log.warn(errorMsg);
             throw new RequiredDataException(errorMsg);
         }
@@ -57,17 +61,16 @@ public class InvitationService implements IService<InvitationRequest, Invitation
     @Override
     public InvitationResponse create(InvitationRequest invitationRequest) throws RequiredDataException, NotValidDataException, NotFoundDataException {
 
-        // vérification l'id d'invité et l'id de la collaboration
         verifyDataInvitation(invitationRequest,"la création");
 
-        // vérification l'invité (membre)
+        // vérification l'invité (membre) au niveau de base de données
         if(receiveInviteById(invitationRequest.getIdInvite()).isEmpty())
             throw new NotValidDataException("Invité est introuvable");
 
         Collaboration collaboration = collaborationRepository.findByIdCollaboration(invitationRequest.getIdCollaboration());
 
         if(collaboration == null)
-            throw new NotFoundDataException("Invitation",invitationRequest.getIdCollaboration());
+            throw new NotFoundDataException("Collaboration",invitationRequest.getIdCollaboration());
         Invitation invitation = invitationMapper.fromReqToModel(invitationRequest);
 
         invitation.setDateCreationInvitation(new Date());

@@ -32,11 +32,16 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
     private final CollaborationRepository collaborationRepository;
     private final WebClient webClient;
 
-    private Optional<MembreResponse> receiveMembreById(String membreId) {
+    private Optional<MembreResponse> receiveMembreById(String idMembre) {
 
-       return Optional.ofNullable(
-               webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ membreId).retrieve().bodyToFlux(MembreResponse.class).blockLast()
-       );
+        try {
+            return Optional.ofNullable(
+                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idMembre).retrieve().bodyToFlux(MembreResponse.class).blockLast()
+            );
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return Optional.empty();
+        }
     }
 
     private void verifyDataCollaboration(CollaborationRequest collaborationRequest, String context) throws RequiredDataException {
@@ -47,7 +52,12 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
             throw new RequiredDataException(errorMsg);
         }
 
-        // vérification l'existance de la valeur de confidentielle
+        if(isNotNullValue(collaborationRequest.getIdProprietaire())) {
+            String errorMsg = "Identifiant de propriétaire est obligatoire pour "+context+" d'une collaboration en ligne";
+            log.warn(errorMsg);
+            throw new RequiredDataException(errorMsg);
+        }
+
         if(collaborationRequest.getConfidentielle() == null) {
             String errorMsg = "Confidentialité est obligatoire pour "+context+" d'une collaboration en ligne";
             log.warn(errorMsg);
@@ -58,10 +68,9 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
     @Override
     public CollaborationResponse create(CollaborationRequest collaborationRequest) throws RequiredDataException, NotValidDataException {
 
-        // vérification le titre et la confidentialité
         verifyDataCollaboration(collaborationRequest,"l'ajout");
 
-        // vérification le membre
+        // vérification le propriétaire (membre) au niveau de base de données
         if(receiveMembreById(collaborationRequest.getIdProprietaire()).isEmpty())
             throw new NotValidDataException("Proriétaire est introuvable");
 
