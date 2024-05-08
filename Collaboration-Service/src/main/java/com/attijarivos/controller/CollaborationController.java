@@ -54,9 +54,9 @@ public class CollaborationController implements IController<CollaborationRequest
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<?> getOne(@PathVariable Long id) {
+    public ResponseEntity<?> getOne(@PathVariable("id") Long idCollaboration) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(collaborationService.getOne(id));
+            return ResponseEntity.status(HttpStatus.OK).body(collaborationService.getOne(idCollaboration));
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -66,9 +66,9 @@ public class CollaborationController implements IController<CollaborationRequest
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<?> update(@PathVariable Long id,@RequestBody @Valid CollaborationRequest collaborationRequest) {
+    public ResponseEntity<?> update(@PathVariable("id") Long idCollaboration,@RequestBody @Valid CollaborationRequest collaborationRequest) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(collaborationService.update(id,collaborationRequest));
+            return ResponseEntity.status(HttpStatus.OK).body(collaborationService.update(idCollaboration,collaborationRequest));
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (RequiredDataException e) {
@@ -80,10 +80,10 @@ public class CollaborationController implements IController<CollaborationRequest
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long idCollaboration) {
         try {
-            collaborationService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de la collaboration en ligne d'id : "+id);
+            collaborationService.delete(idCollaboration);
+            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de la collaboration en ligne d'id : "+idCollaboration);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

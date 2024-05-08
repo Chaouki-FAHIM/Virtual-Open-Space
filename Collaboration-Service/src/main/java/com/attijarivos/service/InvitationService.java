@@ -1,6 +1,8 @@
 package com.attijarivos.service;
 
-import com.attijarivos.DTO.*;
+import com.attijarivos.DTO.InvitationRequest;
+import com.attijarivos.DTO.InvitationResponse;
+import com.attijarivos.DTO.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.NotValidDataException;
@@ -85,12 +87,17 @@ public class InvitationService implements IService<InvitationRequest, Invitation
 
     @Override
     public List<InvitationResponse> getAll() {
-        return List.of();
+        List<Invitation> invitations = invitationRepository.findAll();
+        log.info("Invitations de la collaboration en ligne tourvées sont : {}",invitations);
+        return invitations.stream().map(invitationMapper::fromModelToRes).toList();
     }
 
     @Override
-    public InvitationResponse getOne(Long aLong) throws NotFoundDataException {
-        return null;
+    public InvitationResponse getOne(Long idInvitation) throws NotFoundDataException {
+        Optional<Invitation> invitation = invitationRepository.findById(idInvitation);
+        log.info("Invitation tourvée est : {}",invitation);
+        if(invitation.isEmpty()) throw new NotFoundDataException("Invitation",idInvitation);
+        return invitation.map(invitationMapper::fromModelToRes).orElse(null);
     }
 
     @Override
