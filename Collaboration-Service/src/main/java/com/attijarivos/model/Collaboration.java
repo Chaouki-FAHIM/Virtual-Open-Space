@@ -18,10 +18,11 @@ public class Collaboration {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idCollaboration;
 
-    @Column(nullable = false)
+    @Column(nullable = false,length = 50)
     private String titre;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
     private Date dateCreationCollaboration;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -33,6 +34,6 @@ public class Collaboration {
     @Column(name = "id_proprietaire",nullable = false)
     private String IdProprietaire;
 
-    @Column(columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private Boolean visible;
+    @Column(nullable = false)
+    private Boolean visible= true;;
 }

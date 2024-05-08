@@ -4,13 +4,13 @@ package com.attijarivos.controller;
 import com.attijarivos.DTO.InvitationRequest;
 import com.attijarivos.DTO.InvitationResponse;
 import com.attijarivos.service.IService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/invitations")
@@ -23,28 +23,33 @@ public class InvitationController implements IController<InvitationRequest,Long>
     private final IService<InvitationRequest, InvitationResponse,Long> invitationService;
 
 
+    @PostMapping
     @Override
-    public ResponseEntity<?> create(InvitationRequest invitationRequest) {
+    public ResponseEntity<?> create(@RequestBody @Valid InvitationRequest invitationRequest) {
         return null;
     }
 
+    @GetMapping
     @Override
     public ResponseEntity<?> getAll() {
         return null;
     }
 
+    @GetMapping("/{id}")
     @Override
-    public ResponseEntity<?> getOne(Long aLong) {
+    public ResponseEntity<?> getOne(@PathVariable("id") Long idInvitation) {
         return null;
     }
 
+    @PutMapping("/{id}")
     @Override
-    public ResponseEntity<?> update(Long aLong, InvitationRequest invitationRequest) {
+    public ResponseEntity<?> update(@PathVariable("id") Long idInvitation,@RequestBody @Valid InvitationRequest invitationRequest) {
         return null;
     }
 
+    @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<?> delete(Long aLong) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long idInvitation) {
         return null;
     }
 }

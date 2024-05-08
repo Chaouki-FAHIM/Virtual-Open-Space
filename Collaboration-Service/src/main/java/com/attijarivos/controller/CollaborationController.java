@@ -6,6 +6,7 @@ import com.attijarivos.DTO.CollaborationResponse;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.IService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class CollaborationController implements IController<CollaborationRequest
 
     @PostMapping
     @Override
-    public ResponseEntity<?> create(@RequestBody CollaborationRequest collaborationRequest) {
+    public ResponseEntity<?> create(@RequestBody @Valid CollaborationRequest collaborationRequest) {
         try {
             CollaborationResponse collaborationResponse = collaborationService.create(collaborationRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(collaborationResponse);
@@ -65,7 +66,7 @@ public class CollaborationController implements IController<CollaborationRequest
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<?> update(@PathVariable Long id,@RequestBody CollaborationRequest collaborationRequest) {
+    public ResponseEntity<?> update(@PathVariable Long id,@RequestBody @Valid CollaborationRequest collaborationRequest) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(collaborationService.update(id,collaborationRequest));
         } catch (NotFoundDataException e) {
