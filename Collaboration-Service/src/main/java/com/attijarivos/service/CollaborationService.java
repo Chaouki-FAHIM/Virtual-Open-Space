@@ -1,9 +1,9 @@
 package com.attijarivos.service;
 
 
-import com.attijarivos.DTO.CollaborationRequest;
-import com.attijarivos.DTO.CollaborationResponse;
-import com.attijarivos.DTO.MembreResponse;
+import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.response.CollaborationResponse;
+import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.NotValidDataException;
@@ -25,7 +25,7 @@ import java.util.Optional;
 @Service("service-layer-collaboration")
 @RequiredArgsConstructor
 @Slf4j
-public class CollaborationService implements IService<CollaborationRequest, CollaborationResponse,Long> {
+public class CollaborationService implements IService<CollaborationRequest,CollaborationRequest, CollaborationResponse,Long> {
 
     @Qualifier("mapper-layer-collaboration")
     private final CollaborationMapper collaborationMapper;
@@ -47,13 +47,13 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
     private void verifyDataCollaboration(CollaborationRequest collaborationRequest, String context) throws RequiredDataException {
 
         if(isNotNullValue(collaborationRequest.getTitre())) {
-            String errorMsg = "Titre est obligatoire pour "+context+" d'une collaboration en ligne";
+            String errorMsg = "Titre est obligatoire pour "+context+" de la collaboration en ligne";
             log.warn(errorMsg);
             throw new RequiredDataException(errorMsg);
         }
 
         if(isNotNullValue(collaborationRequest.getIdProprietaire())) {
-            String errorMsg = "Identifiant de propriétaire est obligatoire pour "+context+" d'une collaboration en ligne";
+            String errorMsg = "Identifiant de propriétaire est obligatoire pour "+context+" de la collaboration en ligne";
             log.warn(errorMsg);
             throw new RequiredDataException(errorMsg);
         }
@@ -66,7 +66,7 @@ public class CollaborationService implements IService<CollaborationRequest, Coll
     }
 
     @Override
-    public CollaborationResponse create(CollaborationRequest collaborationRequest) throws RequiredDataException, NotValidDataException {
+    public CollaborationResponse createOne(CollaborationRequest collaborationRequest) throws RequiredDataException, NotValidDataException {
 
         verifyDataCollaboration(collaborationRequest,"l'ajout");
 

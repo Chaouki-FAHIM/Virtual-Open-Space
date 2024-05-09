@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Objects;
 
 
-public interface IService <RequestDTO,ResponseDTO,ID> {
+public interface IService <RequestDTO,ResquestUpdateDTO,ResponseDTO,ID> {
 
     default Boolean isNotNullValue(Object value) {
         return value == null || Objects.equals(value, "");
     }
 
-    ResponseDTO create(RequestDTO requestDTO) throws RequiredDataException, NotValidDataException, NotFoundDataException;
+    ResponseDTO createOne(RequestDTO requestDTO) throws RequiredDataException, NotValidDataException, NotFoundDataException;
     List<ResponseDTO> getAll();
     ResponseDTO getOne(ID id) throws NotFoundDataException;
-    ResponseDTO update(ID id, RequestDTO requestDTO) throws NotFoundDataException,RequiredDataException,NotValidDataException;
+    ResponseDTO update(ID id, ResquestUpdateDTO resquestUpdateDTO) throws NotFoundDataException,RequiredDataException,NotValidDataException;
     void delete(ID id) throws NotFoundDataException,RequiredDataException,NotValidDataException;
 }

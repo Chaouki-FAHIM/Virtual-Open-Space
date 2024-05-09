@@ -1,8 +1,8 @@
 package com.attijarivos.mapper;
 
 
-import com.attijarivos.DTO.InvitationRequest;
-import com.attijarivos.DTO.InvitationResponse;
+import com.attijarivos.DTO.request.InvitationRequest;
+import com.attijarivos.DTO.response.InvitationResponse;
 
 
 import com.attijarivos.model.Invitation;

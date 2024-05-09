@@ -1,4 +1,4 @@
-package com.attijarivos.DTO;
+package com.attijarivos.DTO.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,11 +7,16 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
-@AllArgsConstructor @NoArgsConstructor @Builder
-public class CollaborationRequest {
+@Builder
+public class CollaborationResponse {
+    private Long idCollaboration;
     private String titre;
+    private Date dateCreationCollaboration;
     private Date dateDepart;
     private Boolean confidentielle;
     private String idProprietaire;
+    private Boolean visible;
 }

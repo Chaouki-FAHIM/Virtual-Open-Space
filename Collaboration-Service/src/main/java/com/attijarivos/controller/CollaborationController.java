@@ -1,8 +1,8 @@
 package com.attijarivos.controller;
 
 
-import com.attijarivos.DTO.CollaborationRequest;
-import com.attijarivos.DTO.CollaborationResponse;
+import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.IService;
@@ -21,18 +21,18 @@ import java.util.List;
 @RequestMapping("/collaborations")
 @RequiredArgsConstructor
 @Slf4j
-public class CollaborationController implements IController<CollaborationRequest,Long>{
+public class CollaborationController implements IController<CollaborationRequest,Long>, IControllerUpdate<CollaborationRequest,Long>{
 
     @Autowired
     @Qualifier("service-layer-collaboration")
-    private final IService<CollaborationRequest,CollaborationResponse,Long> collaborationService;
+    private final IService<CollaborationRequest,CollaborationRequest,CollaborationResponse,Long> collaborationService;
 
 
     @PostMapping
     @Override
-    public ResponseEntity<?> create(@RequestBody @Valid CollaborationRequest collaborationRequest) {
+    public ResponseEntity<?> createOne(@RequestBody @Valid CollaborationRequest collaborationRequest) {
         try {
-            CollaborationResponse collaborationResponse = collaborationService.create(collaborationRequest);
+            CollaborationResponse collaborationResponse = collaborationService.createOne(collaborationRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(collaborationResponse);
         } catch (RequiredDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

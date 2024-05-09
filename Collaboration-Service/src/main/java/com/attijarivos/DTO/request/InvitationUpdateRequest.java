@@ -1,4 +1,4 @@
-package com.attijarivos.DTO;
+package com.attijarivos.DTO.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,11 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Builder
-public class InvitationResponse {
-    private Long idInvitation;
-    private String idInvite;
-    private CollaborationResponse collaboration;
-    private Date dateCreationInvitation;
+public class InvitationUpdateRequest {
+
     private Date dateParticiaption;
 }
-

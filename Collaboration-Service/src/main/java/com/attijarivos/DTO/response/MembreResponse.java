@@ -1,4 +1,4 @@
-package com.attijarivos.DTO;
+package com.attijarivos.DTO.response;
 
 import lombok.*;
 

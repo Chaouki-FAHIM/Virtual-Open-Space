@@ -1,8 +1,8 @@
 package com.attijarivos.mapper;
 
 
-import com.attijarivos.DTO.CollaborationRequest;
-import com.attijarivos.DTO.CollaborationResponse;
+import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.model.Collaboration;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
