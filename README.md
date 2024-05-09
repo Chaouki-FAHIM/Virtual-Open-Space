@@ -13,7 +13,7 @@ This section details the progress and components of the Create Collaboration Ser
 
 - [x] **Database Connection**
   - Connect to database with Spring Data JPA.
-  - Database: H2
+  - Database: MySQL Workbench 8.0.34
   - Status: **Completed**
 
 - [x] **Endpoints for Collaboration**
@@ -29,9 +29,8 @@ This section details the progress and components of the Create Collaboration Ser
 
 ## Next Progress
 
-- **Change H2 database to MySQL database **
-- **Create automatic Unit and Integration test for Collaboration API **
-- **Create automatic Unit and Integration test for Invitation API **
+- **Create automatic Unit and Integration test for Collaboration API**
+- **Create automatic Unit and Integration test for Invitation API**
 
 ---
 
@@ -52,9 +51,9 @@ This section details the progress and components of the Create Membre Service.
   - Automatic test endpoints for membre management.
   - Status: **Completed**
 
-## Next Progress 
+## Next Progress
 
-- **Change MongoDB database to Firebase RealTime database **
+Change MongoDB database to Firebase RealTime database
 
 ---
 
