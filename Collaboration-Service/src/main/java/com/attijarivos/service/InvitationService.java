@@ -7,6 +7,7 @@ import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.NotValidDataException;
+import com.attijarivos.exception.RededicationDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.IMapper;
 import com.attijarivos.model.Collaboration;
@@ -22,6 +23,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service("service-layer-invitation")
@@ -65,10 +67,25 @@ public class InvitationService implements IServiceInvitation<InvitationRequest, 
 
     }
 
-    @Override
-    public InvitationResponse createOne(InvitationRequest invitationRequest) throws RequiredDataException, NotValidDataException, NotFoundDataException {
+    private Boolean isRededicationInvitation(InvitationRequest invitationRequest) {
 
-        log.error("numbreOfInvitationProcessedForCreateList : " + numbreOfInvitationProcessedForCreateList);
+        return invitationRepository.findAll().stream()
+                .peek( invitation ->
+                        log.warn(invitation.getCollaboration().getIdCollaboration()+ " / "+invitationRequest.getIdCollaboration()
+                           + " -- " + invitation.getIdInvite()+ " / "+invitationRequest.getIdInvite()
+                        )
+                )
+                .anyMatch(invitation ->
+                        Objects.equals(invitation.getIdInvite(), invitationRequest.getIdInvite())
+                        && Objects.equals(invitation.getCollaboration().getIdCollaboration(), invitationRequest.getIdCollaboration())
+
+                );
+    }
+
+
+    @Override
+    public InvitationResponse createOne(InvitationRequest invitationRequest) throws RequiredDataException, NotValidDataException, NotFoundDataException, RededicationDataException {
+
         verifyDataInvitation(invitationRequest,"la création");
 
         // vérification l'invité (membre) au niveau de base de données
@@ -77,13 +94,16 @@ public class InvitationService implements IServiceInvitation<InvitationRequest, 
             else throw new NotValidDataException("Invité est introuvable !!");
         }
 
-
         Collaboration collaboration = collaborationRepository.findByIdCollaboration(invitationRequest.getIdCollaboration());
 
         if(collaboration == null) {
             if (numbreOfInvitationProcessedForCreateList >0) throw new NotFoundDataException("Collaboration avec l'id "+invitationRequest.getIdCollaboration()+ " est introuvable de l'invitation numero "+ numbreOfInvitationProcessedForCreateList);
             else throw new NotFoundDataException("Collaboration", invitationRequest.getIdCollaboration());
         }
+
+        if(isRededicationInvitation(invitationRequest))
+            if (numbreOfInvitationProcessedForCreateList >0) throw new RededicationDataException("Invitation numéro "+numbreOfInvitationProcessedForCreateList+" a déjà été envoyée pour cette collaboration en ligne");
+            else throw new RededicationDataException("Invitation a déjà été envoyée pour cette collaboration en ligne");
 
         Invitation invitation = invitationMapper.fromReqToModel(invitationRequest);
 
@@ -109,14 +129,16 @@ public class InvitationService implements IServiceInvitation<InvitationRequest, 
             try {
                 numbreOfInvitationProcessedForCreateList ++;
                 return createOne(invitationRequest);
-            } catch (RequiredDataException | NotValidDataException | NotFoundDataException e) {
+            } catch (RequiredDataException | NotValidDataException | NotFoundDataException | RededicationDataException e) {
                 log.error("Erreur lors du traitement de l'invitation numéro " + numbreOfInvitationProcessedForCreateList);
                         numbreOfInvitationProcessedForCreateList = 0;
                 throw new RuntimeException(e.getMessage());
             }
         }).toList();
+
         log.warn("Ajout avec succès d'une list des invitations !! ");
         numbreOfInvitationProcessedForCreateList = 0;
+
         return invitationResponseList;
     }
 
