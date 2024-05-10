@@ -2,6 +2,7 @@ package com.attijarivos.service;
 
 
 import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
@@ -25,7 +26,7 @@ import java.util.Optional;
 @Service("service-layer-collaboration")
 @RequiredArgsConstructor
 @Slf4j
-public class CollaborationService implements IService<CollaborationRequest,CollaborationRequest, CollaborationResponse,Long> {
+public class CollaborationService implements ICollaborationService<CollaborationRequest,CollaborationResponse,Long> {
 
     @Qualifier("mapper-layer-collaboration")
     private final CollaborationMapper collaborationMapper;
@@ -140,5 +141,10 @@ public class CollaborationService implements IService<CollaborationRequest,Colla
         if(collaboration.isEmpty()) throw new NotFoundDataException("Collaboration",idCollaboration);
         collaborationRepository.delete(collaboration.get());
         log.info("Collaboration d'id est bien supprimée : {}",idCollaboration);
+    }
+
+    @Override
+    public CollaborationResponse rejoindre(Long aLong, JoinInvitationRequest joinRequest) throws NotFoundDataException, RequiredDataException {
+        return null;
     }
 }

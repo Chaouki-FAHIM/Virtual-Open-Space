@@ -1,8 +1,9 @@
 package com.attijarivos.service;
 
 import com.attijarivos.DTO.request.InvitationRequest;
+import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
-import com.attijarivos.DTO.request.JoindreRequest;
+import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.NotFoundDataException;
@@ -158,34 +159,34 @@ public class InvitationService implements IServiceInvitation<InvitationRequest,I
     }
 
     @Override
-    public InvitationResponse update(Long idInvitation, JoindreRequest joindreRequest) throws NotFoundDataException, RequiredDataException, NotValidDataException {
-        Optional<Invitation> invitationSearched = invitationRepository.findById(idInvitation);
-        log.info("Invitation tourvée est : {}",invitationSearched);
-
-        if(invitationSearched.isEmpty()) throw new NotFoundDataException("Invitation",idInvitation);
-
-        if(isNotNullValue(joindreRequest.getDateParticiaption())) {
-            String errorMsg = "Date de participation est obligatoire pour le mise à jour d'invitation";
-            log.warn(errorMsg);
-            throw new RequiredDataException(errorMsg);
-        }
-
-        // update la valeur
-        invitationSearched.get().setDateParticiaption(joindreRequest.getDateParticiaption());
-
-        log.info("Invitation est modifiée : "+invitationSearched.get());
-
-        return invitationMapper.fromModelToRes(
-                invitationRepository.save(invitationSearched.get())
-        );
-    }
-
-    @Override
     public void delete(Long idInvitation) throws NotFoundDataException, RequiredDataException, NotValidDataException {
         Optional<Invitation> invitation = invitationRepository.findById(idInvitation);
 
         if(invitation.isEmpty()) throw new NotFoundDataException("Invitation",idInvitation);
         invitationRepository.delete(invitation.get());
         log.info("Collaboration d'id est bien supprimée : {}",idInvitation);
+    }
+
+    @Override
+    public InvitationResponse rejoindre(Long idInvitation, JoinInvitationRequest joinInvitationRequest) throws NotFoundDataException, RequiredDataException {
+        Optional<Invitation> invitationSearched = invitationRepository.findById(idInvitation);
+        log.info("Invitation tourvée est : {}",invitationSearched);
+
+        if(invitationSearched.isEmpty()) throw new NotFoundDataException("Invitation",idInvitation);
+
+        if(isNotNullValue(joinInvitationRequest.getDateParticiaption())) {
+            String errorMsg = "Date de participation est obligatoire pour le mise à jour d'invitation";
+            log.warn(errorMsg);
+            throw new RequiredDataException(errorMsg);
+        }
+
+        // update la valeur
+        invitationSearched.get().setDateParticiaption(joinInvitationRequest.getDateParticiaption());
+
+        log.info("Invitation est modifiée : "+invitationSearched.get());
+
+        return invitationMapper.fromModelToRes(
+                invitationRepository.save(invitationSearched.get())
+        );
     }
 }

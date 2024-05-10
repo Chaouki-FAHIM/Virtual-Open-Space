@@ -2,9 +2,11 @@ package com.attijarivos.controller;
 
 
 import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
+import com.attijarivos.service.ICollaborationService;
 import com.attijarivos.service.IService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +23,11 @@ import java.util.List;
 @RequestMapping("/collaborations")
 @RequiredArgsConstructor
 @Slf4j
-public class CollaborationController implements IController<CollaborationRequest, Long>, IControllerUpdate<CollaborationRequest,Long>{
+public class CollaborationController implements ICollaborationController<CollaborationRequest, Long>{
 
     @Autowired
     @Qualifier("service-layer-collaboration")
-    private final IService<CollaborationRequest,CollaborationRequest,CollaborationResponse,Long> collaborationService;
+    private final ICollaborationService<CollaborationRequest,CollaborationResponse,Long> collaborationService;
 
 
     @PostMapping
@@ -89,5 +91,11 @@ public class CollaborationController implements IController<CollaborationRequest
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    @PatchMapping("/{id}")
+    @Override
+    public ResponseEntity<?> joindre(@PathVariable("id") Long idCollaboration,@RequestBody @Valid JoinCollaborationRequest joinCollaborationRequest) {
+        return null;
     }
 }

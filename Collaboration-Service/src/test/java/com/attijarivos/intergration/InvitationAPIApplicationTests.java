@@ -2,7 +2,7 @@ package com.attijarivos.intergration;
 
 
 import com.attijarivos.DTO.request.InvitationRequest;
-import com.attijarivos.DTO.request.JoindreRequest;
+import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.IMembreID;
 import com.attijarivos.repository.InvitationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,8 +39,8 @@ class InvitationAPIApplicationTests implements IMembreID {
 				.build();
 	}
 
-	private JoindreRequest getInvitationUpdateRequest() {
-		return JoindreRequest.builder()
+	private JoinCollaborationRequest getInvitationUpdateRequest() {
+		return JoinCollaborationRequest.builder()
 				.dateParticiaption(TO_DAY)
 				.build();
 	}

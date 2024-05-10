@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public interface IService <RequestDTO,ResquestUpdateDTO,ResponseDTO,ID> {
+public interface IService <RequestDTO,JoinReq,ResponseDTO,ID> {
 
     default Boolean isNotNullValue(Object value) {
         return value == null || Objects.equals(value, "");
@@ -19,6 +19,6 @@ public interface IService <RequestDTO,ResquestUpdateDTO,ResponseDTO,ID> {
     ResponseDTO createOne(RequestDTO requestDTO) throws RequiredDataException, NotValidDataException, NotFoundDataException, RededicationDataException;
     List<ResponseDTO> getAll();
     ResponseDTO getOne(ID id) throws NotFoundDataException;
-    ResponseDTO update(ID id, ResquestUpdateDTO resquestUpdateDTO) throws NotFoundDataException,RequiredDataException,NotValidDataException;
     void delete(ID id) throws NotFoundDataException,RequiredDataException,NotValidDataException;
+    ResponseDTO rejoindre(ID id, JoinReq joinRequest) throws NotFoundDataException, RequiredDataException;
 }

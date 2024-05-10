@@ -2,8 +2,8 @@ package com.attijarivos.controller;
 
 
 import com.attijarivos.DTO.request.InvitationRequest;
+import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
-import com.attijarivos.DTO.request.JoindreRequest;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.IServiceInvitation;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/invitations")
 @RequiredArgsConstructor
 @Slf4j
-public class InvitationController implements IControllerInvitation<InvitationRequest,Long>, IControllerUpdate<JoindreRequest,Long> {
+public class InvitationController implements IInvitationController<InvitationRequest,Long> {
 
     @Autowired
     @Qualifier("service-layer-invitation")
@@ -57,8 +57,16 @@ public class InvitationController implements IControllerInvitation<InvitationReq
 
     @PatchMapping("/{id}")
     @Override
-    public ResponseEntity<?> joindre(@RequestBody @Valid List<JoindreRequest> Request) {
-        return null;
+    public ResponseEntity<?> joindre(@PathVariable("id") Long idInvitation, @RequestBody @Valid JoinInvitationRequest joinInvitationRequest) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(invitationService.rejoindre(idInvitation, joinInvitationRequest));
+        } catch (NotFoundDataException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RequiredDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping
@@ -92,19 +100,6 @@ public class InvitationController implements IControllerInvitation<InvitationReq
             return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de l'invitation d'id : "+idInvitation);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> update(@PathVariable("id") Long idInvitation,@RequestBody @Valid JoindreRequest joindreRequest) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(invitationService.update(idInvitation, joindreRequest));
-        } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (RequiredDataException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
