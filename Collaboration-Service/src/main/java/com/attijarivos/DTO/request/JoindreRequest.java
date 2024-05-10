@@ -12,6 +12,6 @@ import java.util.Date;
 @Data
 @Builder
 public class InvitationUpdateRequest {
-
+    private String membreId;
     private Date dateParticiaption;
 }
