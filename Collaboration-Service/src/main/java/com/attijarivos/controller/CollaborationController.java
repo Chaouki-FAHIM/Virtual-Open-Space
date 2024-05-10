@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/collaborations")
 @RequiredArgsConstructor
 @Slf4j
-public class CollaborationController implements IController<CollaborationRequest,Long>, IControllerUpdate<CollaborationRequest,Long>{
+public class CollaborationController implements IController<CollaborationRequest, Long>, IControllerUpdate<CollaborationRequest,Long>{
 
     @Autowired
     @Qualifier("service-layer-collaboration")

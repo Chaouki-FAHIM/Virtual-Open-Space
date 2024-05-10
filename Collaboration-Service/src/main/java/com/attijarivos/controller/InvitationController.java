@@ -3,7 +3,7 @@ package com.attijarivos.controller;
 
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
-import com.attijarivos.DTO.request.InvitationUpdateRequest;
+import com.attijarivos.DTO.request.JoindreRequest;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.IServiceInvitation;
@@ -16,18 +16,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
 @RequestMapping("/invitations")
 @RequiredArgsConstructor
 @Slf4j
-public class InvitationController implements IControllerInvitation<InvitationRequest,Long>, IControllerUpdate<InvitationUpdateRequest,Long> {
+public class InvitationController implements IControllerInvitation<InvitationRequest,Long>, IControllerUpdate<JoindreRequest,Long> {
 
     @Autowired
     @Qualifier("service-layer-invitation")
-    private final IServiceInvitation<InvitationRequest, InvitationUpdateRequest,InvitationResponse,Long> invitationService;
+    private final IServiceInvitation<InvitationRequest,InvitationResponse,Long> invitationService;
 
 
     @PostMapping
@@ -54,6 +53,12 @@ public class InvitationController implements IControllerInvitation<InvitationReq
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    @PatchMapping("/{id}")
+    @Override
+    public ResponseEntity<?> joindre(@RequestBody @Valid List<JoindreRequest> Request) {
+        return null;
     }
 
     @GetMapping
@@ -92,11 +97,10 @@ public class InvitationController implements IControllerInvitation<InvitationReq
         }
     }
 
-    @PatchMapping("/{id}")
     @Override
-    public ResponseEntity<?> update(@PathVariable("id") Long idInvitation,@RequestBody @Valid InvitationUpdateRequest invitationUpdateRequest) {
+    public ResponseEntity<?> update(@PathVariable("id") Long idInvitation,@RequestBody @Valid JoindreRequest joindreRequest) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(invitationService.update(idInvitation, invitationUpdateRequest));
+            return ResponseEntity.status(HttpStatus.OK).body(invitationService.update(idInvitation, joindreRequest));
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (RequiredDataException e) {

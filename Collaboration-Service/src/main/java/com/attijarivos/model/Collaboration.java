@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="collaboration")
@@ -36,4 +37,7 @@ public class Collaboration {
 
     @Column(nullable = false)
     private Boolean visible= true;;
+
+    @OneToMany(mappedBy = "collaboration", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invitation> invitations;
 }

@@ -1,48 +1,80 @@
-package com.attijarivos;
+package com.attijarivos.intergration;
 
 
-import com.attijarivos.DTO.request.CollaborationRequest;
-import com.attijarivos.repository.CollaborationRepository;
+import com.attijarivos.DTO.request.InvitationRequest;
+import com.attijarivos.DTO.request.JoindreRequest;
+import com.attijarivos.IMembreID;
+import com.attijarivos.repository.InvitationRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
-@Testcontainers
 @AutoConfigureMockMvc
-class CollaborationAPIApplicationTests {
+class InvitationAPIApplicationTests implements IMembreID {
 
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
-	private CollaborationRepository collaborationRepository;
-	ObjectMapper objectMapper = new ObjectMapper();
-	private final String URI = "/collaboration";
-	private String memberId;
-
-	@DynamicPropertySource
-	static public void setProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
-		//dynamicPropertyRegistry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
-	}
+	private InvitationRepository invitationRepository;
+	private final String URI = "/invitations";
 
 	@AfterEach
 	void cleanUp() {
-		collaborationRepository.deleteAll();
+		invitationRepository.deleteAll();
 	}
 
-	private CollaborationRequest getMembreResquest() {
-		return CollaborationRequest.builder()
-				.confidentielle(true)
-				.dateDepart(null)
-				.titre("Collaboration Test")
-				.idProprietaire("663bbf3e7a25633f8b25a610")
+	private InvitationRequest getInvitationRequest() {
+		return InvitationRequest.builder()
+				.idInvite(MEMBRE_TWO_ID)
+				.idCollaboration(1L)
 				.build();
+	}
+
+	private JoindreRequest getInvitationUpdateRequest() {
+		return JoindreRequest.builder()
+				.dateParticiaption(TO_DAY)
+				.build();
+	}
+
+	@Test
+	void testCreateInvitation() throws Exception {
+		InvitationRequest invitationRequest = getInvitationRequest();
+		mockMvc.perform(
+						MockMvcRequestBuilders.post(URI)
+								.contentType(MediaType.APPLICATION_JSON)
+								.content(new ObjectMapper().writeValueAsString(invitationRequest)))
+				.andExpect(MockMvcResultMatchers.status().isCreated())
+				.andExpect(
+						MockMvcResultMatchers.jsonPath("$.dateParticiaption").value(TO_DAY)
+				);
+	}
+
+	@Test
+	void testGetEmptyListOfInvitations() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get(URI))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(
+						MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0))
+				);
+	}
+
+	@Test
+	void testGetAllInvitations() throws Exception {
+		testCreateInvitation();
+		mockMvc.perform(MockMvcRequestBuilders.get(URI))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
+				.andExpect(
+						MockMvcResultMatchers.jsonPath("$[0].dateParticiaption").value(TO_DAY)
+				);
 	}
 }

@@ -2,7 +2,7 @@ package com.attijarivos.service;
 
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
-import com.attijarivos.DTO.request.InvitationUpdateRequest;
+import com.attijarivos.DTO.request.JoindreRequest;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.NotFoundDataException;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @Service("service-layer-invitation")
 @RequiredArgsConstructor
 @Slf4j
-public class InvitationService implements IServiceInvitation<InvitationRequest, InvitationUpdateRequest, InvitationResponse,Long> {
+public class InvitationService implements IServiceInvitation<InvitationRequest,InvitationResponse,Long> {
 
     @Qualifier("mapper-layer-invitation")
     private final IMapper<Invitation,InvitationRequest,InvitationResponse> invitationMapper;
@@ -158,20 +158,20 @@ public class InvitationService implements IServiceInvitation<InvitationRequest, 
     }
 
     @Override
-    public InvitationResponse update(Long idInvitation, InvitationUpdateRequest invitationUpdateRequest) throws NotFoundDataException, RequiredDataException, NotValidDataException {
+    public InvitationResponse update(Long idInvitation, JoindreRequest joindreRequest) throws NotFoundDataException, RequiredDataException, NotValidDataException {
         Optional<Invitation> invitationSearched = invitationRepository.findById(idInvitation);
         log.info("Invitation tourvée est : {}",invitationSearched);
 
         if(invitationSearched.isEmpty()) throw new NotFoundDataException("Invitation",idInvitation);
 
-        if(isNotNullValue(invitationUpdateRequest.getDateParticiaption())) {
+        if(isNotNullValue(joindreRequest.getDateParticiaption())) {
             String errorMsg = "Date de participation est obligatoire pour le mise à jour d'invitation";
             log.warn(errorMsg);
             throw new RequiredDataException(errorMsg);
         }
 
         // update la valeur
-        invitationSearched.get().setDateParticiaption(invitationUpdateRequest.getDateParticiaption());
+        invitationSearched.get().setDateParticiaption(joindreRequest.getDateParticiaption());
 
         log.info("Invitation est modifiée : "+invitationSearched.get());
 

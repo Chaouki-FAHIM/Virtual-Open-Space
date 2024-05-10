@@ -25,12 +25,13 @@ This section details the progress and components of the Create Collaboration Ser
   - Create and manually test endpoints for invitation management.
   - External communication (WebClient v3)
   - HTTP Methods implemented with all validations in create an invitation.
+  - Create automatic Unit and Integration test for Collaboration API
+  - Create automatic Unit and Integration test for Invitation API
   - Status: **In Progress**
 
 ## Next Progress
 
-- **Create automatic Unit and Integration test for Collaboration API**
-- **Create automatic Unit and Integration test for Invitation API**
+Change an endpoint update to join for access to collaboration
 
 ---
 
@@ -63,12 +64,12 @@ This section details the progress and components of the Create Team Service.
 
 ## Current Progress
 
-- [] **Database Connection**
+- [ ] **Database Connection**
   - Connect to database with Spring Data JPA.
   - Database: MongoDB
   - Status: **To Do**
 
-- [] **Endpoints for Membre (Post, GetOne, and GetAll)**
+- [ ] **Endpoints for Membre (Post, GetOne, and GetAll)**
   - Create endpoints for team management.
   - Manually test endpoints for team management.
   - Automatic test endpoints for team management.
