@@ -28,7 +28,7 @@ import java.util.Optional;
 @Service("service-layer-invitation")
 @RequiredArgsConstructor
 @Slf4j
-public class InvitationService implements IServiceInvitation<InvitationRequest,InvitationResponse,Long> {
+public class InvitationService implements IInvitationService<InvitationRequest,InvitationResponse,Long> {
 
     @Qualifier("mapper-layer-invitation")
     private final IMapper<Invitation,InvitationRequest,InvitationResponse> invitationMapper;
@@ -77,11 +77,6 @@ public class InvitationService implements IServiceInvitation<InvitationRequest,I
     private Boolean isRededicationInvitation(InvitationRequest invitationRequest) {
 
         return invitationRepository.findAll().stream()
-                .peek( invitation ->
-                        log.warn(invitation.getCollaboration().getIdCollaboration()+ " / "+invitationRequest.getIdCollaboration()
-                           + " -- " + invitation.getIdInvite()+ " / "+invitationRequest.getIdInvite()
-                        )
-                )
                 .anyMatch(invitation ->
                         Objects.equals(invitation.getIdInvite(), invitationRequest.getIdInvite())
                         && Objects.equals(invitation.getCollaboration().getIdCollaboration(), invitationRequest.getIdCollaboration())

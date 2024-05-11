@@ -2,8 +2,10 @@ package com.attijarivos.controller;
 
 
 import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
+import com.attijarivos.exception.CollaborationAccessDeniedException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.ICollaborationService;
@@ -68,9 +70,11 @@ public class CollaborationController implements ICollaborationController<Collabo
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<?> update(@PathVariable("id") Long idCollaboration,@RequestBody @Valid CollaborationRequest collaborationRequest) {
+    public ResponseEntity<?> update(@PathVariable("id") Long idCollaboration,@RequestBody @Valid CollaborationUpdateRequest collaborationRequest) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(collaborationService.update(idCollaboration,collaborationRequest));
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    collaborationService.update(idCollaboration,collaborationRequest)
+            );
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (RequiredDataException e) {
@@ -93,9 +97,21 @@ public class CollaborationController implements ICollaborationController<Collabo
         }
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/join/{id}")
     @Override
     public ResponseEntity<?> joindre(@PathVariable("id") Long idCollaboration,@RequestBody @Valid JoinCollaborationRequest joinCollaborationRequest) {
-        return null;
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    collaborationService.rejoindre(idCollaboration,joinCollaborationRequest)
+            );
+        } catch (NotFoundDataException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RequiredDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (CollaborationAccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

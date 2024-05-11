@@ -6,7 +6,7 @@ import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
-import com.attijarivos.service.IServiceInvitation;
+import com.attijarivos.service.IInvitationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class InvitationController implements IInvitationController<InvitationReq
 
     @Autowired
     @Qualifier("service-layer-invitation")
-    private final IServiceInvitation<InvitationRequest,InvitationResponse,Long> invitationService;
+    private final IInvitationService<InvitationRequest,InvitationResponse,Long> invitationService;
 
 
     @PostMapping

@@ -2,16 +2,21 @@ package com.attijarivos.service;
 
 
 import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationUpdateRequest;
+import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
+import com.attijarivos.exception.CollaborationAccessDeniedException;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.CollaborationMapper;
 import com.attijarivos.model.Collaboration;
+import com.attijarivos.model.Invitation;
 import com.attijarivos.repository.CollaborationRepository;
+import com.attijarivos.repository.InvitationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -32,6 +38,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
     @Qualifier("mapper-layer-collaboration")
     private final CollaborationMapper collaborationMapper;
     private final CollaborationRepository collaborationRepository;
+    private final InvitationRepository invitationRepository;
     private final WebClient webClient;
 
     private Optional<MembreResponse> receiveMembreById(String idMembre) throws MicroserviceAccessFailureException {
@@ -59,13 +66,30 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
         if(isNotNullValue(collaborationRequest.getIdProprietaire())) {
             log.warn("Identifiant de propriétaire est obligatoire pour "+context+" "+object);
-            throw new RequiredDataException("Titre",context,object);
+            throw new RequiredDataException("Identifiant",context,object);
         }
 
         if(collaborationRequest.getConfidentielle() == null) {
             log.warn("Confidentialité est obligatoire pour "+context+" "+object);
             throw new RequiredDataException("Confidentialité",context,object);
         }
+    }
+
+    private Collaboration receiveCollaboration(Long idCollaboration) throws NotFoundDataException {
+        Optional<Collaboration> collaboration = collaborationRepository.findById(idCollaboration);
+
+        if(collaboration.isEmpty()) throw new NotFoundDataException("Collaboration",idCollaboration);
+        return collaboration.get();
+    }
+
+    private Boolean haveAutorisationToJoinCollaboration(String idMembre,Collaboration collaboration) {
+        if( !collaboration.getConfidentielle()) return true;
+        List<Invitation>  invitationsOfCollaboration = invitationRepository.findByCollaboration(collaboration);
+
+        return invitationsOfCollaboration.stream().
+                anyMatch(invitation ->
+                        Objects.equals(invitation.getIdInvite(),idMembre)
+                );
     }
 
     @Override
@@ -103,30 +127,35 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
     @Override
     public CollaborationResponse getOne(Long idCollaboration) throws NotFoundDataException {
-        Optional<Collaboration> collaboration = collaborationRepository.findById(idCollaboration);
-        log.info("Collaboration tourvée est : {}",collaboration);
-        if(collaboration.isEmpty()) throw new NotFoundDataException("Collaboration",idCollaboration);
+        Optional<Collaboration> collaboration = Optional.of(receiveCollaboration(idCollaboration));
+        log.info("Collaboration tourvée est : {}",collaboration.get());
+
         return collaboration.map(collaborationMapper::fromModelToRes).orElse(null);
     }
 
     @Override
-    public CollaborationResponse update(Long idCollaboration, CollaborationRequest collaborationRequest) throws RequiredDataException, NotFoundDataException {
+    public CollaborationResponse update(Long idCollaboration, CollaborationUpdateRequest collaborationUpdateRequest) throws RequiredDataException, NotFoundDataException {
 
-        Optional<Collaboration> collaborationSearched = collaborationRepository.findById(idCollaboration);
+        Optional<Collaboration> collaborationSearched = Optional.of(receiveCollaboration(idCollaboration));
         log.info("Collaboration tourvée est : {}",collaborationSearched);
 
-        if(collaborationSearched.isEmpty()) throw new NotFoundDataException("Collaboration",idCollaboration);
-
         // vérification le titre et la confidentialité
-        verifyDataCollaboration(collaborationRequest,"le mise à jour");
+        verifyDataCollaboration(
+                CollaborationRequest.builder()
+                        .titre(collaborationUpdateRequest.getTitre())
+                        .confidentielle(collaborationUpdateRequest.getConfidentielle())
+                        .dateDepart(collaborationUpdateRequest.getDateDepart())
+                        .idProprietaire("*")
+                        .build(),
+                "le mise à jour");
 
         // update les valeurs
-        collaborationSearched.get().setTitre(collaborationRequest.getTitre());
-        collaborationSearched.get().setConfidentielle(collaborationRequest.getConfidentielle());
-        collaborationSearched.get().setDateDepart(collaborationRequest.getDateDepart());
+        collaborationSearched.get().setTitre(collaborationUpdateRequest.getTitre());
+        collaborationSearched.get().setConfidentielle(collaborationUpdateRequest.getConfidentielle());
+        collaborationSearched.get().setDateDepart(collaborationUpdateRequest.getDateDepart());
 
         // vérifier l'existance de date de départ
-        if (isNotNullValue(collaborationRequest.getDateDepart()))
+        if (isNotNullValue(collaborationUpdateRequest.getDateDepart()))
             collaborationSearched.get().setDateDepart(collaborationSearched.get().getDateCreationCollaboration());
 
         log.info("Collaboration en ligne est modifiée : "+collaborationSearched.get());
@@ -138,15 +167,22 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
     @Override
     public void delete(Long idCollaboration) throws NotFoundDataException {
-        Optional<Collaboration> collaboration = collaborationRepository.findById(idCollaboration);
-
-        if(collaboration.isEmpty()) throw new NotFoundDataException("Collaboration",idCollaboration);
-        collaborationRepository.delete(collaboration.get());
+        Optional<Collaboration> collaboration = Optional.of(receiveCollaboration(idCollaboration));
         log.info("Collaboration d'id est bien supprimée : {}",idCollaboration);
+
+        collaborationRepository.delete(collaboration.get());
     }
 
     @Override
-    public CollaborationResponse rejoindre(Long aLong, JoinInvitationRequest joinRequest) throws NotFoundDataException, RequiredDataException {
-        return null;
+    public CollaborationResponse rejoindre(Long idCollaboration, JoinCollaborationRequest joinRequest) throws NotFoundDataException, RequiredDataException, CollaborationAccessDeniedException {
+        Optional<Collaboration> collaboration = Optional.of(receiveCollaboration(idCollaboration));
+
+        if( haveAutorisationToJoinCollaboration(
+                joinRequest.getIdMembre(),collaboration.get())
+        ) return collaborationMapper.fromModelToRes(collaboration.get());
+
+        // traitement de changement la date de participation
+
+        throw new CollaborationAccessDeniedException(idCollaboration);
     }
 }

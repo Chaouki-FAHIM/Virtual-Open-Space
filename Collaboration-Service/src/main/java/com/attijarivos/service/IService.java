@@ -17,5 +17,5 @@ public interface IService <RequestDTO,JoinReq,ResponseDTO,ID> {
     List<ResponseDTO> getAll();
     ResponseDTO getOne(ID id) throws NotFoundDataException;
     void delete(ID id) throws NotFoundDataException,RequiredDataException;
-    ResponseDTO rejoindre(ID id, JoinReq joinRequest) throws NotFoundDataException, RequiredDataException;
+    ResponseDTO rejoindre(ID id, JoinReq joinRequest) throws NotFoundDataException, RequiredDataException, CollaborationAccessDeniedException;
 }
