@@ -1,11 +1,13 @@
 package com.attijarivos.service;
 
+import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.NotFoundDataException;
+import com.attijarivos.exception.NotValidOwnerInviteException;
 import com.attijarivos.exception.RededicationInvitationException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.IMapper;
@@ -74,7 +76,7 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
 
     }
 
-    private Boolean isRededicationInvitation(InvitationRequest invitationRequest) {
+    private boolean isRededicationInvitation(InvitationRequest invitationRequest) {
 
         return invitationRepository.findAll().stream()
                 .anyMatch(invitation ->
@@ -86,7 +88,7 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
 
 
     @Override
-    public InvitationResponse createOne(InvitationRequest invitationRequest) throws RequiredDataException, NotFoundDataException, RededicationInvitationException {
+    public InvitationResponse createOne(InvitationRequest invitationRequest) throws RequiredDataException, NotFoundDataException, RededicationInvitationException, NotValidOwnerInviteException {
 
         verifyDataInvitation(invitationRequest,"la création");
 
@@ -98,10 +100,15 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
 
         Collaboration collaboration = collaborationRepository.findByIdCollaboration(invitationRequest.getIdCollaboration());
 
-        if(collaboration == null) {
+        if(collaboration == null)
             if (numbreOfInvitationProcessedForCreateList >0) throw new NotFoundDataException("Collaboration avec l'id "+invitationRequest.getIdCollaboration()+ " est introuvable de l'invitation numero "+ numbreOfInvitationProcessedForCreateList);
             else throw new NotFoundDataException("Collaboration", invitationRequest.getIdCollaboration());
-        }
+
+
+        if (isNotForOwnerOfCollaboration(collaboration.getIdProprietaire(),invitationRequest))
+            if (numbreOfInvitationProcessedForCreateList > 0)
+                throw new NotValidOwnerInviteException(numbreOfInvitationProcessedForCreateList);
+            else throw new NotValidOwnerInviteException(collaboration.getIdProprietaire());
 
         if(isRededicationInvitation(invitationRequest))
             if (numbreOfInvitationProcessedForCreateList >0) throw new RededicationInvitationException(numbreOfInvitationProcessedForCreateList);
@@ -119,20 +126,33 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
         );
     }
 
+    private boolean isNotForOwnerOfCollaboration(String idProprietaire, InvitationRequest invitationRequest) {
+
+        return invitationRepository.findAll().stream()
+                .anyMatch(
+                        invitation -> Objects.equals(idProprietaire,invitationRequest.getIdInvite()
+                )
+        );
+    }
+
     @Transactional
     @Override
-    public List<InvitationResponse> createInvitationList(List<InvitationRequest> invitationRequestList) throws RequiredDataException {
+    public List<InvitationResponse> createInvitationList(InvitationListRequest invitationRequestList) throws RequiredDataException {
 
-        if(invitationRequestList.isEmpty())
+        if(invitationRequestList.getIdInvites().isEmpty())
             throw new RequiredDataException("List des invitations est obligatoire");
         numbreOfInvitationProcessedForCreateList = 0;
 
-        List<InvitationResponse> invitationResponseList = invitationRequestList.stream().map(invitationRequest -> {
+        List<InvitationResponse> invitationResponseList = invitationRequestList.getIdInvites().stream().map(invitationRequest -> {
             try {
                 numbreOfInvitationProcessedForCreateList ++;
-                return createOne(invitationRequest);
-            } catch (RequiredDataException | NotFoundDataException |
-                     RededicationInvitationException e) {
+                return createOne(
+                        InvitationRequest.builder()
+                                .idInvite(invitationRequest)
+                                .idCollaboration(invitationRequestList.getIdCollaboration())
+                                .build());
+            } catch (RequiredDataException | NotFoundDataException | RededicationInvitationException |
+                     NotValidOwnerInviteException e) {
                 log.error("Erreur lors du traitement de l'invitation numéro " + numbreOfInvitationProcessedForCreateList);
                         numbreOfInvitationProcessedForCreateList = 0;
                 throw new RuntimeException(e.getMessage());

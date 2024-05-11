@@ -18,5 +18,4 @@ public class CollaborationResponse {
     private Date dateDepart;
     private Boolean confidentielle;
     private String idProprietaire;
-    private Boolean visible;
 }

@@ -13,7 +13,7 @@ public interface IService <RequestDTO,JoinReq,ResponseDTO,ID> {
         return value == null || Objects.equals(value, "");
     }
 
-    ResponseDTO createOne(RequestDTO requestDTO) throws RequiredDataException, NotFoundDataException, RededicationInvitationException, MicroserviceAccessFailureException;
+    ResponseDTO createOne(RequestDTO requestDTO) throws RequiredDataException, NotFoundDataException, RededicationInvitationException, MicroserviceAccessFailureException, NotValidOwnerInviteException;
     List<ResponseDTO> getAll();
     ResponseDTO getOne(ID id) throws NotFoundDataException;
     void delete(ID id) throws NotFoundDataException,RequiredDataException;

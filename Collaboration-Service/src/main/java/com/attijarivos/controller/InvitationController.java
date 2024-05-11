@@ -1,6 +1,7 @@
 package com.attijarivos.controller;
 
 
+import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
@@ -44,9 +45,9 @@ public class InvitationController implements IInvitationController<InvitationReq
 
     @PostMapping("/list")
     @Override
-    public ResponseEntity<?> createInvitationList(@RequestBody List<InvitationRequest> invitationRequestList) {
+    public ResponseEntity<?> createInvitationList(@RequestBody InvitationListRequest invitationListRequest) {
         try {
-            List<InvitationResponse> invitationResponseList = invitationService.createInvitationList(invitationRequestList);
+            List<InvitationResponse> invitationResponseList = invitationService.createInvitationList(invitationListRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(invitationResponseList);
         } catch (RequiredDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
