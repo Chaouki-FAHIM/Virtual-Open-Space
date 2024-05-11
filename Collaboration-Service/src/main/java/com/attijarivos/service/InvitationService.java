@@ -3,12 +3,10 @@ package com.attijarivos.service;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
-import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.NotFoundDataException;
-import com.attijarivos.exception.NotValidDataException;
-import com.attijarivos.exception.RededicationDataException;
+import com.attijarivos.exception.RededicationInvitationException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.IMapper;
 import com.attijarivos.model.Collaboration;
@@ -52,18 +50,26 @@ public class InvitationService implements IServiceInvitation<InvitationRequest,I
 
     private void verifyDataInvitation(InvitationRequest invitationRequest, String context) throws RequiredDataException {
 
+        String object = "l'invitation";
+
         if(isNotNullValue(invitationRequest.getIdInvite())) {
-            String errorMsg = "Identifiant d'invité (membre) est obligatoire pour "+context+" d'invitation";
-            if(numbreOfInvitationProcessedForCreateList >0)  errorMsg= errorMsg+" numéro "+ numbreOfInvitationProcessedForCreateList;
+            String errorMsg = "Identifiant d'invité (membre) est obligatoire pour "+context+" "+object;
+            if(numbreOfInvitationProcessedForCreateList >0)  {
+                log.warn(errorMsg+ " numéro "+ numbreOfInvitationProcessedForCreateList);
+                throw new RequiredDataException("Identifiant d'invité",context,object,numbreOfInvitationProcessedForCreateList);
+            }
             log.warn(errorMsg);
-            throw new RequiredDataException(errorMsg);
+            throw new RequiredDataException("Identifiant d'invité",context,object);
         }
 
         if(isNotNullValue(invitationRequest.getIdCollaboration())) {
-            String errorMsg = "Identifiant de la collaboration est obligatoire pour "+context+" d'invitation";
-            if(numbreOfInvitationProcessedForCreateList >0)  errorMsg= errorMsg+" numéro "+ numbreOfInvitationProcessedForCreateList;
+            String errorMsg = "Identifiant de la collaboration est obligatoire pour "+context+" "+object;
+            if(numbreOfInvitationProcessedForCreateList >0)  {
+                log.warn(errorMsg+ " numéro "+ numbreOfInvitationProcessedForCreateList);
+                throw new RequiredDataException("Identifiant de la collaboration",context,object,numbreOfInvitationProcessedForCreateList);
+            }
             log.warn(errorMsg);
-            throw new RequiredDataException(errorMsg);
+            throw new RequiredDataException("Identifiant de la collaboration",context,object);
         }
 
     }
@@ -85,14 +91,14 @@ public class InvitationService implements IServiceInvitation<InvitationRequest,I
 
 
     @Override
-    public InvitationResponse createOne(InvitationRequest invitationRequest) throws RequiredDataException, NotValidDataException, NotFoundDataException, RededicationDataException {
+    public InvitationResponse createOne(InvitationRequest invitationRequest) throws RequiredDataException, NotFoundDataException, RededicationInvitationException {
 
         verifyDataInvitation(invitationRequest,"la création");
 
         // vérification l'invité (membre) au niveau de base de données
         if(receiveInviteById(invitationRequest.getIdInvite()).isEmpty()) {
-            if (numbreOfInvitationProcessedForCreateList >0) throw new NotValidDataException("Invité est introuvable d'invitation numéro "+ numbreOfInvitationProcessedForCreateList);
-            else throw new NotValidDataException("Invité est introuvable !!");
+            if (numbreOfInvitationProcessedForCreateList >0) throw new NotFoundDataException("Invité est introuvable d'invitation numéro "+ numbreOfInvitationProcessedForCreateList);
+            else throw new NotFoundDataException("Invité",invitationRequest.getIdInvite() );
         }
 
         Collaboration collaboration = collaborationRepository.findByIdCollaboration(invitationRequest.getIdCollaboration());
@@ -103,8 +109,8 @@ public class InvitationService implements IServiceInvitation<InvitationRequest,I
         }
 
         if(isRededicationInvitation(invitationRequest))
-            if (numbreOfInvitationProcessedForCreateList >0) throw new RededicationDataException("Invitation numéro "+numbreOfInvitationProcessedForCreateList+" a déjà été envoyée pour cette collaboration en ligne");
-            else throw new RededicationDataException("Invitation a déjà été envoyée pour cette collaboration en ligne");
+            if (numbreOfInvitationProcessedForCreateList >0) throw new RededicationInvitationException(numbreOfInvitationProcessedForCreateList);
+            else throw new RededicationInvitationException();
 
         Invitation invitation = invitationMapper.fromReqToModel(invitationRequest);
 
@@ -130,7 +136,8 @@ public class InvitationService implements IServiceInvitation<InvitationRequest,I
             try {
                 numbreOfInvitationProcessedForCreateList ++;
                 return createOne(invitationRequest);
-            } catch (RequiredDataException | NotValidDataException | NotFoundDataException | RededicationDataException e) {
+            } catch (RequiredDataException | NotFoundDataException |
+                     RededicationInvitationException e) {
                 log.error("Erreur lors du traitement de l'invitation numéro " + numbreOfInvitationProcessedForCreateList);
                         numbreOfInvitationProcessedForCreateList = 0;
                 throw new RuntimeException(e.getMessage());
@@ -159,7 +166,7 @@ public class InvitationService implements IServiceInvitation<InvitationRequest,I
     }
 
     @Override
-    public void delete(Long idInvitation) throws NotFoundDataException, RequiredDataException, NotValidDataException {
+    public void delete(Long idInvitation) throws NotFoundDataException{
         Optional<Invitation> invitation = invitationRepository.findById(idInvitation);
 
         if(invitation.isEmpty()) throw new NotFoundDataException("Invitation",idInvitation);
@@ -175,9 +182,9 @@ public class InvitationService implements IServiceInvitation<InvitationRequest,I
         if(invitationSearched.isEmpty()) throw new NotFoundDataException("Invitation",idInvitation);
 
         if(isNotNullValue(joinInvitationRequest.getDateParticiaption())) {
-            String errorMsg = "Date de participation est obligatoire pour le mise à jour d'invitation";
+            String errorMsg = "Date de participation est obligatoire pour le mise à jour l'invitation";
             log.warn(errorMsg);
-            throw new RequiredDataException(errorMsg);
+            throw new RequiredDataException("Date de participation", "le mise à jour", "d'invitation");
         }
 
         // update la valeur

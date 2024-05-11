@@ -5,6 +5,10 @@ public class NotFoundDataException extends Exception {
         super(element+" avec l'id "+id+" est introuvable !!");
     }
 
+    public NotFoundDataException(String element, String id) {
+        super(element+" avec l'id "+id+" est introuvable !!");
+    }
+
     public NotFoundDataException(String msg) {
         super(msg);
     }

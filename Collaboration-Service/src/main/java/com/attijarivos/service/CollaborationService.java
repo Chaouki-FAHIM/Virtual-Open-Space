@@ -6,8 +6,8 @@ import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
+import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
-import com.attijarivos.exception.NotValidDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.CollaborationMapper;
 import com.attijarivos.model.Collaboration;
@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import java.util.Date;
 import java.util.List;
@@ -33,12 +34,15 @@ public class CollaborationService implements ICollaborationService<Collaboration
     private final CollaborationRepository collaborationRepository;
     private final WebClient webClient;
 
-    private Optional<MembreResponse> receiveMembreById(String idMembre) {
+    private Optional<MembreResponse> receiveMembreById(String idMembre) throws MicroserviceAccessFailureException {
 
         try {
             return Optional.ofNullable(
                     webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idMembre).retrieve().bodyToFlux(MembreResponse.class).blockLast()
             );
+        } catch (WebClientRequestException e) {
+            log.error("Problème lors de connexion avec le Membre-Service", e);
+            throw new MicroserviceAccessFailureException("Membre");
         } catch (Exception e) {
             log.error(e.getMessage());
             return Optional.empty();
@@ -46,34 +50,32 @@ public class CollaborationService implements ICollaborationService<Collaboration
     }
 
     private void verifyDataCollaboration(CollaborationRequest collaborationRequest, String context) throws RequiredDataException {
+        String object = "la collaboration";
 
         if(isNotNullValue(collaborationRequest.getTitre())) {
-            String errorMsg = "Titre est obligatoire pour "+context+" de la collaboration en ligne";
-            log.warn(errorMsg);
-            throw new RequiredDataException(errorMsg);
+            log.warn("Titre est obligatoire pour "+context+" "+object);
+            throw new RequiredDataException("Titre",context,object);
         }
 
         if(isNotNullValue(collaborationRequest.getIdProprietaire())) {
-            String errorMsg = "Identifiant de propriétaire est obligatoire pour "+context+" de la collaboration en ligne";
-            log.warn(errorMsg);
-            throw new RequiredDataException(errorMsg);
+            log.warn("Identifiant de propriétaire est obligatoire pour "+context+" "+object);
+            throw new RequiredDataException("Titre",context,object);
         }
 
         if(collaborationRequest.getConfidentielle() == null) {
-            String errorMsg = "Confidentialité est obligatoire pour "+context+" d'une collaboration en ligne";
-            log.warn(errorMsg);
-            throw new RequiredDataException(errorMsg);
+            log.warn("Confidentialité est obligatoire pour "+context+" "+object);
+            throw new RequiredDataException("Confidentialité",context,object);
         }
     }
 
     @Override
-    public CollaborationResponse createOne(CollaborationRequest collaborationRequest) throws RequiredDataException, NotValidDataException {
+    public CollaborationResponse createOne(CollaborationRequest collaborationRequest) throws RequiredDataException, MicroserviceAccessFailureException, NotFoundDataException {
 
         verifyDataCollaboration(collaborationRequest,"l'ajout");
 
         // vérification le propriétaire (membre) au niveau de base de données
         if(receiveMembreById(collaborationRequest.getIdProprietaire()).isEmpty())
-            throw new NotValidDataException("Proriétaire est introuvable");
+            throw new NotFoundDataException("Proriétaire",collaborationRequest.getIdProprietaire());
 
         Collaboration collaboration = collaborationMapper.fromReqToModel(collaborationRequest);
 
