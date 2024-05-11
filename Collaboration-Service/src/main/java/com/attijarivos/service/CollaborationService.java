@@ -6,6 +6,7 @@ import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
+import com.attijarivos.DTO.response.InvitationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.CollaborationAccessDeniedException;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 
@@ -45,7 +47,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
         try {
             return Optional.ofNullable(
-                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idMembre).retrieve().bodyToFlux(MembreResponse.class).blockLast()
+                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idMembre).retrieve().bodyToMono(MembreResponse.class).block()
             );
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Membre-Service", e);
@@ -53,6 +55,26 @@ public class CollaborationService implements ICollaborationService<Collaboration
         } catch (Exception e) {
             log.error(e.getMessage());
             return Optional.empty();
+        }
+    }
+
+    private void editInvitationDateParticipation(Long idInvitation) throws Exception {
+
+        try {
+             Optional.ofNullable(
+                    webClient.patch().
+                            uri(WebClientConfig.INVITATION_SERVICE_URL + "/"+ idInvitation+"/join")
+                            .body(BodyInserters.fromValue(
+                                    JoinInvitationRequest.builder().dateParticiaption(new Date()).build())
+                            )
+                            .retrieve().bodyToMono(InvitationResponse.class).block()
+            );
+        } catch (WebClientRequestException e) {
+            log.error("Problème lors de connexion avec le Invitation-Service", e);
+            throw new MicroserviceAccessFailureException("Invitation");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -82,14 +104,19 @@ public class CollaborationService implements ICollaborationService<Collaboration
         return collaboration.get();
     }
 
-    private Boolean haveAutorisationToJoinCollaboration(String idMembre,Collaboration collaboration) {
+    private boolean hasJoinedCollaboration(String idMembre, Collaboration collaboration) throws Exception {
         if( !collaboration.getConfidentielle()) return true;
         List<Invitation>  invitationsOfCollaboration = invitationRepository.findByCollaboration(collaboration);
 
-        return invitationsOfCollaboration.stream().
-                anyMatch(invitation ->
-                        Objects.equals(invitation.getIdInvite(),idMembre)
-                );
+        Optional<Invitation> invitationOfCollaboration = invitationsOfCollaboration.stream()
+                .filter(invitation -> Objects.equals(invitation.getIdInvite(), idMembre))
+                .findFirst();
+
+        if(invitationOfCollaboration.isEmpty()) return false;
+
+        editInvitationDateParticipation(invitationOfCollaboration.get().getIdInvitation());
+
+        return true;
     }
 
     @Override
@@ -174,14 +201,12 @@ public class CollaborationService implements ICollaborationService<Collaboration
     }
 
     @Override
-    public CollaborationResponse rejoindre(Long idCollaboration, JoinCollaborationRequest joinRequest) throws NotFoundDataException, RequiredDataException, CollaborationAccessDeniedException {
+    public CollaborationResponse joindre(Long idCollaboration, JoinCollaborationRequest joinRequest) throws Exception {
         Optional<Collaboration> collaboration = Optional.of(receiveCollaboration(idCollaboration));
 
-        if( haveAutorisationToJoinCollaboration(
+        if( hasJoinedCollaboration(
                 joinRequest.getIdMembre(),collaboration.get())
         ) return collaborationMapper.fromModelToRes(collaboration.get());
-
-        // traitement de changement la date de participation
 
         throw new CollaborationAccessDeniedException(idCollaboration);
     }

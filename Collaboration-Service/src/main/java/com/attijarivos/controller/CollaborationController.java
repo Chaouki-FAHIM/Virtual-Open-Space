@@ -9,7 +9,6 @@ import com.attijarivos.exception.CollaborationAccessDeniedException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.ICollaborationService;
-import com.attijarivos.service.IService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,12 +96,12 @@ public class CollaborationController implements ICollaborationController<Collabo
         }
     }
 
-    @PatchMapping("/join/{id}")
+    @PatchMapping("/{id}/join")
     @Override
     public ResponseEntity<?> joindre(@PathVariable("id") Long idCollaboration,@RequestBody @Valid JoinCollaborationRequest joinCollaborationRequest) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    collaborationService.rejoindre(idCollaboration,joinCollaborationRequest)
+                    collaborationService.joindre(idCollaboration,joinCollaborationRequest)
             );
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

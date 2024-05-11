@@ -170,7 +170,7 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
     }
 
     @Override
-    public InvitationResponse rejoindre(Long idInvitation, JoinInvitationRequest joinInvitationRequest) throws NotFoundDataException, RequiredDataException {
+    public InvitationResponse joindre(Long idInvitation, JoinInvitationRequest joinInvitationRequest) throws NotFoundDataException, RequiredDataException {
         Optional<Invitation> invitationSearched = invitationRepository.findById(idInvitation);
         log.info("Invitation tourvée est : {}",invitationSearched);
 
