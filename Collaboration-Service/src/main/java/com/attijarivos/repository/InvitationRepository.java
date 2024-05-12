@@ -10,4 +10,5 @@ import java.util.List;
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 
     List<Invitation> findByCollaboration(Collaboration collaboration);
+    List<Invitation> findByCollaborationAndIdInviteNot(Collaboration collaboration, String idInvite);
 }

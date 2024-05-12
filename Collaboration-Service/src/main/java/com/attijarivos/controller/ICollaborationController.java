@@ -9,4 +9,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface ICollaborationController<Request, ID> extends IController <Request, JoinCollaborationRequest, ID>{
     ResponseEntity<?> update(ID id, CollaborationUpdateRequest collaborationRequest);
+    ResponseEntity<?> getUninvitedMembersToCollaboration(ID id);
 }

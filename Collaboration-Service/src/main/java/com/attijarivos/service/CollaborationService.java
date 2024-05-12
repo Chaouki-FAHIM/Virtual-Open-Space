@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 @Service("service-layer-collaboration")
 @RequiredArgsConstructor
@@ -58,17 +58,33 @@ public class CollaborationService implements ICollaborationService<Collaboration
         }
     }
 
+    private List<MembreResponse> receiveAllMembres() throws MicroserviceAccessFailureException {
+
+        try {
+            return webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL)
+                    .retrieve().bodyToFlux(MembreResponse.class)
+                    .collectList().block();
+
+        } catch (WebClientRequestException e) {
+            log.error("Problème lors de connexion avec le Membre-Service", e);
+            throw new MicroserviceAccessFailureException("Membre");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return List.of();
+        }
+    }
+
     private void editInvitationDateParticipation(Long idInvitation) throws Exception {
 
         try {
-             Optional.ofNullable(
-                    webClient.patch().
-                            uri(WebClientConfig.INVITATION_SERVICE_URL + "/"+ idInvitation+"/join")
-                            .body(BodyInserters.fromValue(
-                                    JoinInvitationRequest.builder().dateParticiaption(new Date()).build())
-                            )
-                            .retrieve().bodyToMono(InvitationResponse.class).block()
-            );
+            webClient.patch().
+                    uri(WebClientConfig.INVITATION_SERVICE_URL + "/"+ idInvitation+"/join")
+                    .body(BodyInserters.fromValue(
+                            JoinInvitationRequest.builder().dateParticiaption(new Date()).build())
+                    )
+                    .retrieve()
+                    .bodyToMono(InvitationResponse.class)
+                    .block();
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Invitation-Service", e);
             throw new MicroserviceAccessFailureException("Invitation");
@@ -190,6 +206,31 @@ public class CollaborationService implements ICollaborationService<Collaboration
         return collaborationMapper.fromModelToRes(
                 collaborationRepository.save(collaborationSearched.get())
         );
+    }
+
+    @Override
+    public List<MembreResponse> getUninvitedMembersToCollaboration(Long idCollaboration) throws NotFoundDataException, MicroserviceAccessFailureException {
+        Optional<Collaboration> collaborationSearched = Optional.of(receiveCollaboration(idCollaboration));
+
+        List<MembreResponse> membreResponseList = receiveAllMembres();
+        if(receiveAllMembres().isEmpty())
+            throw new NotFoundDataException("Membres sont introuvables pour cette instant");
+
+        List<String> invitedMemberIds = invitationRepository.findByCollaboration(collaborationSearched.get()).stream()
+                .map(Invitation::getIdInvite)
+                .collect(Collectors.toList());
+
+        // supprimer le propiétaire de la collaboration
+        membreResponseList.removeIf(
+                membre -> membre.getId().equals(collaborationSearched.get().getIdProprietaire())
+        );
+
+        // supprimer le membre invité à la collaboration
+        return membreResponseList.stream()
+                .filter(
+                        membre -> ! invitedMemberIds.contains(membre.getId())
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
