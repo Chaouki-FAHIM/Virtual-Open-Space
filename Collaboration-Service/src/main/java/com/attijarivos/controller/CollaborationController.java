@@ -85,9 +85,9 @@ public class CollaborationController implements ICollaborationController<Collabo
 
     @GetMapping("/{id}/uninvited-members")
     @Override
-    public ResponseEntity<?> getUninvitedMembersToCollaboration(@PathVariable("id") Long idCollaboration) {
+    public ResponseEntity<?> getMembersForJoiningCollaboration(@PathVariable("id") Long idCollaboration) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(collaborationService.getUninvitedMembersToCollaboration(idCollaboration));
+            return ResponseEntity.status(HttpStatus.OK).body(collaborationService.getMembersForJoiningCollaboration(idCollaboration));
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

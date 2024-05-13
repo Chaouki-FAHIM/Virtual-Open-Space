@@ -16,7 +16,6 @@ public class InvitationMapper implements IMapper<Invitation,InvitationRequest,In
 
     private final CollaborationMapper collaborationMapper;
 
-
     @Override
     public Invitation fromReqToModel(InvitationRequest invitationRequest) {
         return Invitation.builder()

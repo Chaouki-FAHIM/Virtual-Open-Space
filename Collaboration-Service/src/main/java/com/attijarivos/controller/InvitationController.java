@@ -56,20 +56,6 @@ public class InvitationController implements IInvitationController<InvitationReq
         }
     }
 
-    @PatchMapping("/{id}/join")
-    @Override
-    public ResponseEntity<?> joindre(@PathVariable("id") Long idInvitation, @RequestBody @Valid JoinInvitationRequest joinInvitationRequest) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(invitationService.joindre(idInvitation, joinInvitationRequest));
-        } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (RequiredDataException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
     @GetMapping
     @Override
     public ResponseEntity<?> getAll() {

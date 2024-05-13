@@ -8,6 +8,6 @@ import com.attijarivos.exception.RequiredDataException;
 
 import java.util.List;
 
-public interface IInvitationService<RequestDTO,ResponseDTO,ID> extends  IService <RequestDTO, JoinInvitationRequest,ResponseDTO,ID>{
+public interface IInvitationService<RequestDTO,ResponseDTO,ID> extends  IService <RequestDTO,ResponseDTO,ID>{
     List<ResponseDTO> createInvitationList(InvitationListRequest requestDTOList) throws NotFoundDataException, RequiredDataException, RededicationInvitationException;
 }

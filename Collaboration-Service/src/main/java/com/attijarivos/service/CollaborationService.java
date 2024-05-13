@@ -4,9 +4,7 @@ package com.attijarivos.service;
 import com.attijarivos.DTO.request.CollaborationRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
-import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
-import com.attijarivos.DTO.response.InvitationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.CollaborationAccessDeniedException;
@@ -16,20 +14,18 @@ import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.CollaborationMapper;
 import com.attijarivos.model.Collaboration;
 import com.attijarivos.model.Invitation;
+import com.attijarivos.model.Participation;
 import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.repository.InvitationRepository;
+import com.attijarivos.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("service-layer-collaboration")
@@ -40,6 +36,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
     @Qualifier("mapper-layer-collaboration")
     private final CollaborationMapper collaborationMapper;
     private final CollaborationRepository collaborationRepository;
+    private final ParticipationRepository participationRepository;
     private final InvitationRepository invitationRepository;
     private final WebClient webClient;
 
@@ -74,25 +71,6 @@ public class CollaborationService implements ICollaborationService<Collaboration
         }
     }
 
-    private void editInvitationDateParticipation(Long idInvitation) throws Exception {
-
-        try {
-            webClient.patch().
-                    uri(WebClientConfig.INVITATION_SERVICE_URL + "/"+ idInvitation+"/join")
-                    .body(BodyInserters.fromValue(
-                            JoinInvitationRequest.builder().dateParticiaption(new Date()).build())
-                    )
-                    .retrieve()
-                    .bodyToMono(InvitationResponse.class)
-                    .block();
-        } catch (WebClientRequestException e) {
-            log.error("Problème lors de connexion avec le Invitation-Service", e);
-            throw new MicroserviceAccessFailureException("Invitation");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new Exception(e.getMessage());
-        }
-    }
 
     private void verifyDataCollaboration(CollaborationRequest collaborationRequest, String context) throws RequiredDataException {
         String object = "la collaboration";
@@ -120,17 +98,37 @@ public class CollaborationService implements ICollaborationService<Collaboration
         return collaboration.get();
     }
 
+    private void updateOrCreateParticipation(String idParticipant,Collaboration collaboration) {
+        Optional<Participation> participation = participationRepository.findByIdParticipantAndCollaboration(idParticipant,collaboration);
+        if (participation.isPresent())
+        {
+            participation.get().setDateParticiaption(new Date());
+            participationRepository.save(participation.get());
+            return;
+        }
+
+        participationRepository.save(
+                Participation.builder()
+                        .idParticipant(idParticipant)
+                        .collaboration(collaboration)
+                        .dateParticiaption(new Date())
+                        .build()
+        );
+    }
+
     private boolean hasJoinedCollaboration(String idMembre, Collaboration collaboration) throws Exception {
-        if( !collaboration.getConfidentielle()) return true;
+        if( !collaboration.getConfidentielle()) {
+            updateOrCreateParticipation(idMembre,collaboration);
+            return true;
+        }
         List<Invitation>  invitationsOfCollaboration = invitationRepository.findByCollaboration(collaboration);
 
         Optional<Invitation> invitationOfCollaboration = invitationsOfCollaboration.stream()
                 .filter(invitation -> Objects.equals(invitation.getIdInvite(), idMembre))
                 .findFirst();
 
-        if(invitationOfCollaboration.isEmpty()) return false;
-
-        editInvitationDateParticipation(invitationOfCollaboration.get().getIdInvitation());
+        if(invitationOfCollaboration.isPresent()) return false;
+        updateOrCreateParticipation(idMembre,collaboration);
 
         return true;
     }
@@ -208,29 +206,44 @@ public class CollaborationService implements ICollaborationService<Collaboration
         );
     }
 
+    private List<String> getNotInvitedAndParticipatedToCollaboration (Collaboration collaboration) {
+        // Récupérer les membres invités sur la collaboration
+        List<String> invitedMemberIds = invitationRepository
+                .findByCollaboration(collaboration).stream()
+                .map(Invitation::getIdInvite)
+                .toList();
+
+        // Récupérer les membres participés sur la collaboration
+        List<String> participatedMemberIds = participationRepository
+                .findByCollaboration(collaboration).stream()
+                .map(Participation::getIdParticipant)
+                .toList();
+
+        // Fusionner les deux listes et éliminer les doublons
+        Set<String> uniqueMemberIds = new HashSet<>();
+        uniqueMemberIds.addAll(invitedMemberIds);
+        uniqueMemberIds.addAll(participatedMemberIds);
+
+        // ajouter l'identifiant du proriétaire de la collaboration
+        ArrayList<String> memberIds = new ArrayList<>(uniqueMemberIds);
+        memberIds.add(collaboration.getIdProprietaire());
+
+        return memberIds;
+    }
+
     @Override
-    public List<MembreResponse> getUninvitedMembersToCollaboration(Long idCollaboration) throws NotFoundDataException, MicroserviceAccessFailureException {
+    public List<MembreResponse> getMembersForJoiningCollaboration(Long idCollaboration) throws NotFoundDataException, MicroserviceAccessFailureException {
         Optional<Collaboration> collaborationSearched = Optional.of(receiveCollaboration(idCollaboration));
 
         List<MembreResponse> membreResponseList = receiveAllMembres();
         if(receiveAllMembres().isEmpty())
             throw new NotFoundDataException("Membres sont introuvables pour cette instant");
 
-        List<String> invitedMemberIds = invitationRepository.findByCollaboration(collaborationSearched.get()).stream()
-                .map(Invitation::getIdInvite)
-                .collect(Collectors.toList());
-
-        // supprimer le propiétaire de la collaboration
-        membreResponseList.removeIf(
-                membre -> membre.getId().equals(collaborationSearched.get().getIdProprietaire())
-        );
-
-        // supprimer le membre invité à la collaboration
         return membreResponseList.stream()
-                .filter(
-                        membre -> ! invitedMemberIds.contains(membre.getId())
+                .filter( membre ->
+                       ! getNotInvitedAndParticipatedToCollaboration(collaborationSearched.get()).contains(membre.getId())
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

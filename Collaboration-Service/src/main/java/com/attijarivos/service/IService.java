@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public interface IService <RequestDTO,JoinReq,ResponseDTO,ID> {
+public interface IService <RequestDTO,ResponseDTO,ID> {
 
     default Boolean isNotNullValue(Object value) {
         return value == null || Objects.equals(value, "");
@@ -17,5 +17,4 @@ public interface IService <RequestDTO,JoinReq,ResponseDTO,ID> {
     List<ResponseDTO> getAll();
     ResponseDTO getOne(ID id) throws NotFoundDataException;
     void delete(ID id) throws NotFoundDataException,RequiredDataException;
-    ResponseDTO joindre(ID id, JoinReq joinRequest) throws Exception;
 }

@@ -7,6 +7,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface IInvitationController <Request, ID> extends IController <Request, JoinInvitationRequest, ID>{
+public interface IInvitationController <Request, ID> extends IController <Request, ID>{
     ResponseEntity<?> createInvitationList(InvitationListRequest requestDTOList);
 }
