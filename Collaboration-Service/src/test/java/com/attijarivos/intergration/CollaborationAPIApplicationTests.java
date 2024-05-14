@@ -1,52 +1,86 @@
 package com.attijarivos.intergration;
 
 import com.attijarivos.DTO.request.CollaborationRequest;
-import com.attijarivos.IMembreID;
+import com.attijarivos.DTO.request.CollaborationUpdateRequest;
+import com.attijarivos.DTO.request.JoinCollaborationRequest;
+import com.attijarivos.IntegrationTest;
+import com.attijarivos.model.Collaboration;
 import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.repository.InvitationRepository;
+import com.attijarivos.repository.ParticipationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
-class CollaborationAPIApplicationTests implements IMembreID {
+@Slf4j
+@Transactional
+@ActiveProfiles("test")
+class CollaborationAPIApplicationTests extends IntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
 	@Autowired
 	private CollaborationRepository collaborationRepository;
+	@Autowired
+	private ParticipationRepository participationRepository;
 	@Autowired
 	private InvitationRepository invitationRepository;
 
 	private final String URI = "/collaborations";
 
+
 	@AfterEach
 	void cleanUp() {
 		collaborationRepository.deleteAll();
+		participationRepository.deleteAll();
 		invitationRepository.deleteAll();
 	}
 
-	private static CollaborationRequest getCollaborationRequest() {
+	@BeforeEach
+	void setup() {
+		cleanUp();
+	}
+
+	static CollaborationRequest getCollaborationRequest() {
 		return CollaborationRequest.builder()
 				.confidentielle(true)
-				.dateDepart(null)
+				.dateDepart(DATE)
 				.titre("Collaboration Test")
-				.idProprietaire(MEMBRE_ONE_ID)
+				.idProprietaire(FIRST_MEMBRE_ID)
+				.build();
+	}
+
+	private CollaborationUpdateRequest getCollaborationUpdateRequest() {
+		return CollaborationUpdateRequest.builder()
+				.titre("Collaboration Test Updated")
+				.confidentielle(false)
+				.dateDepart(DATE)
 				.build();
 	}
 
 	@Test
 	void testCreateCollaboration() throws Exception {
 		CollaborationRequest request = getCollaborationRequest();
+
 		mockMvc.perform(
 				MockMvcRequestBuilders.post(URI)
 						.contentType(MediaType.APPLICATION_JSON)
@@ -54,7 +88,23 @@ class CollaborationAPIApplicationTests implements IMembreID {
 				.andExpect(MockMvcResultMatchers.status().isCreated())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre").value("Collaboration Test"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.confidentielle").value(true))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.idProprietaire").value(MEMBRE_ONE_ID));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.idProprietaire").value(FIRST_MEMBRE_ID))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.dateDepart").isNotEmpty());
+
+	}
+
+	@Test
+	void testGetOneCollaboration() throws Exception {
+		testCreateCollaboration();
+
+		mockMvc.perform(MockMvcRequestBuilders.get(URI+"/"+(COLLABORATION_ID+3L)))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.idCollaboration").value(COLLABORATION_ID+3L))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.titre").value("Collaboration Test"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.confidentielle").value(true))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.idProprietaire").value(FIRST_MEMBRE_ID))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.dateDepart").isNotEmpty());
+
 	}
 
 	@Test
@@ -70,8 +120,67 @@ class CollaborationAPIApplicationTests implements IMembreID {
 		mockMvc.perform(MockMvcRequestBuilders.get(URI))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idCollaboration").value(COLLABORATION_ID+1))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre").value("Collaboration Test"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].confidentielle").value(true))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idProprietaire").value(MEMBRE_ONE_ID));
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idProprietaire").value(FIRST_MEMBRE_ID))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].dateDepart").isNotEmpty());
+	}
+
+	@Test
+	void testUpdateCollaboration() throws Exception {
+
+		// Create a new collaboration and capture the response
+		MvcResult createResult = mockMvc.perform(
+						MockMvcRequestBuilders.post(URI)
+								.contentType(MediaType.APPLICATION_JSON)
+								.content(new ObjectMapper().writeValueAsString(getCollaborationRequest()))
+				)
+				.andExpect(MockMvcResultMatchers.status().isCreated())
+				.andReturn();
+
+		String responseString = createResult.getResponse().getContentAsString();
+		int idCollaborationCreated  = JsonPath.read(responseString, "$.idCollaboration");
+
+		CollaborationUpdateRequest updateRequest = getCollaborationUpdateRequest();
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.put(URI + "/"+idCollaborationCreated)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(updateRequest))
+				)
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.titre").value("Collaboration Test Updated"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.confidentielle").value(false))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.dateDepart").isNotEmpty())
+				.andReturn();
+	}
+
+	@Test
+	void testJoinCollaboration() throws Exception {
+		testCreateCollaboration();
+
+		JoinCollaborationRequest request = JoinCollaborationRequest.builder().idMembre(SECOND_MEMBRE_ID).build();
+
+		mockMvc.perform(MockMvcRequestBuilders.patch(URI+"/"+(COLLABORATION_ID+2L)+"/join")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(request))
+				)
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.idCollaboration").value(COLLABORATION_ID+2L))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.titre").value("Collaboration Test"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.confidentielle").value(true))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.idProprietaire").value(FIRST_MEMBRE_ID))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.dateDepart").isNotEmpty());
+
+//		assertTrue(
+//                participationRepository.findByIdParticipantAndCollaboration(FIRST_MEMBRE_ID, searchCollaborationById(COLLABORATION_ID)).isPresent(),
+//				"The new participant should be associated with the collaboration."
+//		);
+	}
+
+
+	private Collaboration searchCollaborationById(Long collaborationId) {
+		return collaborationRepository.findById(collaborationId).get();
 	}
 }

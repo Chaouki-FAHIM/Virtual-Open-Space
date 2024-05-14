@@ -35,8 +35,10 @@ public class Collaboration {
     @Column(name = "id_proprietaire",nullable = false)
     private String IdProprietaire;
 
-    @Column(nullable = false)
-    private Boolean visible= true;;
+    private Boolean visible;
+
+    @OneToMany(mappedBy = "collaboration", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participation> participations;
 
     @OneToMany(mappedBy = "collaboration", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invitation> invitations;

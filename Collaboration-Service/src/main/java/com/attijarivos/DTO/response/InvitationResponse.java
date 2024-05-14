@@ -15,7 +15,6 @@ public class InvitationResponse {
     private Long idInvitation;
     private String idInvite;
     private Date dateCreationInvitation;
-    private Date dateParticiaption;
     private CollaborationResponse collaboration;
 }
 

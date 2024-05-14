@@ -1,15 +1,13 @@
 package com.attijarivos.DTO.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Setter
+@Getter
 @Builder
 public class CollaborationResponse {
     private Long idCollaboration;
@@ -18,4 +16,14 @@ public class CollaborationResponse {
     private Date dateDepart;
     private Boolean confidentielle;
     private String idProprietaire;
+
+    public String toString() {
+        return "{idCollaboration:" + idCollaboration +
+                ",titre:"+titre+
+                ",dateCreationCollaboration:"+dateCreationCollaboration +
+                ",dateDepart:"+dateDepart+
+                ",confidentielle:"+confidentielle+
+                ",idProprietaire:"+idProprietaire+
+                "}";
+    }
 }

@@ -21,9 +21,6 @@ public class Invitation {
     @Column(nullable = false)
     private Date dateCreationInvitation;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateParticiaption;
-
     @ManyToOne
     @JoinColumn(name = "id_collaboration", referencedColumnName = "idCollaboration")
     private Collaboration collaboration;

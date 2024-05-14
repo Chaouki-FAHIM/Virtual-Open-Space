@@ -3,7 +3,6 @@ package com.attijarivos.controller;
 
 import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
-import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;

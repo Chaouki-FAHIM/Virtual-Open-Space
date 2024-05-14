@@ -26,7 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service("service-layer-collaboration")
 @RequiredArgsConstructor
@@ -100,6 +100,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
     private void updateOrCreateParticipation(String idParticipant,Collaboration collaboration) {
         Optional<Participation> participation = participationRepository.findByIdParticipantAndCollaboration(idParticipant,collaboration);
+
         if (participation.isPresent())
         {
             participation.get().setDateParticiaption(new Date());

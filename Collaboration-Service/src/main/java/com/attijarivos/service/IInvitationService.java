@@ -1,7 +1,6 @@
 package com.attijarivos.service;
 
 import com.attijarivos.DTO.request.InvitationListRequest;
-import com.attijarivos.DTO.request.JoinInvitationRequest;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RededicationInvitationException;
 import com.attijarivos.exception.RequiredDataException;

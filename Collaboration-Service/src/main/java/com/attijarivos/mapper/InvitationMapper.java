@@ -30,7 +30,6 @@ public class InvitationMapper implements IMapper<Invitation,InvitationRequest,In
                 .collaboration(collaborationMapper.fromModelToRes(invitation.getCollaboration()))
                 .idInvite(invitation.getIdInvite())
                 .dateCreationInvitation(invitation.getDateCreationInvitation())
-                .dateParticiaption(invitation.getDateParticiaption())
                 .build();
     }
 }

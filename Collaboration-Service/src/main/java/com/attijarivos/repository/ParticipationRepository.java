@@ -12,7 +12,5 @@ import java.util.Optional;
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
     Optional<Participation> findByIdParticipantAndCollaboration(String idParticipant, Collaboration collaboration);
-    List<Participation> findByCollaborationAndIdParticipantNot(Collaboration collaboration, String idProprietaire);
-
     List<Participation> findByCollaboration(Collaboration collaboration);
 }
