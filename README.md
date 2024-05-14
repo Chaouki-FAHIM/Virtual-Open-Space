@@ -27,11 +27,14 @@ This section details the progress and components of the Create Collaboration Ser
   - HTTP Methods implemented with all validations in create an invitation.
   - Create automatic Unit and Integration test for Collaboration API
   - Create automatic Unit and Integration test for Invitation API
-  - Status: **In Progress**
+  - Status: **Progress**
 
 ## Next Progress
 
-Change an endpoint update to join for access to collaboration
+Separate these two APIs into two microservices:
+
+- Collaboration-Service should contain classes for Collaboration and Participation.
+- Invitation-Service should contain the Invitation class.
 
 ---
 
