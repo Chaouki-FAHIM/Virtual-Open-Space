@@ -2,14 +2,15 @@ package com.attijarivos.intergration;
 
 
 import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.IntegrationTest;
 import com.attijarivos.model.Collaboration;
-import com.attijarivos.model.Invitation;
 import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.repository.InvitationRepository;
 import com.attijarivos.repository.ParticipationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
@@ -20,8 +21,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.attijarivos.intergration.CollaborationAPIApplicationTests.getCollaborationRequest;
 
@@ -41,6 +46,9 @@ class InvitationAPIApplicationTests extends IntegrationTest {
 	private ParticipationRepository participationRepository;
 	@Autowired
 	private InvitationRepository invitationRepository;
+
+	private final Long COLLABORATION_ID = 3L; // aleardy we have 2 collaborations
+
 
 
 	@AfterEach
@@ -62,6 +70,20 @@ class InvitationAPIApplicationTests extends IntegrationTest {
 				.build();
 	}
 
+	private int createCollaboration() throws Exception {
+		MvcResult createResult = mockMvc.perform(
+						MockMvcRequestBuilders.post(URI)
+								.contentType(MediaType.APPLICATION_JSON)
+								.content(new ObjectMapper().writeValueAsString(getCollaborationRequest()))
+				)
+				.andExpect(MockMvcResultMatchers.status().isCreated())
+				.andReturn();
+
+		String responseString = createResult.getResponse().getContentAsString();
+		return JsonPath.read(responseString, "$.idCollaboration");
+	}
+
+
 	Collaboration createCollaboration(long collaborationId) {
 		CollaborationRequest collaborationRequest = getCollaborationRequest();
 		return collaborationRepository.save(
@@ -76,23 +98,72 @@ class InvitationAPIApplicationTests extends IntegrationTest {
 		);
 	}
 
-	// les valeurs des ids incrémentées par 1 car cette méthode prendre de temps alors
-	@Test
-	void testCreateInvitation() throws Exception {
-		InvitationRequest invitationRequest = getInvitationRequest(COLLABORATION_ID+1L);
-		Collaboration collaboration = createCollaboration(COLLABORATION_ID+1L);
+	private int createInvitation() throws Exception {
+		InvitationRequest invitationRequest = getInvitationRequest(
+				createCollaboration(COLLABORATION_ID).getIdCollaboration()
+		);
 
-		log.warn("createInvitation ---> "+ collaboration.getIdCollaboration());
+		MvcResult createResult = mockMvc.perform(
+						MockMvcRequestBuilders.post(URI)
+								.contentType(MediaType.APPLICATION_JSON)
+								.content(new ObjectMapper().writeValueAsString(invitationRequest)))
+				.andExpect(MockMvcResultMatchers.status().isCreated())
+				.andReturn();
+
+		String responseString = createResult.getResponse().getContentAsString();
+		return JsonPath.read(responseString, "$.idInvitation");
+	}
+
+	@Test
+	void testCreateOneInvitation() throws Exception {
+		InvitationRequest invitationRequest = getInvitationRequest(
+				createCollaboration(COLLABORATION_ID).getIdCollaboration()
+		);
 
 		mockMvc.perform(
 						MockMvcRequestBuilders.post(URI)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content(new ObjectMapper().writeValueAsString(invitationRequest)))
 				.andExpect(MockMvcResultMatchers.status().isCreated())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.idInvitation").value(INVITATION_ID+1L))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.idInvite").value(SECOND_MEMBRE_ID))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.collaboration").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.dateCreationInvitation").isNotEmpty());
+	}
+
+	@Test
+	void testCreateListInvitations() throws Exception {
+		InvitationRequest invitationRequest = getInvitationRequest(
+				createCollaboration(COLLABORATION_ID).getIdCollaboration()
+		);
+
+		List<String> idInvites = new ArrayList<>();
+		idInvites.add(FIRST_MEMBRE_ID);
+		idInvites.add(SECOND_MEMBRE_ID);
+
+		InvitationListRequest request =
+				InvitationListRequest.builder()
+						.idCollaboration(createCollaboration(COLLABORATION_ID).getIdCollaboration())
+						.idInvites(idInvites)
+						.build();
+
+		mockMvc.perform(
+						MockMvcRequestBuilders.post(URI+"/list")
+								.contentType(MediaType.APPLICATION_JSON)
+								.content(new ObjectMapper().writeValueAsString(request)))
+				.andExpect(MockMvcResultMatchers.status().isCreated())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idInvite").value(FIRST_MEMBRE_ID))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].collaboration").isNotEmpty())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].dateCreationInvitation").isNotEmpty())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[1].idInvite").value(SECOND_MEMBRE_ID))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[1].collaboration").isNotEmpty())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[1].dateCreationInvitation").isNotEmpty());
+	}
+
+	@Test
+	void testDeleteInvitation() throws Exception {
+		long idInvitationCreated=  createInvitation();
+		mockMvc.perform(MockMvcRequestBuilders.delete(URI+"/"+idInvitationCreated))
+				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
 
@@ -107,22 +178,12 @@ class InvitationAPIApplicationTests extends IntegrationTest {
 
 	@Test
 	void testGetAllInvitations() throws Exception {
-		InvitationRequest invitationRequest = getInvitationRequest(COLLABORATION_ID);
-		Collaboration collaboration = createCollaboration(COLLABORATION_ID);
-
-		invitationRepository.save(
-				Invitation.builder()
-						.idInvite(invitationRequest.getIdInvite())
-						.dateCreationInvitation(DATE)
-						.collaboration(collaboration)
-						.build()
-		);
-
+		long idInvitationCreated=  createInvitation();
 
 		mockMvc.perform(MockMvcRequestBuilders.get(URI))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idInvitation").value(INVITATION_ID))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idInvitation").value(idInvitationCreated))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idInvite").value(SECOND_MEMBRE_ID))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].collaboration").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].dateCreationInvitation").isNotEmpty());

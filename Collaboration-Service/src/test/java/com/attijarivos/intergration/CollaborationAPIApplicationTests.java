@@ -11,7 +11,6 @@ import com.attijarivos.repository.ParticipationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
@@ -47,7 +46,6 @@ class CollaborationAPIApplicationTests extends IntegrationTest {
 
 	private final String URI = "/collaborations";
 
-
 	@AfterEach
 	void cleanUp() {
 		collaborationRepository.deleteAll();
@@ -77,6 +75,19 @@ class CollaborationAPIApplicationTests extends IntegrationTest {
 				.build();
 	}
 
+	private int createCollaboration() throws Exception {
+		MvcResult createResult = mockMvc.perform(
+						MockMvcRequestBuilders.post(URI)
+								.contentType(MediaType.APPLICATION_JSON)
+								.content(new ObjectMapper().writeValueAsString(getCollaborationRequest()))
+				)
+				.andExpect(MockMvcResultMatchers.status().isCreated())
+				.andReturn();
+
+		String responseString = createResult.getResponse().getContentAsString();
+		return JsonPath.read(responseString, "$.idCollaboration");
+	}
+
 	@Test
 	void testCreateCollaboration() throws Exception {
 		CollaborationRequest request = getCollaborationRequest();
@@ -90,21 +101,28 @@ class CollaborationAPIApplicationTests extends IntegrationTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.confidentielle").value(true))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.idProprietaire").value(FIRST_MEMBRE_ID))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.dateDepart").isNotEmpty());
-
 	}
 
 	@Test
 	void testGetOneCollaboration() throws Exception {
-		testCreateCollaboration();
+		long idCollaborationCreated= createCollaboration();
 
-		mockMvc.perform(MockMvcRequestBuilders.get(URI+"/"+(COLLABORATION_ID+3L)))
+		mockMvc.perform(MockMvcRequestBuilders.get(URI+"/"+idCollaborationCreated))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.idCollaboration").value(COLLABORATION_ID+3L))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.idCollaboration").value(idCollaborationCreated))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre").value("Collaboration Test"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.confidentielle").value(true))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.idProprietaire").value(FIRST_MEMBRE_ID))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.dateDepart").isNotEmpty());
+	}
 
+	@Test
+	void testGetMembersCollaboration() throws Exception {
+
+		long idCollaborationCreated= createCollaboration();
+		mockMvc.perform(MockMvcRequestBuilders.get(URI+"/"+ idCollaborationCreated +"/uninvited-members"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty());
 	}
 
 	@Test
@@ -116,11 +134,11 @@ class CollaborationAPIApplicationTests extends IntegrationTest {
 
 	@Test
 	void testGetAllCollaborations() throws Exception {
-		testCreateCollaboration();
+		long idCollaborationCreated= createCollaboration();
 		mockMvc.perform(MockMvcRequestBuilders.get(URI))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idCollaboration").value(COLLABORATION_ID+1))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idCollaboration").value(idCollaborationCreated))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre").value("Collaboration Test"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].confidentielle").value(true))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].idProprietaire").value(FIRST_MEMBRE_ID))
@@ -130,17 +148,7 @@ class CollaborationAPIApplicationTests extends IntegrationTest {
 	@Test
 	void testUpdateCollaboration() throws Exception {
 
-		// Create a new collaboration and capture the response
-		MvcResult createResult = mockMvc.perform(
-						MockMvcRequestBuilders.post(URI)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(new ObjectMapper().writeValueAsString(getCollaborationRequest()))
-				)
-				.andExpect(MockMvcResultMatchers.status().isCreated())
-				.andReturn();
-
-		String responseString = createResult.getResponse().getContentAsString();
-		int idCollaborationCreated  = JsonPath.read(responseString, "$.idCollaboration");
+		long idCollaborationCreated= createCollaboration();
 
 		CollaborationUpdateRequest updateRequest = getCollaborationUpdateRequest();
 
@@ -157,17 +165,25 @@ class CollaborationAPIApplicationTests extends IntegrationTest {
 	}
 
 	@Test
+	void testDeleteCollaboration() throws Exception {
+		long idCollaborationCreated= createCollaboration();
+
+		mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/"+idCollaborationCreated))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+	}
+
+	@Test
 	void testJoinCollaboration() throws Exception {
-		testCreateCollaboration();
+		long idCollaborationCreated= createCollaboration();
 
 		JoinCollaborationRequest request = JoinCollaborationRequest.builder().idMembre(SECOND_MEMBRE_ID).build();
 
-		mockMvc.perform(MockMvcRequestBuilders.patch(URI+"/"+(COLLABORATION_ID+2L)+"/join")
+		mockMvc.perform(MockMvcRequestBuilders.patch(URI+"/"+idCollaborationCreated+"/join")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(new ObjectMapper().writeValueAsString(request))
 				)
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.idCollaboration").value(COLLABORATION_ID+2L))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.idCollaboration").value(idCollaborationCreated))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre").value("Collaboration Test"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.confidentielle").value(true))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.idProprietaire").value(FIRST_MEMBRE_ID))
