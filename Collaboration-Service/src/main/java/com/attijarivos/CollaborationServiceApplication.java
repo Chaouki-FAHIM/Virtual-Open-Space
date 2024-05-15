@@ -36,11 +36,11 @@ public class CollaborationServiceApplication {
 		return args -> {
 
 			Collaboration collaboration1 = collaborationRepository.save(
-					Collaboration.builder().titre("Collaboration 1").dateCreationCollaboration(currentDate).dateDepart(currentDate).confidentielle(false).IdProprietaire(idProprietaire).visible(true).build()
+					Collaboration.builder().titre("Collaboration 1").dateCreationCollaboration(currentDate).dateDepart(currentDate).confidentielle(false).idProprietaire(idProprietaire).visible(true).build()
 			);
 
 			Collaboration collaboration2 = collaborationRepository.save(
-					Collaboration.builder().titre("Collaboration 2").dateCreationCollaboration(currentDate).dateDepart(currentDate).confidentielle(true).IdProprietaire(idProprietaire).visible(true).build()
+					Collaboration.builder().titre("Collaboration 2").dateCreationCollaboration(currentDate).dateDepart(currentDate).confidentielle(true).idProprietaire(idProprietaire).visible(true).build()
 			);
 
 			participationRepository.save(

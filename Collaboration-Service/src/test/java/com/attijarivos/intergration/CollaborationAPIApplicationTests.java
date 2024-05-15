@@ -3,7 +3,7 @@ package com.attijarivos.intergration;
 import com.attijarivos.DTO.request.CollaborationRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
-import com.attijarivos.MembreIdDataTest;
+import com.attijarivos.DataTest;
 import com.attijarivos.model.Collaboration;
 import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.repository.InvitationRepository;
@@ -34,7 +34,7 @@ import java.util.Date;
 @Slf4j
 @Transactional
 @ActiveProfiles("test")
-class CollaborationAPIApplicationTests implements MembreIdDataTest {
+class CollaborationAPIApplicationTests implements DataTest {
 
 	@Autowired
 	private MockMvc mockMvc;

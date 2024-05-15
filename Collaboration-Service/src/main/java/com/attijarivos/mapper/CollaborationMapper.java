@@ -14,7 +14,7 @@ public class CollaborationMapper implements IMapper<Collaboration,CollaborationR
     public Collaboration fromReqToModel(CollaborationRequest collaborationRequest) {
         return Collaboration.builder()
                 .titre(collaborationRequest.getTitre())
-                .IdProprietaire(collaborationRequest.getIdProprietaire())
+                .idProprietaire(collaborationRequest.getIdProprietaire())
                 .dateDepart(collaborationRequest.getDateDepart())
                 .confidentielle(collaborationRequest.getConfidentielle())
                 .build();

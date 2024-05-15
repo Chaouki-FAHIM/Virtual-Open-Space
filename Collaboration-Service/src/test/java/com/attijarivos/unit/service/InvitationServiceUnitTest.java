@@ -1,4 +1,4 @@
-package com.attijarivos.unit;
+package com.attijarivos.unit.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -33,7 +33,7 @@ public class Collaboration {
     private Boolean confidentielle;
 
     @Column(name = "id_proprietaire",nullable = false)
-    private String IdProprietaire;
+    private String idProprietaire;
 
     private Boolean visible;
 

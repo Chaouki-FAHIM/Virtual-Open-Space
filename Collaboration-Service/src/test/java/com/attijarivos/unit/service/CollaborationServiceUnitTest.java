@@ -1,9 +1,9 @@
-package com.attijarivos.unit;
+package com.attijarivos.unit.service;
 
 import com.attijarivos.DTO.request.CollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
-import com.attijarivos.MembreIdDataTest;
+import com.attijarivos.DataTest;
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
@@ -26,10 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
-public class CollaborationServiceUnitTest implements MembreIdDataTest {
+public class CollaborationServiceUnitTest implements DataTest {
 
     @Mock
     private CollaborationRepository collaborationRepository;
@@ -63,19 +62,16 @@ public class CollaborationServiceUnitTest implements MembreIdDataTest {
 
     @Test
     public void testWebClientInteraction() {
-        // Configuration initiale de WebClient
+
         WebClient realWebClient = WebClient.create();
 
-        // Utilisez WebClient pour effectuer une requête réelle ou simulée (avec WireMock par exemple)
         String response = realWebClient.get()
                 .uri(WebClientConfig.MEMBRE_SERVICE_URL)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
 
-        // Asserts pour vérifier la réponse
         assertNotNull(response);
-        // Autres vérifications pour s'assurer que la réponse est correcte
     }
 
     @Test
@@ -104,4 +100,75 @@ public class CollaborationServiceUnitTest implements MembreIdDataTest {
         assertEquals(expectedResponse, response);
     }
 
+    @Test
+    void getOneCollaboration() throws NotFoundDataException {
+
+        // Arrange
+        Long idCollaboration = 1L;
+        Collaboration collaboration = Collaboration.builder()
+                .idCollaboration(idCollaboration)
+                .titre("Collaboration Test")
+                .confidentielle(new Random().nextBoolean())
+                .dateDepart(new Date())
+                .idProprietaire(FIRST_MEMBRE_ID)
+                .build();
+
+        CollaborationResponse expectedResponse = new CollaborationResponse();
+        expectedResponse.setIdCollaboration(idCollaboration);
+        expectedResponse.setTitre("Collaboration Test");
+
+        when(collaborationRepository.findById(idCollaboration)).thenReturn(Optional.of(collaboration));
+        when(collaborationMapper.fromModelToRes(collaboration)).thenReturn(expectedResponse);
+
+        // Act
+        CollaborationResponse response = collaborationService.getOne(idCollaboration);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void getAllCollaborations() {
+        // Arrange
+        Collaboration collaboration1 = Collaboration.builder()
+                .idCollaboration(1L)
+                .titre("Collaboration Test 1")
+                .confidentielle(new Random().nextBoolean())
+                .dateDepart(new Date())
+                .idProprietaire(FIRST_MEMBRE_ID)
+                .build();
+
+        Collaboration collaboration2 = Collaboration.builder()
+                .idCollaboration(2L)
+                .titre("Collaboration Test 2")
+                .confidentielle(new Random().nextBoolean())
+                .dateDepart(new Date())
+                .idProprietaire(FIRST_MEMBRE_ID)
+                .build();
+
+        List<Collaboration> collaborations = Arrays.asList(collaboration1, collaboration2);
+
+        CollaborationResponse response1 = new CollaborationResponse();
+        response1.setIdCollaboration(1L);
+        response1.setTitre("Collaboration Test 1");
+
+        CollaborationResponse response2 = new CollaborationResponse();
+        response2.setIdCollaboration(2L);
+        response2.setTitre("Collaboration Test 2");
+
+        List<CollaborationResponse> expectedResponses = Arrays.asList(response1, response2);
+
+        when(collaborationRepository.findAll()).thenReturn(collaborations);
+        when(collaborationMapper.fromModelToRes(collaboration1)).thenReturn(response1);
+        when(collaborationMapper.fromModelToRes(collaboration2)).thenReturn(response2);
+
+        // Act
+        List<CollaborationResponse> responses = collaborationService.getAll();
+
+        // Assert
+        assertNotNull(responses);
+        assertEquals(expectedResponses.size(), responses.size());
+        assertEquals(expectedResponses, responses);
+    }
 }
