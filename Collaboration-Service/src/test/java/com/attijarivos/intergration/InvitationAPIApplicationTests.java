@@ -4,7 +4,7 @@ package com.attijarivos.intergration;
 import com.attijarivos.DTO.request.CollaborationRequest;
 import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
-import com.attijarivos.IntegrationTest;
+import com.attijarivos.MembreIdDataTest;
 import com.attijarivos.model.Collaboration;
 import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.repository.InvitationRepository;
@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.attijarivos.intergration.CollaborationAPIApplicationTests.getCollaborationRequest;
@@ -33,7 +34,7 @@ import static com.attijarivos.intergration.CollaborationAPIApplicationTests.getC
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
-class InvitationAPIApplicationTests extends IntegrationTest {
+class InvitationAPIApplicationTests implements MembreIdDataTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -93,7 +94,7 @@ class InvitationAPIApplicationTests extends IntegrationTest {
 						.dateDepart(collaborationRequest.getDateDepart())
 						.titre(collaborationRequest.getTitre())
 						.IdProprietaire(collaborationRequest.getIdProprietaire())
-						.dateCreationCollaboration(DATE)
+						.dateCreationCollaboration(new Date())
 						.build()
 		);
 	}

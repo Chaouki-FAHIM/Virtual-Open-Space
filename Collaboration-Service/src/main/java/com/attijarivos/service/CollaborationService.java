@@ -20,6 +20,7 @@ import com.attijarivos.repository.InvitationRepository;
 import com.attijarivos.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -38,6 +39,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
     private final CollaborationRepository collaborationRepository;
     private final ParticipationRepository participationRepository;
     private final InvitationRepository invitationRepository;
+    @Qualifier("webClient-layer-config")
     private final WebClient webClient;
 
     private Optional<MembreResponse> receiveMembreById(String idMembre) throws MicroserviceAccessFailureException {
