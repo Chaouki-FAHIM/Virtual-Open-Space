@@ -38,11 +38,9 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
 
     private Optional<MembreResponse> receiveInviteById(String idInvite) throws MicroserviceAccessFailureException {
         try {
-            List<MembreResponse> membreResponseList=  webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL)
-                    .retrieve().bodyToFlux(MembreResponse.class)
-                    .collectList().block();
-            return Optional.ofNullable(membreResponseList.stream().filter(membreResponse -> idInvite.equals(membreResponse.getId())).findFirst().orElse(null));
-
+            return Optional.ofNullable(
+                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idInvite).retrieve().bodyToFlux(MembreResponse.class).blockLast()
+            );
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Membre-Service", e);
             throw new MicroserviceAccessFailureException("Membre");
