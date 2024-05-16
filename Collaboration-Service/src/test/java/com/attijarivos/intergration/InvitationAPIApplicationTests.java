@@ -5,6 +5,7 @@ import com.attijarivos.DTO.request.CollaborationRequest;
 import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DataTest;
+import com.attijarivos.ICollaborationTest;
 import com.attijarivos.model.Collaboration;
 import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.repository.InvitationRepository;
@@ -29,12 +30,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.attijarivos.intergration.CollaborationAPIApplicationTests.getCollaborationRequest;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
-class InvitationAPIApplicationTests implements DataTest {
+class InvitationAPIApplicationTests implements DataTest, ICollaborationTest {
 
 	@Autowired
 	private MockMvc mockMvc;

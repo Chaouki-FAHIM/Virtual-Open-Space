@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -187,10 +186,11 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
     }
 
     @Override
-    public void delete(Long idInvitation) throws NotFoundDataException{
+    public boolean delete(Long idInvitation) throws NotFoundDataException{
         Optional<Invitation> invitation = receiveInvitation(idInvitation);
         invitationRepository.delete(invitation.get());
         log.info("Collaboration d'id est bien supprimée : {}",idInvitation);
+        return false;
     }
 
 }

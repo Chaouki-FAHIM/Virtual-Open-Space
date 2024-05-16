@@ -4,6 +4,7 @@ import com.attijarivos.DTO.request.CollaborationRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DataTest;
+import com.attijarivos.ICollaborationTest;
 import com.attijarivos.model.Collaboration;
 import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.repository.InvitationRepository;
@@ -26,7 +27,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Date;
 
 
 @SpringBootTest
@@ -34,7 +34,7 @@ import java.util.Date;
 @Slf4j
 @Transactional
 @ActiveProfiles("test")
-class CollaborationAPIApplicationTests implements DataTest {
+class CollaborationAPIApplicationTests implements DataTest, ICollaborationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -58,23 +58,6 @@ class CollaborationAPIApplicationTests implements DataTest {
 	@BeforeEach
 	void setup() {
 		cleanUp();
-	}
-
-	static CollaborationRequest getCollaborationRequest() {
-		return CollaborationRequest.builder()
-				.confidentielle(true)
-				.dateDepart(new Date())
-				.titre("Collaboration Test")
-				.idProprietaire(FIRST_MEMBRE_ID)
-				.build();
-	}
-
-	private CollaborationUpdateRequest getCollaborationUpdateRequest() {
-		return CollaborationUpdateRequest.builder()
-				.titre("Collaboration Test Updated")
-				.confidentielle(false)
-				.dateDepart(new Date())
-				.build();
 	}
 
 	private int createCollaboration() throws Exception {

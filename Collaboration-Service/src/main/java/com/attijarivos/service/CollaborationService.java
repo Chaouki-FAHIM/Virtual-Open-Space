@@ -20,7 +20,6 @@ import com.attijarivos.repository.InvitationRepository;
 import com.attijarivos.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -250,11 +249,11 @@ public class CollaborationService implements ICollaborationService<Collaboration
     }
 
     @Override
-    public void delete(Long idCollaboration) throws NotFoundDataException {
+    public boolean delete(Long idCollaboration) throws NotFoundDataException {
         Optional<Collaboration> collaboration = Optional.of(receiveCollaboration(idCollaboration));
         log.info("Collaboration d'id est bien supprimée : {}",idCollaboration);
-
         collaborationRepository.delete(collaboration.get());
+        return true;
     }
 
     @Override

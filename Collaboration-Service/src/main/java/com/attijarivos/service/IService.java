@@ -16,5 +16,5 @@ public interface IService <RequestDTO,ResponseDTO,ID> {
     ResponseDTO createOne(RequestDTO requestDTO) throws RequiredDataException, NotFoundDataException, RededicationInvitationException, MicroserviceAccessFailureException, NotValidOwnerInviteException;
     List<ResponseDTO> getAll();
     ResponseDTO getOne(ID id) throws NotFoundDataException;
-    void delete(ID id) throws NotFoundDataException,RequiredDataException;
+    boolean delete(ID id) throws NotFoundDataException,RequiredDataException;
 }

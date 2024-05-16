@@ -1,19 +1,35 @@
 package com.attijarivos.unit.controller;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.attijarivos.ICollaborationTest;
+import com.attijarivos.controller.InvitationController;
+import com.attijarivos.repository.CollaborationRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
-public class CollaborationControllerUnitTest {
+
+public class CollaborationControllerUnitTest implements ICollaborationTest {
+
+    @Mock
+    private CollaborationRepository collaborationRepository;
+    @InjectMocks
+    private InvitationController invitationController;
 
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @Test
+    void createCollaborationWithValidData() {
     }
 
     @Test
-    void name() {
+    void createCollaborationWithRequiredTitleData() {
+    }
+
+    @Test
+    void createCollaborationWithRequiredSOwnerIdData() {
+    }
+
+    @Test
+    void createCollaborationWithRequiredStateData() {
     }
 
 }

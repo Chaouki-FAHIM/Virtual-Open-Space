@@ -1,9 +1,8 @@
 package com.attijarivos;
 
-import com.attijarivos.DTO.request.CollaborationRequest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
-import java.util.Date;
+
 
 @AutoConfigureMockMvc
 public interface DataTest {
