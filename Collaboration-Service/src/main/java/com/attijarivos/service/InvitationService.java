@@ -5,10 +5,7 @@ import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.configuration.WebClientConfig;
-import com.attijarivos.exception.NotFoundDataException;
-import com.attijarivos.exception.NotValidOwnerInviteException;
-import com.attijarivos.exception.RededicationInvitationException;
-import com.attijarivos.exception.RequiredDataException;
+import com.attijarivos.exception.*;
 import com.attijarivos.mapper.IMapper;
 import com.attijarivos.model.Collaboration;
 import com.attijarivos.model.Invitation;
@@ -20,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import java.util.Date;
 import java.util.List;
@@ -38,11 +36,16 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
     private final WebClient webClient;
     private int numbreOfInvitationProcessedForCreateList = 0;
 
-    private Optional<MembreResponse> receiveInviteById(String idInvite) {
+    private Optional<MembreResponse> receiveInviteById(String idInvite) throws MicroserviceAccessFailureException {
         try {
-            return Optional.ofNullable(
-                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idInvite).retrieve().bodyToFlux(MembreResponse.class).blockLast()
-            );
+            List<MembreResponse> membreResponseList=  webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL)
+                    .retrieve().bodyToFlux(MembreResponse.class)
+                    .collectList().block();
+            return Optional.ofNullable(membreResponseList.stream().filter(membreResponse -> idInvite.equals(membreResponse.getId())).findFirst().orElse(null));
+
+        } catch (WebClientRequestException e) {
+            log.error("Problème lors de connexion avec le Membre-Service", e);
+            throw new MicroserviceAccessFailureException("Membre");
         } catch (Exception e) {
             log.error(e.getMessage());
             return Optional.empty();
@@ -87,7 +90,7 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
 
 
     @Override
-    public InvitationResponse createOne(InvitationRequest invitationRequest) throws RequiredDataException, NotFoundDataException, RededicationInvitationException, NotValidOwnerInviteException {
+    public InvitationResponse createOne(InvitationRequest invitationRequest) throws RequiredDataException, NotFoundDataException, RededicationInvitationException, NotValidOwnerInviteException, MicroserviceAccessFailureException {
 
         verifyDataInvitation(invitationRequest,"la création");
 
@@ -158,12 +161,13 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
                                 .idCollaboration(invitationRequestList.getIdCollaboration())
                                 .build());
             } catch (RequiredDataException | NotFoundDataException | RededicationInvitationException |
-                     NotValidOwnerInviteException e) {
+                     NotValidOwnerInviteException | MicroserviceAccessFailureException e) {
                 log.error("Erreur lors du traitement de l'invitation numéro " + numbreOfInvitationProcessedForCreateList);
                         numbreOfInvitationProcessedForCreateList = 0;
                 throw new RuntimeException(e.getMessage());
             }
         }).toList();
+
 
         log.warn("Ajout avec succès d'une list des invitations !! ");
         numbreOfInvitationProcessedForCreateList = 0;
@@ -190,7 +194,7 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
         Optional<Invitation> invitation = receiveInvitation(idInvitation);
         invitationRepository.delete(invitation.get());
         log.info("Collaboration d'id est bien supprimée : {}",idInvitation);
-        return false;
+        return true;
     }
 
 }

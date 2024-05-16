@@ -38,7 +38,6 @@ class CollaborationAPIApplicationTests implements DataTest, ICollaborationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-
 	@Autowired
 	private CollaborationRepository collaborationRepository;
 	@Autowired

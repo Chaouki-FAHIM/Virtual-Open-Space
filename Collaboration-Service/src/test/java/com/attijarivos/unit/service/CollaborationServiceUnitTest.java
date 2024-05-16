@@ -241,5 +241,4 @@ public class CollaborationServiceUnitTest extends WebClientTest implements IColl
         assertNotNull(participationRepository.findByIdParticipantAndCollaboration(membreId, existingCollaboration).get().getDateParticiaption());
     }
 
-
 }
