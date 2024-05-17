@@ -74,7 +74,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
 
     private void verifyDataCollaboration(CollaborationRequest collaborationRequest, String context) throws RequiredDataException {
-        String object = "la collaboration";
+        String object = "de la collaboration";
 
         if(isNotNullValue(collaborationRequest.getTitre())) {
             log.warn("Titre est obligatoire pour "+context+" "+object);
