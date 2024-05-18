@@ -5,8 +5,6 @@ import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.ICollaborationTest;
 import com.attijarivos.exception.*;
-import com.attijarivos.model.Collaboration;
-import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.service.ICollaborationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -46,19 +43,8 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    private CollaborationResponse getCollaborationResponse(long idCollaboration,CollaborationRequest request) {
-        return CollaborationResponse.builder()
-                .idCollaboration(idCollaboration)
-                .idProprietaire(request.getIdProprietaire())
-                .dateCreationCollaboration(new Date())
-                .dateDepart(request.getDateDepart())
-                .titre(request.getTitre())
-                .confidentielle(request.getConfidentielle())
-                .build();
-    }
-
     @Test
-    void createCollaborationWithValidData() throws Exception {
+    void createCollaborationSuccess() throws Exception {
         CollaborationRequest request = getCollaborationRequest();
         CollaborationResponse response = getCollaborationResponse(1L,request);
 
@@ -150,7 +136,7 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     }
 
     @Test
-    void getOneCollaborationExist() throws Exception {
+    void getOneCollaborationSuccess() throws Exception {
         Long idCollaboration = 1L;
         CollaborationResponse response = getCollaborationResponse(idCollaboration,getCollaborationRequest());
 
@@ -187,7 +173,7 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     }
 
     @Test
-    public void deleteCollaborationByIdWithFoundData() throws Exception {
+    public void deleteCollaborationByIdSuccess() throws Exception {
         Long idCollaboration = 1L;
         CollaborationResponse response = getCollaborationResponse(idCollaboration,getCollaborationRequest());
 
@@ -213,7 +199,7 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     }
 
     @Test
-    public void updateCollaborationWithValidData() throws Exception {
+    public void updateCollaborationSuccess() throws Exception {
         // Arrange
         Long idCollaboration = 1L;
         CollaborationUpdateRequest updateRequest = getCollaborationUpdateRequest();

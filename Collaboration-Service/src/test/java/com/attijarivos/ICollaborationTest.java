@@ -2,6 +2,7 @@ package com.attijarivos;
 
 import com.attijarivos.DTO.request.CollaborationRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
+import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.model.Collaboration;
 
 import java.util.Date;
@@ -27,6 +28,18 @@ public interface ICollaborationTest extends DataTest {
                 .idProprietaire(FIRST_MEMBRE_ID)
                 .build();
     }
+
+    default CollaborationResponse getCollaborationResponse(long idCollaboration, CollaborationRequest request) {
+        return CollaborationResponse.builder()
+                .idCollaboration(idCollaboration)
+                .idProprietaire(request.getIdProprietaire())
+                .dateCreationCollaboration(new Date())
+                .dateDepart(request.getDateDepart())
+                .titre(request.getTitre())
+                .confidentielle(request.getConfidentielle())
+                .build();
+    }
+
 
     default CollaborationUpdateRequest getCollaborationUpdateRequest() {
         return CollaborationUpdateRequest.builder()

@@ -155,7 +155,7 @@ public class InvitationServiceUnitTest extends  WebClientTest implements IInvita
     }
 
     @Test
-    void getAllInvitations() {
+    void getAllInvitations() throws NotFoundDataException {
 
         // Arrange
         Invitation invitation1 = getInvitation(1L,1L);
