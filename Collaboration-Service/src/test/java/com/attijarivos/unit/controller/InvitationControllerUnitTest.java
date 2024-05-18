@@ -1,5 +1,6 @@
 package com.attijarivos.unit.controller;
 
+import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
 import com.attijarivos.IInvitationTest;
@@ -18,8 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -176,6 +176,56 @@ public class InvitationControllerUnitTest implements IInvitationTest {
     }
 
     @Test
+    public void createInvitationListSuccess() throws Exception {
+        // Arrange
+        InvitationListRequest request = new InvitationListRequest(1L, List.of("123", "456"));
+        List<InvitationResponse> responses = List.of(
+                getInvitationResponse(1L, new InvitationRequest("123", 1L)),
+                getInvitationResponse(2L, new InvitationRequest("456", 1L))
+        );
+
+        when(invitationService.createInvitationList(any(InvitationListRequest.class))).thenReturn(responses);
+
+        // Act
+        mockMvc.perform(post(URI + "/list")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                // Assert
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].idInvitation").value(responses.get(0).getIdInvitation()))
+                .andExpect(jsonPath("$[0].idInvite").value(responses.get(0).getIdInvite()))
+                .andExpect(jsonPath("$[0].collaboration.idCollaboration").value(responses.get(0).getCollaboration().getIdCollaboration()))
+                .andExpect(jsonPath("$[1].idInvitation").value(responses.get(1).getIdInvitation()))
+                .andExpect(jsonPath("$[1].idInvite").value(responses.get(1).getIdInvite()))
+                .andExpect(jsonPath("$[1].collaboration.idCollaboration").value(responses.get(1).getCollaboration().getIdCollaboration()));
+
+        // Verify
+        verify(invitationService, times(1)).createInvitationList(any(InvitationListRequest.class));
+    }
+
+    @Test
+    public void createInvitationListWithRequiredDataException() throws Exception {
+        // Arrange
+        InvitationListRequest request = new InvitationListRequest(1L, List.of());
+
+        doThrow(new RequiredDataException("List des invitations est obligatoire"))
+                .when(invitationService).createInvitationList(any(InvitationListRequest.class));
+
+        // Act
+        mockMvc.perform(post(URI + "/list")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("List des invitations est obligatoire"));
+
+        // Verify
+        verify(invitationService, times(1)).createInvitationList(any(InvitationListRequest.class));
+    }
+
+    @Test
     public void getInvitationByIdValid() throws Exception {
         // Arrange
         Long idInvitation = 1L;
@@ -263,6 +313,44 @@ public class InvitationControllerUnitTest implements IInvitationTest {
         verify(invitationService, times(1)).getAll();
     }
 
+    @Test
+    public void deleteInvitationByIdSuccess() throws Exception {
+        // Arrange
+        Long idInvitation = 1L;
+        InvitationResponse response = getInvitationResponse(1L, getInvitationRequest());
 
+        when(invitationService.getOne(idInvitation)).thenReturn(response);
+
+        // Act
+        mockMvc.perform(delete(URI + "/" + idInvitation)
+                        .contentType(MediaType.APPLICATION_JSON))
+                // Assert
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Bonne Suppression de l'invitation d'id : " + idInvitation));
+
+        // Verify
+        verify(invitationService, times(1)).delete(idInvitation);
+    }
+
+    @Test
+    public void deleteInvitationByIdNotFound() throws Exception {
+        // Arrange
+        Long idInvitation = 1L;
+
+        doThrow(new NotFoundDataException("Invitation", idInvitation))
+                .when(invitationService).delete(idInvitation);
+
+        // Act
+        mockMvc.perform(delete(URI + "/" + idInvitation)
+                        .contentType(MediaType.APPLICATION_JSON))
+                // Assert
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Invitation avec l'id " + idInvitation + " est introuvable !!"));
+
+        // Verify
+        verify(invitationService, times(1)).delete(idInvitation);
+    }
 
 }

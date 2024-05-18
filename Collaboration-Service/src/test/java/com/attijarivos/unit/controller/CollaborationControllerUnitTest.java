@@ -2,7 +2,9 @@ package com.attijarivos.unit.controller;
 
 import com.attijarivos.DTO.request.CollaborationRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
+import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
+import com.attijarivos.DTO.response.MembreResponse;
 import com.attijarivos.ICollaborationTest;
 import com.attijarivos.exception.*;
 import com.attijarivos.service.ICollaborationService;
@@ -112,7 +114,7 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     }
 
     @Test
-    void getAllCollaborations() throws Exception {
+    void getAllCollaborationsSuccess() throws Exception {
 
         List<CollaborationResponse> collaborations = List.of(
                 getCollaborationResponse(1L,getCollaborationRequest()),
@@ -266,6 +268,171 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
 
         // Verify
         verify(collaborationService, times(1)).update(eq(idCollaboration), any(CollaborationUpdateRequest.class));
+    }
+
+    @Test
+    public void joinCollaborationSuccess() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+        JoinCollaborationRequest joinRequest = JoinCollaborationRequest.builder()
+                .idMembre("123")
+                .build();
+        CollaborationResponse response = getCollaborationResponse(idCollaboration, getCollaborationRequest());
+
+        when(collaborationService.joindre(eq(idCollaboration), any(JoinCollaborationRequest.class))).thenReturn(response);
+
+        // Act
+        mockMvc.perform(patch(URI + "/" + idCollaboration + "/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(joinRequest)))
+                // Assert
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.idCollaboration").value(response.getIdCollaboration()))
+                .andExpect(jsonPath("$.titre").value(response.getTitre()))
+                .andExpect(jsonPath("$.confidentielle").value(response.getConfidentielle()))
+                .andExpect(jsonPath("$.idProprietaire").value(response.getIdProprietaire()));
+
+        // Verify
+        verify(collaborationService, times(1)).joindre(eq(idCollaboration), any(JoinCollaborationRequest.class));
+    }
+
+    @Test
+    public void joinCollaborationWithRequiredDataException() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+        JoinCollaborationRequest joinRequest = JoinCollaborationRequest.builder()
+                .idMembre(null) // idMembre manquant
+                .build();
+
+        doThrow(new RequiredDataException("idMembre", "la jointure", "de la collaboration"))
+                .when(collaborationService).joindre(eq(idCollaboration), any(JoinCollaborationRequest.class));
+
+        // Act
+        mockMvc.perform(patch(URI + "/" + idCollaboration + "/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(joinRequest)))
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("idMembre est obligatoire pour la jointure de la collaboration"));
+
+        // Verify
+        verify(collaborationService, times(1)).joindre(eq(idCollaboration), any(JoinCollaborationRequest.class));
+    }
+
+    @Test
+    public void joinCollaborationNotFound() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+        JoinCollaborationRequest joinRequest = JoinCollaborationRequest.builder()
+                .idMembre("123")
+                .build();
+
+        doThrow(new NotFoundDataException("Collaboration", idCollaboration))
+                .when(collaborationService).joindre(eq(idCollaboration), any(JoinCollaborationRequest.class));
+
+        // Act
+        mockMvc.perform(patch(URI + "/" + idCollaboration + "/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(joinRequest)))
+                // Assert
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Collaboration avec l'id " + idCollaboration + " est introuvable !!"));
+
+        // Verify
+        verify(collaborationService, times(1)).joindre(eq(idCollaboration), any(JoinCollaborationRequest.class));
+    }
+
+    @Test
+    public void joinCollaborationAccessDenied() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+        JoinCollaborationRequest joinRequest = JoinCollaborationRequest.builder()
+                .idMembre("123")
+                .build();
+
+        doThrow(new CollaborationAccessDeniedException(idCollaboration))
+                .when(collaborationService).joindre(eq(idCollaboration), any(JoinCollaborationRequest.class));
+
+        // Act
+        mockMvc.perform(patch(URI + "/" + idCollaboration + "/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(joinRequest)))
+                // Assert
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Autorisation d'acces à la collaboration confidentielle d'id " + idCollaboration));
+
+        // Verify
+        verify(collaborationService, times(1)).joindre(eq(idCollaboration), any(JoinCollaborationRequest.class));
+    }
+
+    @Test
+    public void getMembersForJoiningCollaborationSuccess() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+        List<MembreResponse> membres = List.of(
+                MembreResponse.builder().id("123").nom("Choauki 1").build(),
+                MembreResponse.builder().id("282").nom("Choauki 2").build()
+        );
+
+        when(collaborationService.getMembersForJoiningCollaboration(idCollaboration)).thenReturn(membres);
+
+        // Act
+        mockMvc.perform(get(URI + "/" + idCollaboration + "/uninvited-members")
+                        .contentType(MediaType.APPLICATION_JSON))
+                // Assert
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(membres.get(0).getId()))
+                .andExpect(jsonPath("$[0].nom").value(membres.get(0).getNom()))
+                .andExpect(jsonPath("$[1].id").value(membres.get(1).getId()))
+                .andExpect(jsonPath("$[1].nom").value(membres.get(1).getNom()));
+
+        // Verify
+        verify(collaborationService, times(1)).getMembersForJoiningCollaboration(idCollaboration);
+    }
+
+    @Test
+    public void getMembersForJoiningCollaborationNotFound() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+
+        doThrow(new NotFoundDataException("Collaboration", idCollaboration))
+                .when(collaborationService).getMembersForJoiningCollaboration(idCollaboration);
+
+        // Act
+        mockMvc.perform(get(URI + "/" + idCollaboration + "/uninvited-members")
+                        .contentType(MediaType.APPLICATION_JSON))
+                // Assert
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Collaboration avec l'id " + idCollaboration + " est introuvable !!"));
+
+        // Verify
+        verify(collaborationService, times(1)).getMembersForJoiningCollaboration(idCollaboration);
+    }
+
+    @Test
+    public void getMembersForJoiningCollaborationMicroserviceAccessFailure() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+
+        doThrow(new MicroserviceAccessFailureException("Membre"))
+                .when(collaborationService).getMembersForJoiningCollaboration(idCollaboration);
+
+        // Act
+        mockMvc.perform(get(URI + "/" + idCollaboration + "/uninvited-members")
+                        .contentType(MediaType.APPLICATION_JSON))
+                // Assert
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Problème lors de connexion avec le Micro-Service Membre"));
+
+        // Verify
+        verify(collaborationService, times(1)).getMembersForJoiningCollaboration(idCollaboration);
     }
 
 }
