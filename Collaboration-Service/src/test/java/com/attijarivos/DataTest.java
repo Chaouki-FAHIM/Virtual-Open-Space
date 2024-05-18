@@ -2,7 +2,6 @@ package com.attijarivos;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
-import java.text.SimpleDateFormat;
 
 
 @AutoConfigureMockMvc

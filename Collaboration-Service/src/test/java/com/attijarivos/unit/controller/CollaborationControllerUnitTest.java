@@ -1,11 +1,13 @@
 package com.attijarivos.unit.controller;
 
 import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.ICollaborationTest;
 import com.attijarivos.exception.*;
+import com.attijarivos.model.Collaboration;
+import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.service.ICollaborationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +19,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -32,34 +33,34 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private ICollaborationService<CollaborationRequest, CollaborationResponse, Long> collaborationService;
-
     @Autowired
     private ObjectMapper objectMapper;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS+00:00");
-
-
     private final String URI = "/collaborations";
+
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    void createCollaborationWithValidData() throws Exception {
-        CollaborationRequest request = getCollaborationRequest();
-        CollaborationResponse response = CollaborationResponse.builder()
-                .idCollaboration(1L)
+    private CollaborationResponse getCollaborationResponse(long idCollaboration,CollaborationRequest request) {
+        return CollaborationResponse.builder()
+                .idCollaboration(idCollaboration)
                 .idProprietaire(request.getIdProprietaire())
                 .dateCreationCollaboration(new Date())
                 .dateDepart(request.getDateDepart())
                 .titre(request.getTitre())
                 .confidentielle(request.getConfidentielle())
                 .build();
+    }
+
+    @Test
+    void createCollaborationWithValidData() throws Exception {
+        CollaborationRequest request = getCollaborationRequest();
+        CollaborationResponse response = getCollaborationResponse(1L,request);
 
         when(collaborationService.createOne(any(CollaborationRequest.class))).thenReturn(response);
 
@@ -109,7 +110,7 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     }
 
     @Test
-    void createCollaborationWithRequiredIdProprietaire() throws Exception {
+    void createCollaborationWithRequiredOwnerID() throws Exception {
         CollaborationRequest request = getCollaborationRequest();
         request.setIdProprietaire(null);
 
@@ -127,35 +128,16 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     @Test
     void getAllCollaborations() throws Exception {
 
-        CollaborationRequest request1 = getCollaborationRequest();
-        request1.setTitre("Collaboration Test 1");
-        CollaborationRequest request2 = getCollaborationRequest();
-        request2.setTitre("Collaboration Test 2");
-
         List<CollaborationResponse> collaborations = List.of(
-                CollaborationResponse.builder()
-                        .idCollaboration(1L)
-                        .idProprietaire(request1.getIdProprietaire())
-                        .dateCreationCollaboration(new Date())
-                        .dateDepart(request1.getDateDepart())
-                        .titre(request1.getTitre())
-                        .confidentielle(request1.getConfidentielle())
-                        .build(),
-                CollaborationResponse.builder()
-                        .idCollaboration(1L)
-                        .idProprietaire(request2.getIdProprietaire())
-                        .dateCreationCollaboration(new Date())
-                        .dateDepart(request2.getDateDepart())
-                        .titre(request2.getTitre())
-                        .confidentielle(request2.getConfidentielle())
-                        .build()
+                getCollaborationResponse(1L,getCollaborationRequest()),
+                getCollaborationResponse(2L,getCollaborationRequest())
         );
 
         when(collaborationService.getAll()).thenReturn(collaborations);
 
         mockMvc.perform(get(URI)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())  // Vérifier que le statut est OK
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].idCollaboration").value(collaborations.get(0).getIdCollaboration()))
                 .andExpect(jsonPath("$[0].titre").value(collaborations.get(0).getTitre()))
@@ -168,17 +150,9 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     }
 
     @Test
-    void getOneCollaboration() throws Exception {
+    void getOneCollaborationExist() throws Exception {
         Long idCollaboration = 1L;
-        CollaborationRequest request = getCollaborationRequest();
-        CollaborationResponse response = CollaborationResponse.builder()
-                .idCollaboration(idCollaboration)
-                .idProprietaire(request.getIdProprietaire())
-                .dateCreationCollaboration(new Date())
-                .dateDepart(request.getDateDepart())
-                .titre(request.getTitre())
-                .confidentielle(request.getConfidentielle())
-                .build();
+        CollaborationResponse response = getCollaborationResponse(idCollaboration,getCollaborationRequest());
 
         when(collaborationService.getOne(idCollaboration)).thenReturn(response);
 
@@ -192,6 +166,38 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
                 .andExpect(jsonPath("$.idProprietaire").value(response.getIdProprietaire()));
     }
 
+    @Test
+    public void getOneCollaborationNotFound() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+
+        doThrow(new NotFoundDataException("Collaboration", idCollaboration))
+                .when(collaborationService).getOne(idCollaboration);
+
+        // Act
+        mockMvc.perform(get(URI + "/" + idCollaboration)
+                        .contentType(MediaType.APPLICATION_JSON))
+                // Assert
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Collaboration avec l'id " + idCollaboration + " est introuvable !!"));
+
+        // Verify
+        verify(collaborationService, times(1)).getOne(idCollaboration);
+    }
+
+    @Test
+    public void deleteCollaborationByIdWithFoundData() throws Exception {
+        Long idCollaboration = 1L;
+        CollaborationResponse response = getCollaborationResponse(idCollaboration,getCollaborationRequest());
+
+        when(collaborationService.getOne(idCollaboration)).thenReturn(response);
+
+        mockMvc.perform(delete(URI + "/" + idCollaboration))
+                .andExpect(status().isOk());
+
+        verify(collaborationService, times(1)).delete(idCollaboration);
+    }
 
     @Test
     void deleteCollaborationByIdWithNotFoundData() throws Exception {
@@ -207,20 +213,73 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     }
 
     @Test
-    void deleteCollaborationByIdWithFoundData() throws Exception {
+    public void updateCollaborationWithValidData() throws Exception {
+        // Arrange
         Long idCollaboration = 1L;
+        CollaborationUpdateRequest updateRequest = getCollaborationUpdateRequest();
+        CollaborationResponse response = getCollaborationResponse(idCollaboration, getCollaborationRequest());
 
+        when(collaborationService.update(eq(idCollaboration), any(CollaborationUpdateRequest.class))).thenReturn(response);
 
-        doNothing().doThrow(new RuntimeException()).when(collaborationService).delete(idCollaboration);
+        // Act
+        mockMvc.perform(put(URI + "/" + idCollaboration)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.idCollaboration").value(response.getIdCollaboration()))
+                .andExpect(jsonPath("$.titre").value(response.getTitre()))
+                .andExpect(jsonPath("$.confidentielle").value(response.getConfidentielle()))
+                .andExpect(jsonPath("$.idProprietaire").value(response.getIdProprietaire()));
 
-        mockMvc.perform(delete(URI + "/" + idCollaboration)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())  // Vérifier que le statut est OK
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("Bonne Suppression de la collaboration en ligne d'id : " + idCollaboration));  // Vérifier le message de succès
+        // Assert
+        verify(collaborationService, times(1)).update(eq(idCollaboration), any(CollaborationUpdateRequest.class));
     }
 
+    @Test
+    public void updateCollaborationWithRequiredTitle() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+        CollaborationUpdateRequest updateRequest = getCollaborationUpdateRequest();
+        updateRequest.setTitre(null);
 
+        doThrow(new RequiredDataException("Titre", "la mise à jour", "de la collaboration"))
+                .when(collaborationService).update(eq(idCollaboration), any(CollaborationUpdateRequest.class));
 
+        // Act
+        mockMvc.perform(put(URI + "/" + idCollaboration)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Titre est obligatoire pour la mise à jour de la collaboration"));
+
+        // Verify
+        verify(collaborationService, times(1)).update(eq(idCollaboration), any(CollaborationUpdateRequest.class));
+    }
+
+    @Test
+    public void updateCollaborationWithRequiredConfidentielle() throws Exception {
+        // Arrange
+        Long idCollaboration = 1L;
+        CollaborationUpdateRequest updateRequest = getCollaborationUpdateRequest();
+        updateRequest.setConfidentielle(null);
+
+        doThrow(new RequiredDataException("Confidentialité", "la mise à jour", "de la collaboration"))
+                .when(collaborationService).update(eq(idCollaboration), any(CollaborationUpdateRequest.class));
+
+        // Act
+        mockMvc.perform(put(URI + "/" + idCollaboration)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Confidentialité est obligatoire pour la mise à jour de la collaboration"));
+
+        // Verify
+        verify(collaborationService, times(1)).update(eq(idCollaboration), any(CollaborationUpdateRequest.class));
+    }
 
 }
