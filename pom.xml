@@ -19,6 +19,7 @@
   <modules>
     <module>Membre-Service</module>
     <module>Collaboration-Service</module>
+    <module>Team-Service</module>
   </modules>
 
   <properties>

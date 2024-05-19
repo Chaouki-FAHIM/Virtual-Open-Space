@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="team-service" />
         <module name="collaboration-service" />
         <module name="membre-service" />
       </profile>
@@ -21,6 +22,7 @@
       <module name="collaboration-service (1)" options="-parameters" />
       <module name="membre-service" options="-parameters" />
       <module name="membre-service (1)" options="-parameters" />
+      <module name="team-service" options="-parameters" />
     </option>
   </component>
 </project>
