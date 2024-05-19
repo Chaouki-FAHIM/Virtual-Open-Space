@@ -51,7 +51,7 @@ public class TeamController {
             TeamResponse teamResponse = teamService.getTeamById(idTeam);
             return ResponseEntity.ok(teamResponse);
         } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -64,6 +64,18 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.CREATED).body(teamResponse);
         } catch (RequiredDataException | NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTeam(@PathVariable("id") String idTeam) {
+        try {
+            teamService.deleteTeam(idTeam);
+            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression d'équipe avec l'identifiant : "+idTeam);
+        } catch (NotFoundDataException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

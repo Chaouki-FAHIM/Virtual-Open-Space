@@ -104,7 +104,7 @@ public class TeamService {
         }
     }
 
-    private int numbreOfEquipeProcessedForAddList = 0;
+    private int numbreOfEquipeProcessedForAddList;
 
     @Transactional
     public TeamResponse addMembresToTeam(String idTeam, TeamMembresRequest teamMembresRequest) throws RequiredDataException, NotFoundDataException, MicroserviceAccessFailureException, RededicationMembreException {
@@ -114,6 +114,7 @@ public class TeamService {
         List<String> membreDTOListRequest = teamMembresRequest.getIdMembres();
         Set<MembreDTO> membreDTOSet = team.get().getMembres();
 
+        numbreOfEquipeProcessedForAddList = 0;
 //        membreDTOListRequest.stream().filter(
 //                membreDTO -> {
 //                    numbreOfEquipeProcessedForAddList++;
@@ -136,6 +137,13 @@ public class TeamService {
         return teamMapper.fromTeamToRes(
                 teamRepository.save(team.get())
         );
+    }
+
+    public boolean deleteTeam(String idTeam) throws NotFoundDataException {
+        Optional<Team> team = Optional.of(receiveTeam(idTeam));
+        log.info("Team d'id est bien supprimée : {}",idTeam);
+        teamRepository.delete(team.get());
+        return true;
     }
 
 }

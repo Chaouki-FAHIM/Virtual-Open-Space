@@ -66,7 +66,7 @@ public class InvitationController implements IInvitationController<InvitationReq
             List<InvitationResponse> invitationsResponse = invitationService.getAll();
             return ResponseEntity.status(HttpStatus.OK).body(invitationsResponse);
         } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
