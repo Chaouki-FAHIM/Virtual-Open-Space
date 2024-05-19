@@ -1,6 +1,5 @@
-package com.attijarivos.dto;
+package com.attijarivos.DTO;
 
-import com.attijarivos.model.RoleHabilation;
 import lombok.*;
 
 @NoArgsConstructor
@@ -8,11 +7,12 @@ import lombok.*;
 @Setter
 @Getter
 @Builder
-public class MembreResponse {
+public class MembreDTO {
     private String id;
     private String nom;
     private String prenom;
-    private RoleHabilation roleHabilation;
+    private enum roleHabilation {
+        IOS,ANDROID,BACKEND,FRONTEND,TEST,DEVOPS,DESIGN
+    }
     private boolean statutCollaboration;
-    private String idTeam;
 }

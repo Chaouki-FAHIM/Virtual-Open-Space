@@ -2,6 +2,9 @@ package com.attijarivos.DTO;
 
 import com.attijarivos.model.Siege;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,4 +16,6 @@ public class TeamResponse {
     private String nomTeam;
     private String descriptionTeam;
     private Siege siege;
+    @DBRef
+    private List<MembreDTO> membres;
 }

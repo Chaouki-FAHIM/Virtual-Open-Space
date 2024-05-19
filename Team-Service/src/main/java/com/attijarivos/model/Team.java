@@ -1,8 +1,11 @@
 package com.attijarivos.model;
 
+import com.attijarivos.DTO.MembreDTO;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,4 +19,5 @@ public class Team {
     private String nomTeam;
     private String descriptionTeam;
     private Siege siege;
+    private Set<MembreDTO> membres;
 }

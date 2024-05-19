@@ -12,4 +12,5 @@ public class MembreRequest {
     private String nom;
     private String prenom;
     private RoleHabilation roleHabilation;
+    private String idTeam;
 }

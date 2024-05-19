@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 
-@Configuration
+@Configuration("swagger-layer-config")
 public class SwaggerConfig {
     
     @Bean

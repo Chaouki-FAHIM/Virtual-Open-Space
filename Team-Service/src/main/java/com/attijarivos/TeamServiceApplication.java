@@ -24,7 +24,7 @@ public class TeamServiceApplication
             );
 
             teamRepository.save(
-                    Team.builder().nomTeam("Data office").descriptionTeam("Traitement les données").siege(Siege.ROUDANI).build()
+                    Team.builder().nomTeam("Data office").descriptionTeam("Traitement des données").siege(Siege.ROUDANI).build()
             );
 
             teamRepository.save(
