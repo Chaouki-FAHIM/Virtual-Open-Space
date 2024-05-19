@@ -66,7 +66,10 @@ public class TeamService {
     }
 
     public List<TeamResponse> getAllTeams() {
-        return List.of(null);
+        List<Team> teams = teamRepository.findAll();
+        log.info("Teams tourvées sont : {}",teams);
+
+        return teams.stream().map(teamMapper::fromTeamToRes).toList();
     }
 
     public TeamResponse getTeamById(String idTeam) throws NotFoundDataException {

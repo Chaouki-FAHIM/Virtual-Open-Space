@@ -51,17 +51,7 @@ public class TeamController {
             TeamResponse teamResponse = teamService.getTeamById(idTeam);
             return ResponseEntity.ok(teamResponse);
         } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/{name}")
-    public ResponseEntity<?> getTeamByName(@PathVariable String name) {
-        try {
-            List<TeamResponse> teamResponseList = teamService.getTeamByName(name);
-            return ResponseEntity.ok(teamResponseList);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

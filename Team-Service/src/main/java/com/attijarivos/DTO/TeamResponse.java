@@ -16,6 +16,5 @@ public class TeamResponse {
     private String nomTeam;
     private String descriptionTeam;
     private Siege siege;
-    @DBRef
     private List<MembreDTO> membres;
 }
