@@ -171,10 +171,7 @@ class InvitationAPIApplicationTests implements DataTest, ICollaborationTest {
 	@Test
 	void testGetEmptyListOfInvitations() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get(URI))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(
-						MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0))
-				);
+				.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 
 	@Test

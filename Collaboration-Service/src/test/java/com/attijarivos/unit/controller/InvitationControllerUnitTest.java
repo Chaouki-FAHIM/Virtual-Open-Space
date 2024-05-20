@@ -305,7 +305,7 @@ public class InvitationControllerUnitTest implements IInvitationTest {
         mockMvc.perform(get(URI)
                         .contentType(MediaType.APPLICATION_JSON))
                 // Assert
-                .andExpect(status().isNoContent())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Liste des invitations est vide !!"));
 

@@ -189,10 +189,10 @@ public class CollaborationServiceUnitTest extends WebClientTest implements IColl
         Collaboration existingCollaboration = getCollaboration(idCollaboration);
 
         List<MembreResponse> allMembres = Arrays.asList(
-                MembreResponse.builder().id("1").nom("FAHIM 1").prenom("Chaouki 1").statutCollaboration(new Random().nextBoolean()).build(),
-                MembreResponse.builder().id("2").nom("FAHIM 2").prenom("Chaouki 2").statutCollaboration(true).build(),
-                MembreResponse.builder().id("3").nom("FAHIM 3").prenom("Chaouki 3").statutCollaboration(true).build(),
-                MembreResponse.builder().id("4").nom("FAHIM 4").prenom("Chaouki 4").statutCollaboration(true).build()
+                MembreResponse.builder().idMembre("1").nomMembre("FAHIM 1").prenom("Chaouki 1").statutCollaboration(new Random().nextBoolean()).build(),
+                MembreResponse.builder().idMembre("2").nomMembre("FAHIM 2").prenom("Chaouki 2").statutCollaboration(true).build(),
+                MembreResponse.builder().idMembre("3").nomMembre("FAHIM 3").prenom("Chaouki 3").statutCollaboration(true).build(),
+                MembreResponse.builder().idMembre("4").nomMembre("FAHIM 4").prenom("Chaouki 4").statutCollaboration(true).build()
         );
 
         List<String> invitedMemberIds = Arrays.asList("1");
@@ -212,7 +212,7 @@ public class CollaborationServiceUnitTest extends WebClientTest implements IColl
         // Assert
         assertNotNull(nonInvitedMembers);
         assertEquals(2, nonInvitedMembers.size());
-        assertEquals("FAHIM 3", nonInvitedMembers.get(0).getNom());
+        assertEquals("FAHIM 3", nonInvitedMembers.get(0).getNomMembre());
     }
 
     @Test

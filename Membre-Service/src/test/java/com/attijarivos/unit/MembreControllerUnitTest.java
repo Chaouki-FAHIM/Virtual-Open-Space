@@ -3,6 +3,7 @@ package com.attijarivos.unit;
 import com.attijarivos.controller.MembreController;
 import com.attijarivos.dto.MembreRequest;
 import com.attijarivos.dto.MembreResponse;
+import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.MembreService;
@@ -34,7 +35,7 @@ class MembreControllerUnitTest {
     }
 
     @Test
-    public void shouldCreateMembreSuccessfully() throws RequiredDataException {
+    public void shouldCreateMembreSuccessfully() throws RequiredDataException, MicroserviceAccessFailureException {
         // Arrange
         MembreRequest membreRequest = new MembreRequest();
         MembreResponse expectedResponse = new MembreResponse();
@@ -68,7 +69,7 @@ class MembreControllerUnitTest {
         // Arrange
         String membreId = "1";
         MembreResponse expectedMembre = new MembreResponse();
-        when(membreService.getMembre(membreId)).thenReturn(expectedMembre);
+        when(membreService.getOneMembreDetail(membreId)).thenReturn(expectedMembre);
 
         // Act
         ResponseEntity<?> response = membreController.getMembre(membreId);

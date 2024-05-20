@@ -374,8 +374,8 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
         // Arrange
         Long idCollaboration = 1L;
         List<MembreResponse> membres = List.of(
-                MembreResponse.builder().id("123").nom("Choauki 1").build(),
-                MembreResponse.builder().id("282").nom("Choauki 2").build()
+                MembreResponse.builder().idMembre("123").nomMembre("Choauki 1").build(),
+                MembreResponse.builder().idMembre("282").nomMembre("Choauki 2").build()
         );
 
         when(collaborationService.getMembersForJoiningCollaboration(idCollaboration)).thenReturn(membres);
@@ -386,10 +386,10 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
                 // Assert
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(membres.get(0).getId()))
-                .andExpect(jsonPath("$[0].nom").value(membres.get(0).getNom()))
-                .andExpect(jsonPath("$[1].id").value(membres.get(1).getId()))
-                .andExpect(jsonPath("$[1].nom").value(membres.get(1).getNom()));
+                .andExpect(jsonPath("$[0].idMembre").value(membres.get(0).getIdMembre()))
+                .andExpect(jsonPath("$[0].nomMembre").value(membres.get(0).getNomMembre()))
+                .andExpect(jsonPath("$[1].idMembre").value(membres.get(1).getIdMembre()))
+                .andExpect(jsonPath("$[1].nomMembre").value(membres.get(1).getNomMembre()));
 
         // Verify
         verify(collaborationService, times(1)).getMembersForJoiningCollaboration(idCollaboration);

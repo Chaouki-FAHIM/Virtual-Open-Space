@@ -57,17 +57,18 @@ class MembreServiceApplicationTests {
 		membreRespository.deleteAll();
 	}
 
-	private MembreRequest getMembreResquest() {
+	private MembreRequest getOneMembreDetailResquest() {
 		return MembreRequest.builder()
-				.nom("FAHIM")
+				.nomMembre("FAHIM")
 				.prenom("Chaouki")
 				.roleHabilation(RoleHabilation.TEST)
+				.idTeam("ej888ejehks754")
 				.build();
 	}
 
 	@Test
 	public void shouldCreateMembre() throws Exception {
-		MembreRequest membreRequest = getMembreResquest();
+		MembreRequest membreRequest = getOneMembreDetailResquest();
 		String membreRequestString = objectMapper.writeValueAsString(membreRequest);
 		byte[] responseContent = mockMvc.perform(
 				MockMvcRequestBuilders.post(URI)
@@ -75,7 +76,7 @@ class MembreServiceApplicationTests {
 						.content(membreRequestString)
 		).andExpect(status().isCreated()).andReturn().getResponse().getContentAsByteArray();
 		Assertions.assertEquals(1, membreRespository.findAll().size());
-		memberId = objectMapper.readValue(responseContent, MembreResponse.class).getId();
+		memberId = objectMapper.readValue(responseContent, MembreResponse.class).getIdMembre();
 	}
 
 	@Test
@@ -89,7 +90,7 @@ class MembreServiceApplicationTests {
 	@Test
 	public void shouldGetAllMembresList() throws Exception {
 		//shouldCreateMembre();
-		MembreRequest membreRequest = getMembreResquest();
+		MembreRequest membreRequest = getOneMembreDetailResquest();
 		String membreRequestString = objectMapper.writeValueAsString(membreRequest);
 		mockMvc.perform(
 				MockMvcRequestBuilders.post(URI)
@@ -100,7 +101,7 @@ class MembreServiceApplicationTests {
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(1)))
-				.andExpect(jsonPath("$[0].nom", is("FAHIM")))
+				.andExpect(jsonPath("$[0].nomMembre", is("FAHIM")))
 				.andExpect(jsonPath("$[0].prenom", is("Chaouki")))
 				.andExpect(jsonPath("$[0].roleHabilation", is(RoleHabilation.TEST.toString())));
 	}
@@ -112,8 +113,8 @@ class MembreServiceApplicationTests {
 		mockMvc.perform(MockMvcRequestBuilders.get(URI + "/" + memberId)
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id", is(memberId)))
-				.andExpect(jsonPath("$.nom", is("FAHIM")))
+				.andExpect(jsonPath("$.idMembre", is(memberId)))
+				.andExpect(jsonPath("$.nomMembre", is("FAHIM")))
 				.andExpect(jsonPath("$.prenom", is("Chaouki")))
 				.andExpect(jsonPath("$.roleHabilation", is(RoleHabilation.TEST.toString())));
 

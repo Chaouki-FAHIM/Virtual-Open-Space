@@ -8,8 +8,8 @@ import lombok.*;
 @Getter
 @Builder
 public class MembreResponse {
-    private String id;
-    private String nom;
+    private String idMembre;
+    private String nomMembre;
     private String prenom;
     private enum roleHabilation {
         IOS,ANDROID,BACKEND,FRONTEND,TEST,DEVOPS,DESIGN

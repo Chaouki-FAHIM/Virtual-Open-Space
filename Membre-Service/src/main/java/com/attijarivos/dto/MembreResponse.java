@@ -9,8 +9,8 @@ import lombok.*;
 @Getter
 @Builder
 public class MembreResponse {
-    private String id;
-    private String nom;
+    private String idMembre;
+    private String nomMembre;
     private String prenom;
     private RoleHabilation roleHabilation;
     private boolean statutCollaboration;

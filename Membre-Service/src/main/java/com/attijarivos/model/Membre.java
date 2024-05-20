@@ -3,11 +3,7 @@ package com.attijarivos.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,8 +13,8 @@ import java.util.Set;
 @Document("membre")
 public class Membre {
     @Id
-    private String id;
-    private String nom;
+    private String idMembre;
+    private String nomMembre;
     private String prenom;
     private RoleHabilation roleHabilation;
     private boolean statutCollaboration;

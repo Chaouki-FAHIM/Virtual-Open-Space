@@ -33,7 +33,7 @@ public abstract class WebClientTest implements DataTest {
 
         // Mocking a valid MembreResponse
         MembreResponse membreResponse = new MembreResponse();
-        membreResponse.setId(FIRST_MEMBRE_ID);
+        membreResponse.setIdMembre(FIRST_MEMBRE_ID);
 
         when(responseSpec.bodyToMono(MembreResponse.class)).thenReturn(Mono.just(membreResponse));
     }

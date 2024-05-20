@@ -12,7 +12,7 @@ public class MembreMapper {
     public Membre fromReqToMembre(MembreRequest membreRequest) {
 
         return Membre.builder()
-                .nom(membreRequest.getNom())
+                .nomMembre(membreRequest.getNomMembre())
                 .prenom(membreRequest.getPrenom())
                 .roleHabilation(membreRequest.getRoleHabilation())
                 .build();

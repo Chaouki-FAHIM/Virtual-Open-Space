@@ -2,9 +2,9 @@ package com.attijarivos.DTO;
 
 import com.attijarivos.model.Siege;
 import lombok.*;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,5 +16,5 @@ public class TeamResponse {
     private String nomTeam;
     private String descriptionTeam;
     private Siege siege;
-    private List<MembreDTO> membres;
+    private Set<MembreDTO> membres = new HashSet<>();
 }

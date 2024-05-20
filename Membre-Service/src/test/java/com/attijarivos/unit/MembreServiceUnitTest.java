@@ -1,6 +1,7 @@
 package com.attijarivos.unit;
 
 import com.attijarivos.dto.MembreResponse;
+import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.MembreMapper;
 import com.attijarivos.dto.MembreRequest;
@@ -32,13 +33,14 @@ class MembreServiceUnitTest {
     }
 
     @Test
-    void createMembreWithValidData() throws RequiredDataException {
+    void createMembreWithValidData() throws RequiredDataException, MicroserviceAccessFailureException {
 
         // Arrange
         MembreRequest request = MembreRequest.builder()
-                .nom("FAHIM")
+                .nomMembre("FAHIM")
                 .prenom("Chaouki")
                 .roleHabilation(RoleHabilation.TEST)
+                .idTeam("ej888ejehks754")
                 .build();
 
         Membre membre = new Membre();
@@ -61,7 +63,7 @@ class MembreServiceUnitTest {
     void createMembreWithRequiredDataFirstName() {
         // Arrange
         MembreRequest requestWithMissingNom = MembreRequest.builder()
-                .nom(null)
+                .nomMembre(null)
                 .prenom("Chaouki")
                 .roleHabilation(RoleHabilation.TEST)
                 .build();
@@ -78,7 +80,7 @@ class MembreServiceUnitTest {
     void createMembreWithRequiredDataLastName() {
         // Arrange
         MembreRequest requestWithMissingNom = MembreRequest.builder()
-                .nom("FAHIM")
+                .nomMembre("FAHIM")
                 .prenom(null)
                 .roleHabilation(RoleHabilation.TEST)
                 .build();
@@ -95,7 +97,7 @@ class MembreServiceUnitTest {
     void createMembreWithRequiredDataRoleHabilation() {
         // Arrange
         MembreRequest requestWithMissingNom = MembreRequest.builder()
-                .nom("KHAROUBI")
+                .nomMembre("KHAROUBI")
                 .prenom("Amine")
                 .roleHabilation(null)
                 .build();

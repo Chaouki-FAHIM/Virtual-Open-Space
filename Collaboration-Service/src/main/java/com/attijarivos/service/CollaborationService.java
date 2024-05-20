@@ -243,7 +243,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
         return membreResponseList.stream()
                 .filter( membre ->
-                       ! getNotInvitedAndParticipatedToCollaboration(collaborationSearched.get()).contains(membre.getId())
+                       ! getNotInvitedAndParticipatedToCollaboration(collaborationSearched.get()).contains(membre.getIdMembre())
                 )
                 .toList();
     }
