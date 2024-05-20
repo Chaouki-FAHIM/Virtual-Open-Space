@@ -4,10 +4,12 @@ import com.attijarivos.DTO.TeamMembresRequest;
 import com.attijarivos.DTO.TeamRequest;
 import com.attijarivos.DTO.TeamResponse;
 import com.attijarivos.exception.NotFoundDataException;
+import com.attijarivos.exception.RededicationMembreException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/teams")
+@Slf4j
 public class TeamController {
 
     @Autowired
@@ -62,9 +65,12 @@ public class TeamController {
         try {
             TeamResponse teamResponse = teamService.addMembresToTeam(idTeam, teamMembresRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(teamResponse);
-        } catch (RequiredDataException | NotFoundDataException e) {
+        } catch (RequiredDataException | RededicationMembreException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NotFoundDataException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

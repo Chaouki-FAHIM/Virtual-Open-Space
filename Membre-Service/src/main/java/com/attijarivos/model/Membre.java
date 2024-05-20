@@ -22,6 +22,4 @@ public class Membre {
     private String prenom;
     private RoleHabilation roleHabilation;
     private boolean statutCollaboration;
-    @DBRef
-    private Set<String> teams = new HashSet<>();
 }

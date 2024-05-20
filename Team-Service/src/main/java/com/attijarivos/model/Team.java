@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -19,5 +20,5 @@ public class Team {
     private String nomTeam;
     private String descriptionTeam;
     private Siege siege;
-    private Set<MembreDTO> membres;
+    private Set<MembreDTO> membres = new HashSet<>();;
 }

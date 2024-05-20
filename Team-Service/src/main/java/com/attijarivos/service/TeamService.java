@@ -34,6 +34,7 @@ public class TeamService {
     private final WebClient webClient;
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
+    private int numbreOfEquipeProcessedForAddList;
 
 
     private Boolean isNotNullValue(Object value) {
@@ -78,10 +79,6 @@ public class TeamService {
         return teamMapper.fromTeamToRes(team.get());
     }
 
-    public List<TeamResponse> getTeamByName(String name) {
-        return null;
-    }
-
     private Team receiveTeam(String idTeam) throws NotFoundDataException {
         Optional<Team> team = teamRepository.findByIdTeam(idTeam);
 
@@ -89,7 +86,7 @@ public class TeamService {
         return team.get();
     }
 
-    private Optional<MembreDTO> receiveMembreById(String idMembre) throws MicroserviceAccessFailureException {
+    private Optional<MembreDTO> receiveMembreById(String idMembre) throws Exception {
 
         try {
             return Optional.ofNullable(
@@ -99,40 +96,37 @@ public class TeamService {
             log.error("Problème lors de connexion avec le Membre-Service", e);
             throw new MicroserviceAccessFailureException("Membre");
         } catch (Exception e) {
-            log.error(e.getMessage());
-            return Optional.empty();
+            throw new Exception(e.getMessage());
         }
     }
 
-    private int numbreOfEquipeProcessedForAddList;
-
     @Transactional
-    public TeamResponse addMembresToTeam(String idTeam, TeamMembresRequest teamMembresRequest) throws RequiredDataException, NotFoundDataException, MicroserviceAccessFailureException, RededicationMembreException {
+    public TeamResponse addMembresToTeam(String idTeam, TeamMembresRequest teamMembresRequest) throws Exception {
 
         Optional<Team> team = Optional.of(receiveTeam(idTeam));
 
         List<String> membreDTOListRequest = teamMembresRequest.getIdMembres();
-        Set<MembreDTO> membreDTOSet = team.get().getMembres();
+        Set<MembreDTO> membresOfTeam = team.get().getMembres();
 
         numbreOfEquipeProcessedForAddList = 0;
-//        membreDTOListRequest.stream().filter(
-//                membreDTO -> {
-//                    numbreOfEquipeProcessedForAddList++;
-//                    if (membreDTOListRequest.contains(membreDTO)) {
-//                        try {
-//                            throw new RededicationMembreException(numbreOfEquipeProcessedForAddList);
-//                        } catch (RededicationMembreException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                    if(receiveMembreById(membreDTO))
-//                        throw new NotFoundDataException("Identifant de membre",membreDTO);
-//                    else membreDTOSet.add();
-//                }
-//
-//        );
 
-        team.get().setMembres(membreDTOSet);
+        for (String idMembre : membreDTOListRequest) {
+            Optional<MembreDTO> membreDTO = receiveMembreById(idMembre);
+            log.info("Membre : {}", membreDTO.get());
+
+            if(team.get().getMembres() != null && team.get().getMembres().contains(membreDTO.get())) {
+                log.warn("Le membre numero "+numbreOfEquipeProcessedForAddList+ " dans votre liste est déjà exister dans cette équipe");
+                throw new RededicationMembreException(numbreOfEquipeProcessedForAddList);
+            }
+            else {
+                log.info("Membre avec l'identifiant {} est été ajouter dans le team  : {}", membreDTO.get(), idTeam);
+                membresOfTeam.add(membreDTO.get());
+            }
+
+            numbreOfEquipeProcessedForAddList++;
+        }
+
+        team.get().setMembres(membresOfTeam);
 
         return teamMapper.fromTeamToRes(
                 teamRepository.save(team.get())

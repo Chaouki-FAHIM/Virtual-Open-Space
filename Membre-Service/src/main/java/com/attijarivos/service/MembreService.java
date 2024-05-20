@@ -1,6 +1,8 @@
 package com.attijarivos.service;
 
 import com.attijarivos.dto.MembreResponse;
+import com.attijarivos.dto.MembresOfTeamRequest;
+import com.attijarivos.dto.TeamResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
@@ -12,6 +14,7 @@ import com.attijarivos.repository.MembreRespository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -35,35 +38,40 @@ public class MembreService {
         return value == null || Objects.equals(value, "");
     }
 
-    private boolean verifyTeamById(String idTeam) throws MicroserviceAccessFailureException {
+    private void verifyTeamById(String idTeam) throws MicroserviceAccessFailureException {
 
         try {
-            return webClient.get().uri(WebClientConfig.TEAM_SERVICE_URL + "/" + idTeam).retrieve().bodyToMono(Object.class).block() != null;
+            webClient.get().uri(WebClientConfig.TEAM_SERVICE_URL + "/" + idTeam).retrieve().bodyToMono(Object.class).block() ;
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Team-Service", e);
             throw new MicroserviceAccessFailureException("Team");
         } catch (Exception e) {
             log.error(e.getMessage());
-            return false;
         }
     }
 
-    private void addMembreToTeam(String idTeam, String idMembre) throws MicroserviceAccessFailureException {
-
+    private boolean addMembreToTeam(String idMembre, String idTeam) throws MicroserviceAccessFailureException {
         try {
-            webClient.patch()
+            MembresOfTeamRequest membresOfTeamRequest = new MembresOfTeamRequest();
+            membresOfTeamRequest.setIdMembres(List.of(idMembre));
+
+            Optional<TeamResponse> teamResponse = Optional.ofNullable(webClient.patch()
                     .uri(WebClientConfig.TEAM_SERVICE_URL + "/" + idTeam + "/membres")
-                    .bodyValue(List.of(idMembre))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(membresOfTeamRequest)
                     .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
+                    .bodyToMono(TeamResponse.class)
+                    .block());
+            return teamResponse.isPresent();
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Team-Service", e);
             throw new MicroserviceAccessFailureException("Team");
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+        return false;
     }
+
 
 
     public MembreResponse createMembre(MembreRequest membreRequest) throws Exception {
@@ -81,13 +89,15 @@ public class MembreService {
             throw new RequiredDataException("Identifiant d'équipe est obligatoire pour l'ajout d'un nouveau membre");
         }
 
-        if (verifyTeamById(membreRequest.getIdTeam()))
-        {
-            addMembreToTeam(membreRequest.getIdTeam(), membreRequest.getIdTeam());
-        }
+        verifyTeamById(membreRequest.getIdTeam());
 
-        Membre membre = membreMapper.fromReqToMembre(membreRequest);
-        membreRespository.save(membre);
+        Membre membre = membreRespository.save(
+                membreMapper.fromReqToMembre(membreRequest)
+        );
+
+        if (addMembreToTeam(membre.getId(),membreRequest.getIdTeam()) )
+            log.info("Bonne ajout d'un nouveau membre à nouvelle équipe !!");
+        else log.warn("Mauvaise ajout d'un nouveau membre à nouvelle équipe !!");
 
         log.info("Membre d'id {} est enregistré!!",membre.getId());
 

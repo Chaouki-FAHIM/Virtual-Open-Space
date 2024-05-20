@@ -14,5 +14,4 @@ public class MembreResponse {
     private String prenom;
     private RoleHabilation roleHabilation;
     private boolean statutCollaboration;
-    private String idTeam;
 }
