@@ -72,7 +72,7 @@ This section details the progress and components of the Create Team Service.
   - Database: MongoDB
   - Status: **Completed**
 
-- [ ] **Endpoints for Membre **
+- [X] **Endpoints for Membre**
   - Create endpoints for team management.
   - Unit test endpoints for team management.
   - Status: **Progress**

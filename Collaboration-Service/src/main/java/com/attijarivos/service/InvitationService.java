@@ -33,13 +33,13 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
     private final IMapper<Invitation,InvitationRequest,InvitationResponse> invitationMapper;
     private final InvitationRepository invitationRepository;
     private final CollaborationRepository collaborationRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
     private int numbreOfInvitationProcessedForCreateList = 0;
 
     private Optional<MembreResponse> receiveInviteById(String idInvite) throws MicroserviceAccessFailureException {
         try {
             return Optional.ofNullable(
-                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idInvite).retrieve().bodyToFlux(MembreResponse.class).blockLast()
+                    webClientBuilder.build().get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idInvite).retrieve().bodyToFlux(MembreResponse.class).blockLast()
             );
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Membre-Service", e);

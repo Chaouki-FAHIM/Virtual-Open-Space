@@ -39,13 +39,13 @@ public class CollaborationService implements ICollaborationService<Collaboration
     private final ParticipationRepository participationRepository;
     private final InvitationRepository invitationRepository;
     @Qualifier("webClient-layer-config")
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     private Optional<MembreResponse> receiveMembreById(String idMembre) throws MicroserviceAccessFailureException {
 
         try {
             return Optional.ofNullable(
-                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idMembre).retrieve().bodyToMono(MembreResponse.class).block()
+                    webClientBuilder.build().get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idMembre).retrieve().bodyToMono(MembreResponse.class).block()
             );
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Membre-Service", e);
@@ -59,7 +59,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
     private List<MembreResponse> receiveAllMembres() throws MicroserviceAccessFailureException {
 
         try {
-            return webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL)
+            return webClientBuilder.build().get().uri(WebClientConfig.MEMBRE_SERVICE_URL)
                     .retrieve().bodyToFlux(MembreResponse.class)
                     .collectList().block();
 

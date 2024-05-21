@@ -20,12 +20,12 @@ import java.util.Optional;
 public abstract class WebClientOperations {
 
     @Qualifier("webClient-layer-config")
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     protected void verifyTeamById(String idTeam) throws MicroserviceAccessFailureException {
 
         try {
-            webClient.get().uri(WebClientConfig.TEAM_SERVICE_URL + "/" + idTeam).retrieve().bodyToMono(Object.class).block() ;
+            webClientBuilder.build().get().uri(WebClientConfig.TEAM_SERVICE_URL + "/" + idTeam).retrieve().bodyToMono(Object.class).block() ;
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Team-Service", e);
             throw new MicroserviceAccessFailureException("Team");
@@ -40,7 +40,7 @@ public abstract class WebClientOperations {
             idMembresRequest.setIdMembres(List.of(idMembre));
 
             Optional<DetailTeamResponse> teamResponse = Optional.ofNullable(
-                    webClient.patch()
+                    webClientBuilder.build().patch()
                     .uri(WebClientConfig.TEAM_SERVICE_URL + "/" + idTeam + "/membres")
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(idMembresRequest)
@@ -59,7 +59,7 @@ public abstract class WebClientOperations {
 
     protected List<DetailTeamResponse> receiveAllTeams() throws MicroserviceAccessFailureException {
         try {
-            return webClient.get()
+            return webClientBuilder.build().get()
                     .uri(WebClientConfig.TEAM_SERVICE_URL)
                     .retrieve()
                     .bodyToFlux(DetailTeamResponse.class)
@@ -76,7 +76,7 @@ public abstract class WebClientOperations {
 
     protected void syncUpdateMemberInTeam(ShortMembreResponse membreResponse) throws MicroserviceAccessFailureException {
         try {
-             webClient.patch()
+             webClientBuilder.build().patch()
                     .uri(WebClientConfig.TEAM_SERVICE_URL + "/syncUpdateMembre")
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(membreResponse)
@@ -94,7 +94,7 @@ public abstract class WebClientOperations {
 
     protected void syncDeleteMemberInTeam(String membreId) throws MicroserviceAccessFailureException {
         try {
-            webClient.patch()
+            webClientBuilder.build().patch()
                     .uri(WebClientConfig.TEAM_SERVICE_URL + "/syncDeleteMembre/"+membreId)
                     .retrieve()
                     .bodyToMono(Void.class)

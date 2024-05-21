@@ -28,7 +28,7 @@ import java.util.*;
 public class TeamService {
 
     @Qualifier("webClient-layer-config")
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
     private int numbreOfEquipeProcessedForAddList;
@@ -87,7 +87,7 @@ public class TeamService {
 
         try {
             return Optional.ofNullable(
-                    webClient.get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idMembre).retrieve().bodyToMono(MembreDTO.class).block()
+                    webClientBuilder.build().get().uri(WebClientConfig.MEMBRE_SERVICE_URL + "/"+ idMembre).retrieve().bodyToMono(MembreDTO.class).block()
             );
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Membre-Service", e);

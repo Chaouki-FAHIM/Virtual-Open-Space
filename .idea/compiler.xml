@@ -6,20 +6,26 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="team-service" />
         <module name="collaboration-service" />
+        <module name="team-service" />
         <module name="membre-service" />
+        <module name="discovery-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="collaboration-service (1)" target="17" />
+      <module name="discovery-Service" target="17" />
+      <module name="Discovery-Service" target="1.5" />
       <module name="membre-service (1)" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Discovery-Service" options="" />
       <module name="collaboration-service" options="-parameters" />
       <module name="collaboration-service (1)" options="-parameters" />
+      <module name="discovery-Service" options="-parameters" />
+      <module name="discovery-service" options="-parameters" />
       <module name="membre-service" options="-parameters" />
       <module name="membre-service (1)" options="-parameters" />
       <module name="team-service" options="-parameters" />

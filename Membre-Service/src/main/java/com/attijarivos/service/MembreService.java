@@ -17,15 +17,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.*;
 
 @Service
-
 @Slf4j
 public class MembreService extends WebClientOperations {
 
     private final MembreRespository membreRespository;
     private final MembreMapper membreMapper;
 
-    public MembreService(WebClient webClient, MembreRespository membreRespository, MembreMapper membreMapper) {
-        super(webClient);
+    public MembreService(WebClient.Builder webClientBuilder, MembreRespository membreRespository, MembreMapper membreMapper) {
+        super(webClientBuilder);
         this.membreRespository = membreRespository;
         this.membreMapper = membreMapper;
     }

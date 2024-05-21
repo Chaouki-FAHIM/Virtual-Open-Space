@@ -24,6 +24,12 @@
     <!-- Dependencies -->
     <dependencies>
 
+        <!-- Eureka Discovery Client  -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
         <!-- MongoDB -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
