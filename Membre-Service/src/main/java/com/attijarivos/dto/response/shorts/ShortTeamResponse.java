@@ -1,5 +1,6 @@
-package com.attijarivos.dto.team;
+package com.attijarivos.dto.response.shorts;
 
+import com.attijarivos.dto.Siege;
 import lombok.*;
 
 @NoArgsConstructor

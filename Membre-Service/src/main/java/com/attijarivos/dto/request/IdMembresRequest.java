@@ -1,4 +1,4 @@
-package com.attijarivos.dto;
+package com.attijarivos.dto.request;
 
 
 import lombok.Getter;
@@ -8,6 +8,6 @@ import java.util.List;
 
 @Setter
 @Getter
-public class MembresOfTeamRequest {
+public class IdMembresRequest {
     private List<String> idMembres;
 }

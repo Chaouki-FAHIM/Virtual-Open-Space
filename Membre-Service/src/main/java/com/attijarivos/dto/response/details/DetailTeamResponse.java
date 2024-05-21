@@ -1,6 +1,7 @@
-package com.attijarivos.dto.team;
+package com.attijarivos.dto.response.details;
 
-import com.attijarivos.dto.membre.MembreResponse;
+import com.attijarivos.dto.response.shorts.ShortMembreResponse;
+import com.attijarivos.dto.Siege;
 import lombok.*;
 
 import java.util.HashSet;
@@ -16,6 +17,6 @@ public class DetailTeamResponse {
     private String nomTeam;
     private String descriptionTeam;
     private Siege siege;
-    private Set<MembreResponse> membres = new HashSet<>();
+    private Set<ShortMembreResponse> membres = new HashSet<>();
 
 }

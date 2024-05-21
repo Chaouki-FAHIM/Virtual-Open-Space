@@ -1,6 +1,6 @@
-package com.attijarivos.dto;
+package com.attijarivos.dto.response.details;
 
-import com.attijarivos.dto.team.ShortTeamResponse;
+import com.attijarivos.dto.response.shorts.ShortTeamResponse;
 import com.attijarivos.model.RoleHabilation;
 import lombok.*;
 

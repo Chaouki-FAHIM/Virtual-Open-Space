@@ -1,7 +1,7 @@
 package com.attijarivos;
 
-import com.attijarivos.dto.membre.MembreRequest;
-import com.attijarivos.dto.membre.MembreResponse;
+import com.attijarivos.dto.request.MembreRequest;
+import com.attijarivos.dto.response.shorts.ShortMembreResponse;
 import com.attijarivos.model.RoleHabilation;
 import com.attijarivos.repository.MembreRespository;
 import org.junit.jupiter.api.AfterEach;
@@ -76,7 +76,7 @@ class MembreServiceApplicationTests {
 						.content(membreRequestString)
 		).andExpect(status().isCreated()).andReturn().getResponse().getContentAsByteArray();
 		Assertions.assertEquals(1, membreRespository.findAll().size());
-		memberId = objectMapper.readValue(responseContent, MembreResponse.class).getIdMembre();
+		memberId = objectMapper.readValue(responseContent, ShortMembreResponse.class).getIdMembre();
 	}
 
 	@Test

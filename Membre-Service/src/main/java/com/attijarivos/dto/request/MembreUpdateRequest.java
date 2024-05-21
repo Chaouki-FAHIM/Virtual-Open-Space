@@ -1,4 +1,4 @@
-package com.attijarivos.dto.membre;
+package com.attijarivos.dto.request;
 
 import com.attijarivos.model.RoleHabilation;
 import lombok.*;
@@ -8,9 +8,8 @@ import lombok.*;
 @Setter
 @Getter
 @Builder
-public class MembreRequest {
+public class MembreUpdateRequest {
     private String nomMembre;
     private String prenom;
     private RoleHabilation roleHabilation;
-    private String idTeam;
 }

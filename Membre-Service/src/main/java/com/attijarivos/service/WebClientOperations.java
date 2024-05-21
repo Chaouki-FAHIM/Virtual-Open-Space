@@ -1,8 +1,9 @@
 package com.attijarivos.service;
 
 import com.attijarivos.configuration.WebClientConfig;
-import com.attijarivos.dto.MembresOfTeamRequest;
-import com.attijarivos.dto.team.DetailTeamResponse;
+import com.attijarivos.dto.request.IdMembresRequest;
+import com.attijarivos.dto.response.details.DetailTeamResponse;
+import com.attijarivos.dto.response.shorts.ShortMembreResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +36,14 @@ public abstract class WebClientOperations {
 
     protected boolean addMembreToTeam(String idMembre, String idTeam) throws MicroserviceAccessFailureException {
         try {
-            MembresOfTeamRequest membresOfTeamRequest = new MembresOfTeamRequest();
-            membresOfTeamRequest.setIdMembres(List.of(idMembre));
+            IdMembresRequest idMembresRequest = new IdMembresRequest();
+            idMembresRequest.setIdMembres(List.of(idMembre));
 
-            Optional<DetailTeamResponse> teamResponse = Optional.ofNullable(webClient.patch()
+            Optional<DetailTeamResponse> teamResponse = Optional.ofNullable(
+                    webClient.patch()
                     .uri(WebClientConfig.TEAM_SERVICE_URL + "/" + idTeam + "/membres")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(membresOfTeamRequest)
+                    .bodyValue(idMembresRequest)
                     .retrieve()
                     .bodyToMono(DetailTeamResponse.class)
                     .block());
@@ -63,6 +65,25 @@ public abstract class WebClientOperations {
                     .bodyToFlux(DetailTeamResponse.class)
                     .collectList()
                     .block();
+        } catch (WebClientRequestException e) {
+            log.error("Problème lors de connexion avec le Team-Service", e);
+            throw new MicroserviceAccessFailureException("Team");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("Erreur lors de la récupération des équipes", e);
+        }
+    }
+
+    protected void syncUpdateMemberInTeam(ShortMembreResponse membreResponse) throws MicroserviceAccessFailureException {
+        try {
+             webClient.patch()
+                    .uri(WebClientConfig.TEAM_SERVICE_URL + "/syncUpdateMembre")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(membreResponse)
+                    .retrieve()
+                    .bodyToFlux(DetailTeamResponse.class)
+                    .collectList()
+                    .block() ;
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Team-Service", e);
             throw new MicroserviceAccessFailureException("Team");

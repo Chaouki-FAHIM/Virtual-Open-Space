@@ -1,10 +1,10 @@
 package com.attijarivos.unit;
 
-import com.attijarivos.dto.membre.MembreResponse;
+import com.attijarivos.dto.response.shorts.ShortMembreResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.MembreMapper;
-import com.attijarivos.dto.membre.MembreRequest;
+import com.attijarivos.dto.request.MembreRequest;
 import com.attijarivos.model.Membre;
 import com.attijarivos.model.RoleHabilation;
 import com.attijarivos.repository.MembreRespository;
@@ -45,14 +45,14 @@ class MembreServiceUnitTest {
 
         Membre membre = new Membre();
 
-        MembreResponse expectedResponse = new MembreResponse();
+        ShortMembreResponse expectedResponse = new ShortMembreResponse();
 
         when(membreMapper.fromReqToMembre(any(MembreRequest.class))).thenReturn(membre);
         when(membreRespository.save(any(Membre.class))).thenReturn(membre);
         when(membreMapper.fromMembreToRes(any(Membre.class))).thenReturn(expectedResponse);
 
         // Act
-        MembreResponse response = membreService.createMembre(request);
+        ShortMembreResponse response = membreService.createMembre(request);
 
         // Assert
         assertNotNull(response);
