@@ -1,6 +1,6 @@
 package com.attijarivos.service;
 
-import com.attijarivos.dto.MembreAndOurTeamResponse;
+import com.attijarivos.dto.DetailMembreResponse;
 import com.attijarivos.dto.MembreResponse;
 import com.attijarivos.dto.TeamResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
@@ -71,14 +71,14 @@ public class MembreService extends WebClientOperations {
         return membres.stream().map(membreMapper::fromMembreToRes).toList();
     }
 
-    public MembreAndOurTeamResponse getOneMembreDetail(String idMembre) throws NotFoundDataException, MicroserviceAccessFailureException {
+    public DetailMembreResponse getOneMembreDetail(String idMembre) throws NotFoundDataException, MicroserviceAccessFailureException {
         Optional<Membre> membre = membreRespository.findById(idMembre);
         log.info("Membre trouvé est : {}", membre);
         if (membre.isEmpty()) throw new NotFoundDataException(idMembre);
 
         List<TeamResponse> teamResponseList = receiveAllTeams();
 
-        MembreAndOurTeamResponse response = MembreAndOurTeamResponse.builder()
+        DetailMembreResponse response = DetailMembreResponse.builder()
                 .idMembre(membre.get().getIdMembre())
                 .nomMembre(membre.get().getNomMembre())
                 .prenom(membre.get().getPrenom())
@@ -88,15 +88,19 @@ public class MembreService extends WebClientOperations {
 
         Set<TeamResponse> teamResponseSet = new HashSet<>();
 
+        int numberOfTeamsProccessed = 0;
         for (TeamResponse teamResponse : teamResponseList) {
+            log.warn("Equipe : {}",teamResponse.toString());
             if (teamResponse.getMembres() != null) {
                 for (MembreResponse membreResponse : teamResponse.getMembres()) {
+                    log.warn("GetIdMembre d'équipe {} : {}",teamResponse.getIdTeam(),membreResponse.getIdMembre());
                     if (membreResponse.getIdMembre() != null && membreResponse.getIdMembre().equals(idMembre)) {
                         teamResponseSet.add(teamResponse);
                         break;  // Exit the loop once a match is found
                     }
                 }
             }
+            numberOfTeamsProccessed++;
         }
 
         response.setTeams(teamResponseSet);

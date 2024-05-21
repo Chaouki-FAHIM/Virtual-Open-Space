@@ -11,8 +11,6 @@ public class MembreDTO {
     private String idMembre;
     private String nomMembre;
     private String prenom;
-    private enum roleHabilation {
-        IOS,ANDROID,BACKEND,FRONTEND,TEST,DEVOPS,DESIGN
-    }
+    private RoleHabilation roleHabilation;
     private boolean statutCollaboration;
 }

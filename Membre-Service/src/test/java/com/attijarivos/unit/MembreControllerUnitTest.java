@@ -1,6 +1,7 @@
 package com.attijarivos.unit;
 
 import com.attijarivos.controller.MembreController;
+import com.attijarivos.dto.DetailMembreResponse;
 import com.attijarivos.dto.MembreRequest;
 import com.attijarivos.dto.MembreResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
@@ -65,10 +66,10 @@ class MembreControllerUnitTest {
     }
 
     @Test
-    public void shouldFetchOneMembreSuccessfully() throws NotFoundDataException {
+    public void shouldFetchOneMembreSuccessfully() throws NotFoundDataException, MicroserviceAccessFailureException {
         // Arrange
         String membreId = "1";
-        MembreResponse expectedMembre = new MembreResponse();
+        DetailMembreResponse expectedMembre = new DetailMembreResponse();
         when(membreService.getOneMembreDetail(membreId)).thenReturn(expectedMembre);
 
         // Act

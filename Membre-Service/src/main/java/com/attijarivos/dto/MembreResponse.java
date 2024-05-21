@@ -14,4 +14,15 @@ public class MembreResponse {
     private String prenom;
     private RoleHabilation roleHabilation;
     private boolean statutCollaboration;
+
+    @Override
+    public String toString() {
+        return "MembreResponse{" +
+                "idMembre='" + idMembre + '\'' +
+                ", nomMembre='" + nomMembre + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", roleHabilation=" + roleHabilation +
+                ", statutCollaboration=" + statutCollaboration +
+                '}';
+    }
 }

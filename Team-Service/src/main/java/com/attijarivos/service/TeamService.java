@@ -112,7 +112,6 @@ public class TeamService {
 
         for (String idMembre : membreDTOListRequest) {
             Optional<MembreDTO> membreDTO = receiveMembreById(idMembre);
-            log.info("Membre : {}", membreDTO.get());
 
             if(team.get().getMembres() != null && team.get().getMembres().contains(membreDTO.get())) {
                 log.warn("Le membre numero "+numbreOfEquipeProcessedForAddList+ " dans votre liste est déjà exister dans cette équipe");

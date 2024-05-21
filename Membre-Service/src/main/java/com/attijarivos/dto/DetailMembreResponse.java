@@ -11,7 +11,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Builder
-public class MembreAndOurTeamResponse {
+public class DetailMembreResponse {
     private String idMembre;
     private String nomMembre;
     private String prenom;

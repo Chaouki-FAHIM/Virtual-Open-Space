@@ -1,6 +1,6 @@
 package com.attijarivos.controller;
 
-import com.attijarivos.dto.MembreAndOurTeamResponse;
+import com.attijarivos.dto.DetailMembreResponse;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.dto.MembreRequest;
@@ -46,7 +46,7 @@ public class MembreController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getMembre(@PathVariable String id) {
         try {
-            MembreAndOurTeamResponse membreResponse = membreService.getOneMembreDetail(id);
+            DetailMembreResponse membreResponse = membreService.getOneMembreDetail(id);
             return ResponseEntity.ok(membreResponse);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
