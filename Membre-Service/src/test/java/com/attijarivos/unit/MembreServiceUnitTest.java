@@ -1,10 +1,10 @@
 package com.attijarivos.unit;
 
-import com.attijarivos.dto.MembreResponse;
+import com.attijarivos.dto.membre.MembreResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.MembreMapper;
-import com.attijarivos.dto.MembreRequest;
+import com.attijarivos.dto.membre.MembreRequest;
 import com.attijarivos.model.Membre;
 import com.attijarivos.model.RoleHabilation;
 import com.attijarivos.repository.MembreRespository;

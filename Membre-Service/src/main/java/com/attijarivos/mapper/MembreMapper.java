@@ -1,7 +1,7 @@
 package com.attijarivos.mapper;
 
-import com.attijarivos.dto.MembreResponse;
-import com.attijarivos.dto.MembreRequest;
+import com.attijarivos.dto.membre.MembreResponse;
+import com.attijarivos.dto.membre.MembreRequest;
 import com.attijarivos.model.Membre;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.attijarivos;
 
-import com.attijarivos.dto.MembreRequest;
-import com.attijarivos.dto.MembreResponse;
+import com.attijarivos.dto.membre.MembreRequest;
+import com.attijarivos.dto.membre.MembreResponse;
 import com.attijarivos.model.RoleHabilation;
 import com.attijarivos.repository.MembreRespository;
 import org.junit.jupiter.api.AfterEach;

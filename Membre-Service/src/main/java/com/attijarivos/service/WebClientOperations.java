@@ -2,7 +2,7 @@ package com.attijarivos.service;
 
 import com.attijarivos.configuration.WebClientConfig;
 import com.attijarivos.dto.MembresOfTeamRequest;
-import com.attijarivos.dto.TeamResponse;
+import com.attijarivos.dto.team.DetailTeamResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +38,12 @@ public abstract class WebClientOperations {
             MembresOfTeamRequest membresOfTeamRequest = new MembresOfTeamRequest();
             membresOfTeamRequest.setIdMembres(List.of(idMembre));
 
-            Optional<TeamResponse> teamResponse = Optional.ofNullable(webClient.patch()
+            Optional<DetailTeamResponse> teamResponse = Optional.ofNullable(webClient.patch()
                     .uri(WebClientConfig.TEAM_SERVICE_URL + "/" + idTeam + "/membres")
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(membresOfTeamRequest)
                     .retrieve()
-                    .bodyToMono(TeamResponse.class)
+                    .bodyToMono(DetailTeamResponse.class)
                     .block());
             return teamResponse.isPresent();
         } catch (WebClientRequestException e) {
@@ -55,12 +55,12 @@ public abstract class WebClientOperations {
         return false;
     }
 
-    protected List<TeamResponse> receiveAllTeams() throws MicroserviceAccessFailureException {
+    protected List<DetailTeamResponse> receiveAllTeams() throws MicroserviceAccessFailureException {
         try {
             return webClient.get()
                     .uri(WebClientConfig.TEAM_SERVICE_URL)
                     .retrieve()
-                    .bodyToFlux(TeamResponse.class)
+                    .bodyToFlux(DetailTeamResponse.class)
                     .collectList()
                     .block();
         } catch (WebClientRequestException e) {

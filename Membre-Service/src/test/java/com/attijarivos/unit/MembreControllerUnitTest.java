@@ -2,8 +2,8 @@ package com.attijarivos.unit;
 
 import com.attijarivos.controller.MembreController;
 import com.attijarivos.dto.DetailMembreResponse;
-import com.attijarivos.dto.MembreRequest;
-import com.attijarivos.dto.MembreResponse;
+import com.attijarivos.dto.membre.MembreRequest;
+import com.attijarivos.dto.membre.MembreResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;

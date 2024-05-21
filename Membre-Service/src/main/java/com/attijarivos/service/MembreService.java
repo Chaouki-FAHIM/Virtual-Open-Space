@@ -1,12 +1,13 @@
 package com.attijarivos.service;
 
-import com.attijarivos.dto.DetailMembreResponse;
-import com.attijarivos.dto.MembreResponse;
-import com.attijarivos.dto.TeamResponse;
+import com.attijarivos.dto.*;
+import com.attijarivos.dto.membre.MembreRequest;
+import com.attijarivos.dto.membre.MembreResponse;
+import com.attijarivos.dto.team.DetailTeamResponse;
+import com.attijarivos.dto.team.ShortTeamResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
-import com.attijarivos.dto.MembreRequest;
 import com.attijarivos.mapper.MembreMapper;
 import com.attijarivos.model.Membre;
 import com.attijarivos.repository.MembreRespository;
@@ -67,7 +68,7 @@ public class MembreService extends WebClientOperations {
 
     public List<MembreResponse> getAllMembres() {
         List<Membre> membres = membreRespository.findAll();
-        log.info("Membres tourvés sont : {}",membres.toString());
+        log.info("Membres tourvés sont : {}",membres);
         return membres.stream().map(membreMapper::fromMembreToRes).toList();
     }
 
@@ -76,7 +77,7 @@ public class MembreService extends WebClientOperations {
         log.info("Membre trouvé est : {}", membre);
         if (membre.isEmpty()) throw new NotFoundDataException(idMembre);
 
-        List<TeamResponse> teamResponseList = receiveAllTeams();
+        List<DetailTeamResponse> detailTeamResponseList = receiveAllTeams();
 
         DetailMembreResponse response = DetailMembreResponse.builder()
                 .idMembre(membre.get().getIdMembre())
@@ -86,26 +87,33 @@ public class MembreService extends WebClientOperations {
                 .statutCollaboration(membre.get().isStatutCollaboration())
                 .build();
 
-        Set<TeamResponse> teamResponseSet = new HashSet<>();
+        Set<ShortTeamResponse> detailTeamResponseSet = new HashSet<>();
 
-        int numberOfTeamsProccessed = 0;
-        for (TeamResponse teamResponse : teamResponseList) {
-            log.warn("Equipe : {}",teamResponse.toString());
-            if (teamResponse.getMembres() != null) {
-                for (MembreResponse membreResponse : teamResponse.getMembres()) {
-                    log.warn("GetIdMembre d'équipe {} : {}",teamResponse.getIdTeam(),membreResponse.getIdMembre());
+        for (DetailTeamResponse detailTeamResponse : detailTeamResponseList) {
+            log.warn("Equipe : {}", detailTeamResponse.toString());
+                for (MembreResponse membreResponse : detailTeamResponse.getMembres()) {
+                    log.warn("GetIdMembre d'équipe {} : {}", detailTeamResponse.getIdTeam(),membreResponse.getIdMembre());
                     if (membreResponse.getIdMembre() != null && membreResponse.getIdMembre().equals(idMembre)) {
-                        teamResponseSet.add(teamResponse);
-                        break;  // Exit the loop once a match is found
+
+                        detailTeamResponseSet.add(
+                                ShortTeamResponse.builder()
+                                        .idTeam(detailTeamResponse.getIdTeam())
+                                        .nomTeam(detailTeamResponse.getNomTeam())
+                                        .siege(detailTeamResponse.getSiege())
+                                        .build()
+                        );
+                        break;
                     }
-                }
             }
-            numberOfTeamsProccessed++;
         }
 
-        response.setTeams(teamResponseSet);
+        response.setTeams(detailTeamResponseSet);
 
         return response;
     }
 
+    public DetailMembreResponse updateMembre(Long idMembre,MembreRequest membreRequest) throws NotFoundDataException, MicroserviceAccessFailureException {
+
+        return null;
+    }
 }

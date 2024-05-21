@@ -1,4 +1,4 @@
-package com.attijarivos.dto;
+package com.attijarivos.dto.membre;
 
 import com.attijarivos.model.RoleHabilation;
 import lombok.*;
