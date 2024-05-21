@@ -4,8 +4,6 @@ import com.attijarivos.dto.request.MembreRequest;
 import com.attijarivos.dto.request.MembreUpdateRequest;
 import com.attijarivos.dto.response.shorts.ShortMembreResponse;
 import com.attijarivos.dto.response.details.DetailMembreResponse;
-import com.attijarivos.dto.response.details.DetailTeamResponse;
-import com.attijarivos.dto.response.shorts.ShortTeamResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
@@ -111,4 +109,11 @@ public class MembreService extends WebClientOperations {
                membre.get(),  receiveAllTeams()
         );
     }
+
+    public void deleteMembre(String idMembre) throws NotFoundDataException, MicroserviceAccessFailureException {
+        Optional<Membre> membre = Optional.of(receiveMembre(idMembre));
+        membreRespository.delete(membre.get());
+        syncDeleteMemberInTeam(idMembre);
+    }
+
 }

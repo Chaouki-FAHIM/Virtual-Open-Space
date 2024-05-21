@@ -2,6 +2,7 @@ package com.attijarivos.controller;
 
 import com.attijarivos.dto.request.MembreUpdateRequest;
 import com.attijarivos.dto.response.details.DetailMembreResponse;
+import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.dto.request.MembreRequest;
@@ -29,6 +30,8 @@ public class MembreController {
             return ResponseEntity.status(HttpStatus.CREATED).body(shortMembreResponse);
         } catch (RequiredDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (MicroserviceAccessFailureException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -51,6 +54,8 @@ public class MembreController {
             return ResponseEntity.ok(membreResponse);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (MicroserviceAccessFailureException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -63,6 +68,22 @@ public class MembreController {
             return ResponseEntity.ok(membreResponse);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (MicroserviceAccessFailureException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") String idMembre) {
+        try {
+            membreService.deleteMembre(idMembre);
+            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de l'équipe d'id : "+idMembre);
+        } catch (NotFoundDataException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (MicroserviceAccessFailureException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

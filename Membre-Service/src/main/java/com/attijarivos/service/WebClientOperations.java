@@ -80,12 +80,27 @@ public abstract class WebClientOperations {
                     .uri(WebClientConfig.TEAM_SERVICE_URL + "/syncUpdateMembre")
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(membreResponse)
-                    .retrieve()
-                    .bodyToFlux(DetailTeamResponse.class)
-                    .collectList()
-                    .block() ;
+                     .retrieve()
+                     .bodyToMono(Void.class)
+                     .subscribe();
         } catch (WebClientRequestException e) {
             log.error("Problème lors de connexion avec le Team-Service", e);
+            throw new MicroserviceAccessFailureException("Team");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("Erreur lors de la récupération des équipes", e);
+        }
+    }
+
+    protected void syncDeleteMemberInTeam(String membreId) throws MicroserviceAccessFailureException {
+        try {
+            webClient.patch()
+                    .uri(WebClientConfig.TEAM_SERVICE_URL + "/syncDeleteMembre/"+membreId)
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .subscribe();
+        } catch (WebClientRequestException e) {
+            log.error("Problème lors de connexion avec le Team-Service lors de synchronisation les données du  membres des équipes (Delete)", e);
             throw new MicroserviceAccessFailureException("Team");
         } catch (Exception e) {
             log.error(e.getMessage());

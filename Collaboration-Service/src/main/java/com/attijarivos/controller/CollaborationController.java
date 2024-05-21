@@ -6,6 +6,7 @@ import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.exception.CollaborationAccessDeniedException;
+import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.service.ICollaborationService;
@@ -39,6 +40,8 @@ public class CollaborationController implements ICollaborationController<Collabo
             return ResponseEntity.status(HttpStatus.CREATED).body(collaborationResponse);
         } catch (RequiredDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (MicroserviceAccessFailureException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -90,6 +93,8 @@ public class CollaborationController implements ICollaborationController<Collabo
             return ResponseEntity.status(HttpStatus.OK).body(collaborationService.getMembersForJoiningCollaboration(idCollaboration));
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (MicroserviceAccessFailureException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

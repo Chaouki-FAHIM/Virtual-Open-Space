@@ -4,10 +4,7 @@ package com.attijarivos.controller;
 import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
-import com.attijarivos.exception.NotFoundDataException;
-import com.attijarivos.exception.NotValidOwnerInviteException;
-import com.attijarivos.exception.RededicationInvitationException;
-import com.attijarivos.exception.RequiredDataException;
+import com.attijarivos.exception.*;
 import com.attijarivos.service.IInvitationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +36,8 @@ public class InvitationController implements IInvitationController<InvitationReq
             return ResponseEntity.status(HttpStatus.CREATED).body(invitationResponse);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (MicroserviceAccessFailureException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
         } catch (RequiredDataException | NotValidOwnerInviteException | RededicationInvitationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
