@@ -20,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -139,4 +136,36 @@ public class TeamService {
         return true;
     }
 
+    @Transactional
+    public Set<TeamResponse> syncUpdateMemberInTeam(MembreDTO membreDTO) {
+
+        Set<TeamResponse> teamsOfMembre = new HashSet<>();
+        for(Team team : teamRepository.findAll())
+            for(MembreDTO membre : team.getMembres())
+                if(membre.getIdMembre().equals(membreDTO.getIdMembre())) {
+                    teamsOfMembre.add(teamMapper.fromTeamToRes(team));
+                    membre.setNomMembre(membreDTO.getNomMembre());
+                    membre.setPrenom(membreDTO.getPrenom());
+                    membre.setRoleHabilation(membreDTO.getRoleHabilation());
+                    teamRepository.save(team);
+                    break;
+                }
+
+
+        return teamsOfMembre;
+    }
+
+    public Set<TeamResponse> syncDeleteMemberInTeam(String idMembre) {
+        Set<TeamResponse> teamsOfMembre = new HashSet<>();
+        for(Team team : teamRepository.findAll()) {
+            for(MembreDTO membre : team.getMembres())
+                if(membre.getIdMembre().equals(idMembre)) {
+                    teamsOfMembre.add(teamMapper.fromTeamToRes(team));
+                    team.getMembres().remove(membre);
+                    break;
+                }
+            teamRepository.save(team);
+        }
+        return Set.of();
+    }
 }

@@ -1,5 +1,6 @@
 package com.attijarivos.controller;
 
+import com.attijarivos.DTO.MembreDTO;
 import com.attijarivos.DTO.TeamMembresRequest;
 import com.attijarivos.DTO.TeamRequest;
 import com.attijarivos.DTO.TeamResponse;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -83,6 +85,28 @@ public class TeamController {
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/syncUpdateMembre")
+    public ResponseEntity<?> syncUpdateMemberInTeam(@RequestBody @Valid MembreDTO membreDTO) {
+        try {
+            Set<TeamResponse> teamResponseList = teamService.syncUpdateMemberInTeam(membreDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(teamResponseList);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/syncDeleteMembre/{idMembre}")
+    public ResponseEntity<?> syncDeleteMemberInTeam(@PathVariable("idMembre") String membreDTO) {
+        try {
+            Set<TeamResponse> teamResponseList = teamService.syncDeleteMemberInTeam(membreDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(teamResponseList);
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
