@@ -21,6 +21,7 @@
     <module>Collaboration-Service</module>
     <module>Team-Service</module>
     <module>Discovery-Service</module>
+      <module>Gateway-Service</module>
   </modules>
 
   <properties>
