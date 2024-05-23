@@ -10,7 +10,7 @@
 
 The Gateway-Service is implemented using Spring Cloud Gateway. It acts as an entry point for all client requests, routing them to the appropriate microservices within the Virtual Open Space architecture. This service handles request routing, filtering, and provides cross-cutting concerns such as security, monitoring, and resiliency.
 
-Status: **In Progress**
+Status: **Completed**
 
 ## Key Features
 
@@ -34,9 +34,9 @@ Status: **Completed**
 
 ---
 
-# Create Collaboration Service
+# Create Collaborations Service
 
-This section details the progress and components of the Create Collaboration Service.
+This section details the progress and components of the Create Collaborations Service.
 
 ## Current Progress
 
@@ -45,7 +45,7 @@ This section details the progress and components of the Create Collaboration Ser
   - Database: MySQL Workbench 8.0.34
   - Status: **Completed**
 
-- [x] **Endpoints for Collaboration**
+- [x] **Endpoints for Collaborations**
   - Create and manually test endpoints for collaboration management.
   - External communication (WebClient v3)
   - Status: **Completed**
@@ -54,7 +54,7 @@ This section details the progress and components of the Create Collaboration Ser
   - Create and manually test endpoints for invitation management.
   - External communication (WebClient v3)
   - HTTP Methods implemented with all validations in create an invitation.
-  - Create Unit and Integration test for Collaboration API
+  - Create Unit and Integration test for Collaborations API
   - Create Unit and Integration test for Invitation API
   - Status: **Completed**
 
@@ -62,7 +62,7 @@ This section details the progress and components of the Create Collaboration Ser
 
 Separate these two APIs into two microservices:
 
-- Collaboration-Service should contain classes for Collaboration and Participation.
+- Collaborations-Service should contain classes for Collaborations and Participation.
 - Invitation-Service should contain the Invitation class.
 
 ---
@@ -90,9 +90,9 @@ Change MongoDB database to Firebase RealTime database
 
 ---
 
-# Create Team Service
+# Create Teams Service
 
-This section details the progress and components of the Create Team Service.
+This section details the progress and components of the Create Teams Service.
 
 ## Current Progress
 

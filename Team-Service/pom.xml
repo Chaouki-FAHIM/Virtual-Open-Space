@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>team-service</name>
-    <description>Team Service</description>
+    <description>Teams Service</description>
     <url>**</url>
 
     <properties>
