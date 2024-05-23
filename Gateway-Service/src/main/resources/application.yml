@@ -1,0 +1,27 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: membre-service
+          uri: lb://membre-service
+          predicates:
+            - Path=/membres/**
+        - id: collaboration-service
+          uri: lb://collaboration-service
+          predicates:
+            - Path=/collaborations/**
+        - id: team-service
+          uri: lb://team-service
+          predicates:
+            - Path=/teams/**
+  main:
+    web-application-type: reactive
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
