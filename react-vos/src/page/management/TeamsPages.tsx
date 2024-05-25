@@ -1,7 +1,7 @@
 import React from 'react';
 
-function Teams() {
+function TeamsPages() {
     return <h1>Equipes</h1>;
 }
 
-export default Teams;
+export default TeamsPages;

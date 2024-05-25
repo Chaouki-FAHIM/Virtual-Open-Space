@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Virtual Open Space** is a web application designed to visualize collaborations and virtual meetings within an organization using Microsoft Teams. The goal of the application is to streamline the viewing and management of virtual interactions to enhance organizational efficiency and connectivity.
+**Virtual Open Space** is a web application designed to visualize collaborations and virtual meetings within an organization using Microsoft TeamsPages. The goal of the application is to streamline the viewing and management of virtual interactions to enhance organizational efficiency and connectivity.
 
 ---
 
@@ -34,9 +34,9 @@ Status: **Completed**
 
 ---
 
-# Create Collaborations Service
+# Create CollaborationsPage Service
 
-This section details the progress and components of the Create Collaborations Service.
+This section details the progress and components of the Create CollaborationsPage Service.
 
 ## Current Progress
 
@@ -45,7 +45,7 @@ This section details the progress and components of the Create Collaborations Se
   - Database: MySQL Workbench 8.0.34
   - Status: **Completed**
 
-- [x] **Endpoints for Collaborations**
+- [x] **Endpoints for CollaborationsPage**
   - Create and manually test endpoints for collaboration management.
   - External communication (WebClient v3)
   - Status: **Completed**
@@ -54,7 +54,7 @@ This section details the progress and components of the Create Collaborations Se
   - Create and manually test endpoints for invitation management.
   - External communication (WebClient v3)
   - HTTP Methods implemented with all validations in create an invitation.
-  - Create Unit and Integration test for Collaborations API
+  - Create Unit and Integration test for CollaborationsPage API
   - Create Unit and Integration test for Invitation API
   - Status: **Completed**
 
@@ -62,7 +62,7 @@ This section details the progress and components of the Create Collaborations Se
 
 Separate these two APIs into two microservices:
 
-- Collaborations-Service should contain classes for Collaborations and Participation.
+- CollaborationsPage-Service should contain classes for CollaborationsPage and Participation.
 - Invitation-Service should contain the Invitation class.
 
 ---
@@ -90,9 +90,9 @@ Change MongoDB database to Firebase RealTime database
 
 ---
 
-# Create Teams Service
+# Create TeamsPages Service
 
-This section details the progress and components of the Create Teams Service.
+This section details the progress and components of the Create TeamsPages Service.
 
 ## Current Progress
 
