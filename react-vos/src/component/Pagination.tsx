@@ -7,24 +7,47 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
-    const handlePageChange = (page: number):void => {
+    const handlePageChange = (page: number): void => {
         if (page > 0 && page <= totalPages) {
             onPageChange(page);
         }
     };
 
-    const pages = Array.from({ length: totalPages }, (_, i:number) => i + 1);
+    const pages = Array.from({ length: totalPages }, (_, i: number) => i + 1);
 
     return (
         <nav aria-label="Page navigation">
-            <ul className="pagination pagination-sm justify-content-center">
+            <ul className="pagination justify-content-center">
+                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                    <button
+                        className="page-link"
+                        aria-label="Previous"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        <span aria-hidden="true">&laquo;</span>
+                    </button>
+                </li>
                 {pages.map(page => (
                     <li key={page} className={`page-item ${page === currentPage ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => handlePageChange(page)}>
+                        <button
+                            className={`page-link ${page === currentPage ? 'bg-dark border-dark text-white' : ''}`}
+                            onClick={() => handlePageChange(page)}
+                        >
                             {page}
                         </button>
                     </li>
                 ))}
+                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                    <button
+                        className="page-link"
+                        aria-label="Next"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        <span aria-hidden="true">&raquo;</span>
+                    </button>
+                </li>
             </ul>
         </nav>
     );

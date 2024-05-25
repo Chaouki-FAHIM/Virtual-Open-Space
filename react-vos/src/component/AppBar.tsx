@@ -26,6 +26,37 @@ function AppBar() {
         }
     }, [location]);
 
+    // Fonction pour fermer le menu avec animation
+    const closeMenu = () => {
+        const nav = document.getElementById('navbarNavDropdown');
+        if (nav && nav.classList.contains('show')) {
+            nav.classList.remove('show');
+            nav.classList.add('collapsing');
+            setTimeout(() => {
+                nav.classList.remove('collapsing');
+                nav.classList.add('collapse');
+            }, 350); // Durée de l'animation en millisecondes
+        }
+    };
+
+    // Fonction pour gérer le clic sur le bouton de basculement de la barre de navigation
+    const handleTogglerClick = () => {
+        const nav = document.getElementById('navbarNavDropdown');
+        if (nav) {
+            if (nav.classList.contains('show')) {
+                nav.classList.remove('show');
+                nav.classList.add('collapsing');
+                setTimeout(() => {
+                    nav.classList.remove('collapsing');
+                    nav.classList.add('collapse');
+                }, 350); // Durée de l'animation en millisecondes
+            } else {
+                nav.classList.remove('collapse');
+                nav.classList.add('show');
+            }
+        }
+    };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
@@ -40,7 +71,7 @@ function AppBar() {
                 </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
-                        aria-label="Toggle navigation">
+                        aria-label="Toggle navigation" onClick={handleTogglerClick}>
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNavDropdown">
@@ -50,7 +81,10 @@ function AppBar() {
                                 <Link
                                     className={`btn nav-link ${selectedPage === item.name ? 'text-warning' : 'text-light'}`}
                                     to={item.link}
-                                    onClick={() => setSelectedPage(item.name)}
+                                    onClick={() => {
+                                        setSelectedPage(item.name);
+                                        closeMenu(); // Fermer le menu après le clic
+                                    }}
                                 >
                                     {item.name}
                                     <i className={`bi bi-${item.icone} ${selectedPage === item.name ? 'text-warning' : 'text-light'} m-2`}></i>
