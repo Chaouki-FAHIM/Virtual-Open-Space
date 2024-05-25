@@ -10,7 +10,7 @@
     <artifactId>collaboration-service</artifactId>
     <packaging>jar</packaging>
 
-    <name>CollaborationsPage-Service</name>
+    <name>Collaboration-Service</name>
     <url>**</url>
 
     <!-- Dependencies -->

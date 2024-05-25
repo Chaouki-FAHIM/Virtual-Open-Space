@@ -11,7 +11,7 @@ const MembresPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [membersPerPage] = useState(4);
-    const [selectedMember, setSelectedMember] = useState<Membre | null>(null);
+    const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,12 +38,12 @@ const MembresPage: React.FC = () => {
         setCurrentPage(page);
     };
 
-    const handleMemberClick = (member: Membre) => {
-        setSelectedMember(member);
+    const handleMemberClick = (id: string) => {
+        setSelectedMemberId(id);
     };
 
     const handleCloseModal = () => {
-        setSelectedMember(null);
+        setSelectedMemberId(null);
     };
 
     return (
@@ -62,7 +62,7 @@ const MembresPage: React.FC = () => {
                     // Afficher les cartes membres une fois les données chargées
                     currentMembers.map((membreItem) => (
                         <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={membreItem.idMembre}>
-                            <MembreCard membre={membreItem} onClick={() => handleMemberClick(membreItem)} />
+                            <MembreCard membre={membreItem} onClick={() => handleMemberClick(membreItem.idMembre)} />
                         </div>
                     ))
                 )}
@@ -70,8 +70,8 @@ const MembresPage: React.FC = () => {
             {!loading && members.length > membersPerPage && (
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             )}
-            {selectedMember && (
-                <MemberModal show={!!selectedMember} member={selectedMember} onClose={handleCloseModal} />
+            {selectedMemberId && (
+                <MemberModal show={!!selectedMemberId} memberId={selectedMemberId} onClose={handleCloseModal} />
             )}
         </div>
     );

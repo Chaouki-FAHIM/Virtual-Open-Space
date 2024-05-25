@@ -4,4 +4,5 @@ export interface Membre {
     nomMembre: string;
     prenom: string;
     roleHabilation: string;
+    statutCollaboration?: string;
 }

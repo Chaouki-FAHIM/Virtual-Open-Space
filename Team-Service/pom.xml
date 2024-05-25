@@ -13,8 +13,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>team-service</name>
-    <description>TeamsPages Service</description>
+    <name>Team-Service</name>
+    <description>Team Service</description>
     <url>**</url>
 
     <properties>
