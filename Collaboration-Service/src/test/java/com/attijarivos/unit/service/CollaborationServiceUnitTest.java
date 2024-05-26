@@ -31,6 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CollaborationServiceUnitTest extends WebClientTest implements ICollaborationTest {
 
@@ -82,7 +83,7 @@ public class CollaborationServiceUnitTest extends WebClientTest implements IColl
     }
 
     @Test
-    void getOneCollaboration() throws NotFoundDataException {
+    void getOneCollaboration() throws NotFoundDataException, MicroserviceAccessFailureException {
 
         // Arrange
         Long idCollaboration = 1L;
@@ -104,25 +105,29 @@ public class CollaborationServiceUnitTest extends WebClientTest implements IColl
     }
 
     @Test
-    void getAllCollaborations() {
+    void getAllCollaborations() throws NotFoundDataException, MicroserviceAccessFailureException {
 
         // Arrange
         Collaboration collaboration1 = getCollaboration(1L);
         Collaboration collaboration2 = getCollaboration(2L);
 
-        List<Collaboration> collaborations = Arrays.asList(collaboration1, collaboration2);
+        Set<Collaboration> collaborations = new HashSet<>();
+        collaborations.add(collaboration1);
+        collaborations.add(collaboration2);
 
         CollaborationResponse response1 = collaborationMapper.fromModelToRes(collaboration1);
         CollaborationResponse response2 = collaborationMapper.fromModelToRes(collaboration2);
 
-        List<CollaborationResponse> expectedResponses = Arrays.asList(response1, response2);
+        Set<CollaborationResponse> expectedResponses = new HashSet<>();
+        expectedResponses.add(response1);
+        expectedResponses.add(response2);
 
-        when(collaborationRepository.findAll()).thenReturn(collaborations);
+        when(collaborationRepository.findAll()).thenReturn((List<Collaboration>) collaborations);
         when(collaborationMapper.fromModelToRes(collaboration1)).thenReturn(response1);
         when(collaborationMapper.fromModelToRes(collaboration2)).thenReturn(response2);
 
         // Act
-        List<CollaborationResponse> responses = collaborationService.getAll();
+        Set<CollaborationResponse> responses = collaborationService.getAll();
 
         // Assert
         assertNotNull(responses);
@@ -204,7 +209,7 @@ public class CollaborationServiceUnitTest extends WebClientTest implements IColl
         when(invitationRepository.findByCollaboration(existingCollaboration))
                 .thenReturn(invitedMemberIds.stream().map(id -> Invitation.builder().idInvite(id).collaboration(existingCollaboration).build()).toList());
         when(participationRepository.findByCollaboration(existingCollaboration))
-                .thenReturn(participatedMemberIds.stream().map(id -> Participation.builder().idParticipant(id).collaboration(existingCollaboration).build()).toList());
+                .thenReturn(participatedMemberIds.stream().map(id -> Participation.builder().idParticipant(id).collaboration(existingCollaboration).build()).collect(Collectors.toSet()));
 
         // Act
         List<MembreResponse> nonInvitedMembers = collaborationService.getMembersForJoiningCollaboration(idCollaboration);

@@ -3,6 +3,8 @@ package com.attijarivos.DTO.response;
 import lombok.*;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +18,7 @@ public class CollaborationResponse {
     private Date dateDepart;
     private Boolean confidentielle;
     private String idProprietaire;
+    private Set<MembreResponse> participants = new HashSet<>();
 
     public String toString() {
         return "{idCollaboration:" + idCollaboration +

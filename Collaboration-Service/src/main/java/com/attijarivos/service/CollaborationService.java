@@ -26,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service("service-layer-collaboration")
@@ -162,18 +163,38 @@ public class CollaborationService implements ICollaborationService<Collaboration
     }
 
     @Override
-    public List<CollaborationResponse> getAll() {
+    public Set<CollaborationResponse> getAll() throws NotFoundDataException, MicroserviceAccessFailureException {
         List<Collaboration> collaborations = collaborationRepository.findAll();
         log.info("Collaborations tourvées sont : {}",collaborations);
-        return collaborations.stream().map(collaborationMapper::fromModelToRes).toList();
+
+        Set<CollaborationResponse> collaborationResponseSet = new HashSet<>();
+
+        for(Collaboration collaboration : collaborations)
+            collaborationResponseSet.add(
+                    getOne(collaboration.getIdCollaboration())
+            );
+
+
+        return collaborationResponseSet;
     }
 
     @Override
-    public CollaborationResponse getOne(Long idCollaboration) throws NotFoundDataException {
+    public CollaborationResponse getOne(Long idCollaboration) throws NotFoundDataException, MicroserviceAccessFailureException {
         Optional<Collaboration> collaboration = Optional.of(receiveCollaboration(idCollaboration));
         log.info("Collaboration tourvée est : {}",collaboration.get());
 
-        return collaboration.map(collaborationMapper::fromModelToRes).orElse(null);
+        Set<String> participationIdSet = participationRepository.findByCollaboration(collaboration.get()).stream().map(Participation::getIdParticipant).collect(Collectors.toSet());
+
+        CollaborationResponse response = collaborationMapper.fromModelToRes(
+                collaboration.get()
+        );
+
+        for (String participationId : participationIdSet)
+            response.getParticipants().add(
+                    receiveMembreById(participationId).get()
+            );
+
+        return response;
     }
 
     @Override
@@ -262,7 +283,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
         if( hasJoinedCollaboration(
                 joinRequest.getIdMembre(),collaboration.get())
-        ) return collaborationMapper.fromModelToRes(collaboration.get());
+        ) return getOne(idCollaboration);
 
         throw new CollaborationAccessDeniedException(idCollaboration);
     }

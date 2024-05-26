@@ -16,9 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/invitations")
+@CrossOrigin("http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
 public class InvitationController implements IInvitationController<InvitationRequest,Long> {
@@ -62,7 +64,7 @@ public class InvitationController implements IInvitationController<InvitationReq
     @Override
     public ResponseEntity<?> getAll() {
         try {
-            List<InvitationResponse> invitationsResponse = invitationService.getAll();
+            Set<InvitationResponse> invitationsResponse = invitationService.getAll();
             return ResponseEntity.status(HttpStatus.OK).body(invitationsResponse);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

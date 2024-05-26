@@ -173,7 +173,7 @@ public class InvitationServiceUnitTest extends  WebClientTest implements IInvita
         when(invitationMapper.fromModelToRes(invitation2)).thenReturn(response2);
 
         // Act
-        List<InvitationResponse> actualResponseList = invitationService.getAll();
+        Set<InvitationResponse> actualResponseList = invitationService.getAll();
 
         // Assert
         assertNotNull(actualResponseList);

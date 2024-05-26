@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { GetAllMembers } from "../../service/members/GetAllMembers";
-import { Membre } from "../../model/Membre";
-import MembreCard from "../../component/card/MembreCard";
-import PlaceholderCard from "../../component/card/PlaceholderCard";
-import Pagination from "../../component/Pagination";
-import MemberModal from "../../component/modal/modal-members/MembreModal";
+import React, { useEffect, useState } from 'react'
+import { GetAllMembers } from "../../../service/members/GetAllMembers"
+import { Membre } from "../../../model/Membre"
+import MembreCard from "../../../component/card/membre/MembreCard"
+import PlaceholderMembreCard from "../../../component/card/membre/PlaceholderMembreCard"
+import Pagination from "../../../component/Pagination"
+import MemberModal from "../../../component/modal/modal-members/MembreModal"
 
 const MembresPage: React.FC = () => {
     const [members, setMembers] = useState<Membre[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [membersPerPage] = useState(4);
+    const [membersPerPage] = useState(6);
     const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -54,24 +54,25 @@ const MembresPage: React.FC = () => {
                 {loading ? (
                     // Afficher les placeholders pendant le chargement
                     Array.from({ length: membersPerPage }).map((_, index) => (
-                        <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
-                            <PlaceholderCard />
+                        <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-1" key={index}>
+                            <PlaceholderMembreCard />
                         </div>
                     ))
                 ) : (
                     // Afficher les cartes membres une fois les données chargées
                     currentMembers.map((membreItem) => (
-                        <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={membreItem.idMembre}>
+                        <div className="col-12 col-sm-5 col-md-4 col-lg-2 d-flex justify-content-center" key={membreItem.idMembre}>
                             <MembreCard membre={membreItem} onClick={() => handleMemberClick(membreItem.idMembre)} />
                         </div>
                     ))
                 )}
             </div>
+
             {!loading && members.length > membersPerPage && (
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             )}
             {selectedMemberId && (
-                <MemberModal show={!!selectedMemberId} collaborationId={selectedMemberId} onClose={handleCloseModal} />
+                <MemberModal show={!!selectedMemberId} membreId={selectedMemberId} onClose={handleCloseModal} />
             )}
         </div>
     );

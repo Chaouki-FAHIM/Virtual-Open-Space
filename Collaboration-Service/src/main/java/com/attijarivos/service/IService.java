@@ -3,8 +3,8 @@ package com.attijarivos.service;
 
 import com.attijarivos.exception.*;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 public interface IService <RequestDTO,ResponseDTO,ID> {
@@ -14,7 +14,7 @@ public interface IService <RequestDTO,ResponseDTO,ID> {
     }
 
     ResponseDTO createOne(RequestDTO requestDTO) throws RequiredDataException, NotFoundDataException, RededicationInvitationException, MicroserviceAccessFailureException, NotValidOwnerInviteException;
-    List<ResponseDTO> getAll() throws NotFoundDataException;
-    ResponseDTO getOne(ID id) throws NotFoundDataException;
+    Set<ResponseDTO> getAll() throws NotFoundDataException, MicroserviceAccessFailureException;
+    ResponseDTO getOne(ID id) throws NotFoundDataException, MicroserviceAccessFailureException;
     boolean delete(ID id) throws NotFoundDataException,RequiredDataException;
 }

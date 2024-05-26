@@ -1,3 +1,5 @@
+import {Membre} from "./Membre";
+
 export interface Collaboration {
     idCollaboration:number;
     dateCreationCollaboration:string;
@@ -5,4 +7,5 @@ export interface Collaboration {
     confidentielle:boolean;
     dateDepart:string;
     idProprietaire:string;
+    participants:Membre[];
 }

@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import {Collaboration} from "../../model/Collaboration";
+import { Membre } from "../../../model/Membre";
 import { Tooltip } from "bootstrap";
 
-interface CollaborationCardProps {
-    collaboration: Collaboration;
+interface MembreCardProps {
+    membre: Membre;
     onClick: () => void;
 }
 
-const MembreCard: React.FC<CollaborationCardProps> = ({ collaboration, onClick }) => {
+const MembreCard: React.FC<MembreCardProps> = ({ membre, onClick }) => {
     useEffect(() => {
         const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
@@ -21,13 +21,14 @@ const MembreCard: React.FC<CollaborationCardProps> = ({ collaboration, onClick }
             <img
                 className="rounded-circle border border-black border-2"
                 src='https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'
-                alt={`${collaboration.titre}`}
-                style={{ width: '100px', height: '100px' }}
+                alt={`${membre.nomMembre} ${membre.prenom}`}
+                style={{ width: '5.5rem', height: '5.5rem' }}
                 data-bs-toggle="tooltip"
                 data-bs-title="Avatar"
             />
             <div className="mt-2">
-                <div className="font-weight-bold" data-bs-toggle="tooltip" data-bs-title="Nom & Prénom">${collaboration.dateDepart} </div>
+                <div className="font-weight-bold" data-bs-toggle="tooltip" data-bs-title="Nom & Prénom">{membre.nomMembre} {membre.prenom}</div>
+                <p className="badge bg-warning text-muted" data-bs-toggle="tooltip" data-bs-title="Rôle d'habilation">{membre.roleHabilation}</p>
             </div>
         </div>
     );

@@ -19,10 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/collaborations")
+@CrossOrigin("http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
 public class CollaborationController implements ICollaborationController<CollaborationRequest, Long>{
@@ -51,7 +52,7 @@ public class CollaborationController implements ICollaborationController<Collabo
     @Override
     public ResponseEntity<?> getAll() {
         try {
-            List<CollaborationResponse> collaborationsResponse = collaborationService.getAll();
+            Set<CollaborationResponse> collaborationsResponse = collaborationService.getAll();
             return ResponseEntity.status(HttpStatus.OK).body(collaborationsResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

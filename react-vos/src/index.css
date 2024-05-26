@@ -7,7 +7,7 @@
     margin: 0 auto;   /* Centrer le conteneur */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre douce */
     padding: 15px; /* Ajoutez un peu de padding pour un meilleur rendu */
-    background-color: #ff3300; /* Couleur de fond */
+    background-color: #F6A500; /* Couleur de fond */
     border-radius: 8px; /* Ajouter des coins arrondis */
     color: white; /* Texte en blanc pour un meilleur contraste */
 }

@@ -19,10 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("service-layer-invitation")
 @RequiredArgsConstructor
@@ -174,11 +172,11 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
     }
 
     @Override
-    public List<InvitationResponse> getAll() throws NotFoundDataException {
-        List<Invitation> invitations = invitationRepository.findAll();
+    public Set<InvitationResponse> getAll() throws NotFoundDataException {
+        Set<Invitation> invitations = (Set<Invitation>) invitationRepository.findAll();
         if(invitations.isEmpty()) throw new NotFoundDataException("Liste des invitations est vide !!");
         log.info("Invitations de la collaboration en ligne tourvées sont : {}",invitations);
-        return invitations.stream().map(invitationMapper::fromModelToRes).toList();
+        return invitations.stream().map(invitationMapper::fromModelToRes).collect(Collectors.toSet());
     }
 
     @Override

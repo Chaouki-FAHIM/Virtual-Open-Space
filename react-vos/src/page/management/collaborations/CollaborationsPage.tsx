@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import PlaceholderCard from "../../component/card/PlaceholderCard";
-import Pagination from "../../component/Pagination";
-import {Collaboration} from "../../model/Collaboration";
-import {GetAllCollaborations} from "../../service/collaborations/GelAllCollaborations";
-import CollaborationCard from "../../component/card/CollaborationCard";
+import React, { useEffect, useState } from 'react';
+import PlaceholderMembreCard from "../../../component/card/membre/PlaceholderMembreCard";
+import Pagination from "../../../component/Pagination";
+import { Collaboration } from "../../../model/Collaboration";
+import { GetAllCollaborations } from "../../../service/collaborations/GelAllCollaborations";
+import CollaborationCard from "../../../component/card/collaboration/CollaborationCard";
 
 function CollaborationsPage() {
 
@@ -51,14 +51,14 @@ function CollaborationsPage() {
                     // Afficher les placeholders pendant le chargement
                     Array.from({ length: collaborationsPerPage }).map((_, index) => (
                         <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
-                            <PlaceholderCard />
+                            <PlaceholderMembreCard />
                         </div>
                     ))
                 ) : (
                     // Afficher les cartes membres une fois les données chargées
                     currentCollaborations.map((collaborationItem) => (
                         <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={collaborationItem.idCollaboration}>
-                            <CollaborationCard collaboration={collaborationItem} onClick={() => handleCollaborationClick(collaborationItem.idCollaboration)}/>
+                            <CollaborationCard collaboration={collaborationItem} onClick={() => handleCollaborationClick(collaborationItem.idCollaboration)} />
                         </div>
                     ))
                 )}
@@ -66,9 +66,7 @@ function CollaborationsPage() {
             {!loading && collaborations.length > collaborationsPerPage && (
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             )}
-            {/*{selectedCollaborationId && (*/}
-            {/*    <MemberModal show={!!selectedCollaborationId} collaborationId={selectedCollaborationId} onClose={handleCloseModal} />*/}
-            {/*)}*/}
+
         </div>
     );
 }

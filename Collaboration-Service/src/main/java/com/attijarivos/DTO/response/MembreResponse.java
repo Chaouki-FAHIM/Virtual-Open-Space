@@ -1,5 +1,6 @@
 package com.attijarivos.DTO.response;
 
+import com.attijarivos.DTO.RoleHabilation;
 import lombok.*;
 
 @NoArgsConstructor
@@ -11,8 +12,6 @@ public class MembreResponse {
     private String idMembre;
     private String nomMembre;
     private String prenom;
-    private enum roleHabilation {
-        IOS,ANDROID,BACKEND,FRONTEND,TEST,DEVOPS,DESIGN
-    }
+    private RoleHabilation roleHabilation;
     private boolean statutCollaboration;
 }

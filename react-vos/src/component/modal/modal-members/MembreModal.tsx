@@ -9,7 +9,7 @@ import './MemberModal.css';
 
 interface MemberModalProps {
     show: boolean;
-    collaborationId: string;
+    membreId: string;
     onClose: () => void;
 }
 
@@ -21,14 +21,14 @@ function replaceUnderscoresWithSpace(text: string) {
     return text.replace(/_/g, ' ');
 }
 
-const MemberModal: React.FC<MemberModalProps> = ({ show, collaborationId, onClose }) => {
+const MemberModal: React.FC<MemberModalProps> = ({ show, membreId, onClose }) => {
     const [memberDetail, setMemberDetail] = useState<DetailMembre | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchMember = async () => {
             try {
-                const memberData = await GetOneMembers(collaborationId);
+                const memberData = await GetOneMembers(membreId);
                 setMemberDetail(memberData);
                 setLoading(false);
             } catch (error) {
@@ -38,7 +38,7 @@ const MemberModal: React.FC<MemberModalProps> = ({ show, collaborationId, onClos
         };
 
         fetchMember();
-    }, [collaborationId]);
+    }, [membreId]);
 
     if (!show) {
         return null;
@@ -103,7 +103,7 @@ const MemberModal: React.FC<MemberModalProps> = ({ show, collaborationId, onClos
                         { teams.length === 1 && (
                             <>
                                 <FormRow label="Equipe" value={teams[0].nomTeam} disabled />
-                                <FormRow label="Siège" value= {replaceUnderscoresWithSpace(teams[0].siege)} disabled />
+                                <FormRow label="Siège" value={replaceUnderscoresWithSpace(teams[0].siege)} disabled />
                             </>
                         )}
                         {teams.length > 1 && (
@@ -112,7 +112,7 @@ const MemberModal: React.FC<MemberModalProps> = ({ show, collaborationId, onClos
                                 {teams.map((team) => (
                                     <div key={team.idTeam} className="team-container border p-3 mb-2 rounded">
                                         <FormSubRow label="Equipe" value={team.nomTeam} />
-                                        <FormSubRow label="Siège" value={team.siege} />
+                                        <FormSubRow label="Siège" value={replaceUnderscoresWithSpace(team.siege)} />
                                     </div>
                                 ))}
                             </div>
