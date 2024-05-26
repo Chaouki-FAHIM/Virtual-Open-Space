@@ -9,7 +9,7 @@ import './MemberModal.css';
 
 interface MemberModalProps {
     show: boolean;
-    memberId: string;
+    collaborationId: string;
     onClose: () => void;
 }
 
@@ -21,14 +21,14 @@ function replaceUnderscoresWithSpace(text: string) {
     return text.replace(/_/g, ' ');
 }
 
-const MemberModal: React.FC<MemberModalProps> = ({ show, memberId, onClose }) => {
+const MemberModal: React.FC<MemberModalProps> = ({ show, collaborationId, onClose }) => {
     const [memberDetail, setMemberDetail] = useState<DetailMembre | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchMember = async () => {
             try {
-                const memberData = await GetOneMembers(memberId);
+                const memberData = await GetOneMembers(collaborationId);
                 setMemberDetail(memberData);
                 setLoading(false);
             } catch (error) {
@@ -38,7 +38,7 @@ const MemberModal: React.FC<MemberModalProps> = ({ show, memberId, onClose }) =>
         };
 
         fetchMember();
-    }, [memberId]);
+    }, [collaborationId]);
 
     if (!show) {
         return null;

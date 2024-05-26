@@ -71,7 +71,7 @@ const MembresPage: React.FC = () => {
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             )}
             {selectedMemberId && (
-                <MemberModal show={!!selectedMemberId} memberId={selectedMemberId} onClose={handleCloseModal} />
+                <MemberModal show={!!selectedMemberId} collaborationId={selectedMemberId} onClose={handleCloseModal} />
             )}
         </div>
     );
