@@ -5,7 +5,7 @@ import { Tooltip } from "bootstrap";
 interface LitleMembreCardProps {
     membre: Membre;
     onClick?: () => void;
-    position: { top: string, left: string }; // Ajout de la position comme prop
+    position: { top: string, left: string };
 }
 
 const LitleMembreCard: React.FC<LitleMembreCardProps> = ({ membre, onClick, position }) => {
@@ -18,12 +18,12 @@ const LitleMembreCard: React.FC<LitleMembreCardProps> = ({ membre, onClick, posi
     }, []);
 
     return (
-        <div className="position-absolute" style={{ top: position.top, left: position.left, cursor: 'pointer' }} onClick={onClick}>
+        <div className="position-absolute" style={{ top: position.top, left: position.left, transform: 'translate(-50%, -50%)', cursor: 'pointer' }} onClick={onClick}>
             <img
                 className="rounded-circle border border-black border-2"
                 src='https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'
                 alt={`${membre.nomMembre} ${membre.prenom}`}
-                style={{ width: '3rem', height: '3rem' }} // Augmentation de la taille pour une meilleure visibilité
+                style={{ width: '3rem', height: '3rem' }}
                 data-bs-toggle="tooltip"
                 data-bs-title={`${membre.nomMembre} ${membre.prenom}`}
             />

@@ -31,38 +31,40 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
 
     const getPositionFor4 = (index: number) => {
         const positions = [
-            { top: '-20%', left: '5%' },
-            { top: '-20%', left: '70%' },
-            { top: '-60%', left: '10%' },
-            { top: '-60%', left: '70%' }
+            { top: '25%', left: '25%' },
+            { top: '25%', left: '75%' },
+            { top: '75%', left: '25%' },
+            { top: '75%', left: '75%' }
         ];
         return positions[index % positions.length];
     };
 
     const getPositionFor8 = (index: number) => {
         const positions = [
-            { top: '-80%', left: '40%' }, // Top
-            { top: '-67%', left: '2%' },
-            { top: '-67%', left: '75%' },
-            { top: '-47%', left: '2%' },
-            { top: '-47%', left: '75%' },
-            { top: '-27%', left: '5%' },
-            { top: '-27%', left: '75%' },
-            { top: '-15%', left: '40%' } // Bouttom
+            { top: '10%', left: '50%' }, // Top
+            { top: '20%', left: '15%' },
+            { top: '20%', left: '85%' },
+            { top: '40%', left: '15%' },
+            { top: '40%', left: '85%' },
+            { top: '60%', left: '15%' },
+            { top: '60%', left: '85%' },
+            { top: '70%', left: '50%' } // Bottom
         ];
         return positions[index % positions.length];
     };
 
     const getPositionFor10 = (index: number) => {
         const positions = [
-            { top: '0%', left: '40%' },
-            { top: '10%', left: '5%' },
-            { top: '10%', left: '75%' },
-            { top: '40%', left: '5%' },
-            { top: '40%', left: '75%' },
-            { top: '65%', left: '5%' },
-            { top: '65%', left: '75%' },
-            { top: '90%', left: '40%' }
+            { top: '10%', left: '50%' },
+            { top: '20%', left: '15%' },
+            { top: '20%', left: '85%' },
+            { top: '40%', left: '15%' },
+            { top: '40%', left: '85%' },
+            { top: '60%', left: '15%' },
+            { top: '60%', left: '85%' },
+            { top: '80%', left: '15%' },
+            { top: '80%', left: '85%' },
+            { top: '90%', left: '50%' }
         ];
         return positions[index % positions.length];
     };
@@ -79,14 +81,15 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
 
     return (
         <div className="text-center mx-3 my-3 position-relative" style={{ cursor: 'pointer', width: '75%', height: 'auto' }} onClick={onClick}>
-            <img
-                src={getImageSrc(collaboration.participants.length)}
-                alt={`Collaboration ${collaboration.titre}`}
-                className="img-fluid"
-                data-bs-toggle="tooltip"
-                data-bs-title="Collaboration"
-            />
-            <div className="position-relative" style={{ width: '100%', height: '100%' }}>
+            <div className="position-relative w-100 h-100">
+                <img
+                    src={getImageSrc(collaboration.participants.length)}
+                    alt={`Collaboration ${collaboration.titre}`}
+                    className="img-fluid"
+                    data-bs-toggle="tooltip"
+                    data-bs-title="Collaboration"
+                    style={{ width: '100%', height: 'auto' }}
+                />
                 {collaboration.participants.length > 0 &&
                     collaboration.participants.map((participant: Membre, index: number) => (
                         <LitleMembreCard membre={participant} key={index} position={getPosition(index)} />
