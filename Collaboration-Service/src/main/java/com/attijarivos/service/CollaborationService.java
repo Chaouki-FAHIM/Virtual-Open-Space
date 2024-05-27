@@ -173,8 +173,6 @@ public class CollaborationService implements ICollaborationService<Collaboration
             collaborationResponseSet.add(
                     getOne(collaboration.getIdCollaboration())
             );
-
-
         return collaborationResponseSet;
     }
 

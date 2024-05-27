@@ -3,6 +3,9 @@ package com.attijarivos.DTO.response;
 import com.attijarivos.DTO.RoleHabilation;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -14,4 +17,5 @@ public class MembreResponse {
     private String prenom;
     private RoleHabilation roleHabilation;
     private boolean statutCollaboration;
+    private Set<TeamResponse> teams= new HashSet<>();
 }

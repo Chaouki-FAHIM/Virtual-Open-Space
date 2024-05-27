@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
+import { format } from 'date-fns';
 import { Collaboration } from "../../../model/Collaboration";
 import { Tooltip } from "bootstrap";
-import { Membre } from "../../../model/Membre";
+import { DetailsMembre } from "../../../model/DetailsMembre";
 import LitleMembreCard from "../membre/LitleMembreCard";
 
 interface CollaborationCardProps {
@@ -12,6 +13,7 @@ interface CollaborationCardProps {
 const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, onClick }) => {
 
     useEffect(() => {
+        console.log(collaboration);
         const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
         return () => {
@@ -31,40 +33,38 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
 
     const getPositionFor4 = (index: number) => {
         const positions = [
-            { top: '25%', left: '25%' },
-            { top: '25%', left: '75%' },
-            { top: '75%', left: '25%' },
-            { top: '75%', left: '75%' }
+            { top: '-20%', left: '5%' },
+            { top: '-20%', left: '70%' },
+            { top: '-60%', left: '10%' },
+            { top: '-60%', left: '70%' }
         ];
         return positions[index % positions.length];
     };
 
     const getPositionFor8 = (index: number) => {
         const positions = [
-            { top: '10%', left: '50%' }, // Top
-            { top: '20%', left: '15%' },
-            { top: '20%', left: '85%' },
-            { top: '40%', left: '15%' },
-            { top: '40%', left: '85%' },
-            { top: '60%', left: '15%' },
-            { top: '60%', left: '85%' },
-            { top: '70%', left: '50%' } // Bottom
+            { top: '-80%', left: '40%' }, // Top
+            { top: '-67%', left: '2%' },
+            { top: '-67%', left: '75%' },
+            { top: '-47%', left: '2%' },
+            { top: '-47%', left: '75%' },
+            { top: '-27%', left: '5%' },
+            { top: '-27%', left: '75%' },
+            { top: '-15%', left: '40%' } // Bottom
         ];
         return positions[index % positions.length];
     };
 
     const getPositionFor10 = (index: number) => {
         const positions = [
-            { top: '10%', left: '50%' },
-            { top: '20%', left: '15%' },
-            { top: '20%', left: '85%' },
-            { top: '40%', left: '15%' },
-            { top: '40%', left: '85%' },
-            { top: '60%', left: '15%' },
-            { top: '60%', left: '85%' },
-            { top: '80%', left: '15%' },
-            { top: '80%', left: '85%' },
-            { top: '90%', left: '50%' }
+            { top: '0%', left: '40%' },
+            { top: '10%', left: '5%' },
+            { top: '10%', left: '75%' },
+            { top: '40%', left: '5%' },
+            { top: '40%', left: '75%' },
+            { top: '65%', left: '5%' },
+            { top: '65%', left: '75%' },
+            { top: '90%', left: '40%' }
         ];
         return positions[index % positions.length];
     };
@@ -79,28 +79,50 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
         }
     };
 
+    // Récupérer les équipes du propriétaire
+    const ownerTeams = collaboration.participants.find(p => p.idMembre === collaboration.idProprietaire)?.teams.map(team => team.idTeam) || [];
+
+    // Formater la date
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(date);
+    };
+
+    const formattedDate = formatDate(collaboration.dateDepart);
+
     return (
         <div className="text-center mx-3 my-3 position-relative" style={{ cursor: 'pointer', width: '75%', height: 'auto' }} onClick={onClick}>
-            <div className="position-relative w-100 h-100">
-                <img
-                    src={getImageSrc(collaboration.participants.length)}
-                    alt={`Collaboration ${collaboration.titre}`}
-                    className="img-fluid"
-                    data-bs-toggle="tooltip"
-                    data-bs-title="Collaboration"
-                    style={{ width: '100%', height: 'auto' }}
-                />
+            <div className="font-weight-bold mb-2" data-bs-toggle="tooltip" data-bs-title="Date de départ">
+                {formattedDate}
+            </div>
+            <div className="mb-2" data-bs-toggle="tooltip" data-bs-title="Titre">
+                <strong>{collaboration.titre}</strong>
+            </div>
+            <img
+                src={getImageSrc(collaboration.participants.length)}
+                alt={`Collaboration ${collaboration.titre}`}
+                className="img-fluid"
+                data-bs-toggle="tooltip"
+                data-bs-title="Collaboration"
+            />
+            <div className="position-relative" style={{ width: '100%', height: '100%' }}>
                 {collaboration.participants.length > 0 &&
-                    collaboration.participants.map((participant: Membre, index: number) => (
-                        <LitleMembreCard membre={participant} key={index} position={getPosition(index)} />
+                    collaboration.participants.map((participant: DetailsMembre, index: number) => (
+                        <LitleMembreCard
+                            membre={participant}
+                            key={index}
+                            ownerTeams={ownerTeams}
+                            idProprietaire={collaboration.idProprietaire}
+                            position={getPosition(index)}
+                        />
                     ))
                 }
-            </div>
-            <div className="font-weight-bold mt-4" data-bs-toggle="tooltip" data-bs-title="Date de départ">
-                {collaboration.dateDepart}
-            </div>
-            <div className="font-weight-bold" data-bs-toggle="tooltip" data-bs-title="Titre">
-                {collaboration.titre}
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import {Membre} from "./Membre";
+import {DetailsMembre} from "./DetailsMembre";
 
 export interface Collaboration {
     idCollaboration:number;
@@ -7,5 +7,5 @@ export interface Collaboration {
     confidentielle:boolean;
     dateDepart:string;
     idProprietaire:string;
-    participants:Membre[];
+    participants:DetailsMembre[];
 }
