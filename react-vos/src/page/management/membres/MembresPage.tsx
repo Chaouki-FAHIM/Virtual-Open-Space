@@ -4,7 +4,7 @@ import { Membre } from "../../../model/Membre"
 import MembreCard from "../../../component/card/membre/MembreCard"
 import PlaceholderMembreCard from "../../../component/card/membre/PlaceholderMembreCard"
 import Pagination from "../../../component/Pagination"
-import MemberModal from "../../../component/modal/modal-members/MembreModal"
+import MemberModal from "../../../component/modal/members/MembreModal"
 
 const MembresPage: React.FC = () => {
     const [members, setMembers] = useState<Membre[]>([]);
@@ -61,7 +61,7 @@ const MembresPage: React.FC = () => {
                 ) : (
                     // Afficher les cartes membres une fois les données chargées
                     currentMembers.map((membreItem) => (
-                        <div className="col-12 col-sm-5 col-md-4 col-lg-2 d-flex justify-content-center" key={membreItem.idMembre}>
+                        <div className="col-6 col-sm-5 col-md-4 col-lg-2 d-flex justify-content-center" key={membreItem.idMembre}>
                             <MembreCard membre={membreItem} onClick={() => handleMemberClick(membreItem.idMembre)} />
                         </div>
                     ))

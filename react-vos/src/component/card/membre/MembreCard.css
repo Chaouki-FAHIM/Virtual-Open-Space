@@ -1,0 +1,9 @@
+.tooltip-inner {
+    background-color: gold; /* Change la couleur de fond à doré */
+    color: black; /* Change la couleur du texte à noir */
+}
+
+.tooltip-arrow::before {
+    border-top-color: gold; /* Change la couleur de la flèche à doré */
+}
+

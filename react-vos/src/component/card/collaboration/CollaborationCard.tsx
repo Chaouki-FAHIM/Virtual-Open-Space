@@ -13,7 +13,6 @@ interface CollaborationCardProps {
 const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, onClick }) => {
 
     useEffect(() => {
-        console.log(collaboration);
         const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
         return () => {
@@ -43,46 +42,25 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
 
     const getPositionFor8 = (index: number) => {
         const positions = [
-            { top: '-80%', left: '40%' }, // Top
-            { top: '-67%', left: '2%' },
-            { top: '-67%', left: '75%' },
-            { top: '-47%', left: '2%' },
-            { top: '-47%', left: '75%' },
-            { top: '-27%', left: '5%' },
-            { top: '-27%', left: '75%' },
+            { top: '-90%', left: '40%' }, // Top
+            { top: '-77%', left: '2%' },
+            { top: '-77%', left: '75%' },
+            { top: '-53%', left: '2%' },
+            { top: '-53%', left: '75%' },
+            { top: '-30%', left: '5%' },
+            { top: '-30%', left: '75%' },
             { top: '-15%', left: '40%' } // Bottom
         ];
         return positions[index % positions.length];
     };
 
-    const getPositionFor10 = (index: number) => {
-        const positions = [
-            { top: '0%', left: '40%' },
-            { top: '10%', left: '5%' },
-            { top: '10%', left: '75%' },
-            { top: '40%', left: '5%' },
-            { top: '40%', left: '75%' },
-            { top: '65%', left: '5%' },
-            { top: '65%', left: '75%' },
-            { top: '90%', left: '40%' }
-        ];
-        return positions[index % positions.length];
-    };
-
     const getPosition = (index: number) => {
-        if (collaboration.participants.length <= 4) {
-            return getPositionFor4(index);
-        } else if (collaboration.participants.length <= 8) {
-            return getPositionFor8(index);
-        } else {
-            return getPositionFor10(index);
-        }
+        if (collaboration.participants.length <= 4) return getPositionFor4(index);
+        else return getPositionFor8(index);
     };
 
-    // Récupérer les équipes du propriétaire
     const ownerTeams = collaboration.participants.find(p => p.idMembre === collaboration.idProprietaire)?.teams.map(team => team.idTeam) || [];
 
-    // Formater la date
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('fr-FR', {
@@ -98,11 +76,25 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
 
     return (
         <div className="text-center mx-3 my-3 position-relative" style={{ cursor: 'pointer', width: '75%', height: 'auto' }} onClick={onClick}>
-            <div className="font-weight-bold mb-2" data-bs-toggle="tooltip" data-bs-title="Date de départ">
-                {formattedDate}
-            </div>
-            <div className="mb-2" data-bs-toggle="tooltip" data-bs-title="Titre">
-                <strong>{collaboration.titre}</strong>
+            {/*<div className="font-weight-bold mb-2" data-bs-toggle="tooltip" data-bs-title="Date de départ">{formattedDate}</div>*/}
+            <div className="mb-2 flex items-baseline">
+                <strong data-bs-toggle="tooltip" data-bs-title="Titre">{collaboration.titre}</strong>
+
+                <span className="badge rounded-pill text-bg-warning mx-1" data-bs-toggle="tooltip"
+                      data-bs-title="Nombre de participants">
+                    {collaboration.participants.length} <i className="bi bi-person-fill"></i>
+                </span>
+                {
+                    collaboration.confidentielle && (
+                        <span className="badge rounded-pill text-bg-danger m-1" data-bs-toggle="tooltip"
+                              data-bs-title="Confidentielle">
+                            <i className="bi bi-lock-fill"></i>
+                        </span>
+
+                    )
+                }
+
+
             </div>
             <img
                 src={getImageSrc(collaboration.participants.length)}

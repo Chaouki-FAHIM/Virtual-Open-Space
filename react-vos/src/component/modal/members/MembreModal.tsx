@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GetOneMembers } from "../../../service/members/GetOneMembers";
+import { GetOneMember } from "../../../service/members/GetOneMember";
 import { Membre } from "../../../model/Membre";
 import { Team } from "../../../model/Team";
 import FormRow from '../../form/FormRow';
@@ -28,7 +28,7 @@ const MemberModal: React.FC<MemberModalProps> = ({ show, membreId, onClose }) =>
     useEffect(() => {
         const fetchMember = async () => {
             try {
-                const memberData = await GetOneMembers(membreId);
+                const memberData = await GetOneMember(membreId);
                 setMemberDetail(memberData);
                 setLoading(false);
             } catch (error) {
