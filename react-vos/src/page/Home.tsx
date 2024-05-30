@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { GetAllMembers } from "../service/members/GetAllMembers";
 import { Membre } from "../model/Membre";
 import MembreCard from "../component/card/membre/MembreCard";
@@ -37,7 +37,7 @@ const Home: React.FC = () => {
         setIsScrolling(true);
     };
 
-    const handleScroll = () => {
+    const handleScroll = useCallback(() => {
         if (scrollContainerRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
             if (scrollLeft + clientWidth >= scrollWidth - 1) {
@@ -50,7 +50,7 @@ const Home: React.FC = () => {
                 });
             }
         }
-    };
+    }, [fetchData]);
 
     useEffect(() => {
         if (scrollContainerRef.current) {
@@ -61,16 +61,14 @@ const Home: React.FC = () => {
                 element.removeEventListener('scroll', handleScroll);
             };
         }
-    }, [scrollContainerRef]);
+    }, [scrollContainerRef, handleScroll]);
 
     // Dupliquez les membres pour permettre un défilement infini
     const duplicatedMembers = [...members, ...members];
 
     return (
-
         <>
-            <p className="text-center text-muted m-2 mt-5 text-sm-start">Les membres ci-dessous sont actuellement
-                connectés</p>
+            <p className="text-center text-muted m-2 mt-5 text-sm-start">Les membres ci-dessous sont actuellement connectés</p>
             <div
                 className="scroll-container flex overflow-x-auto d-flex flex-row flex-nowrap overflow-auto border border-1 rounded-3 shadow-3xl m-2"
                 ref={scrollContainerRef}

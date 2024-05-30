@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { format } from 'date-fns';
 import { Collaboration } from "../../../model/Collaboration";
 import { Tooltip } from "bootstrap";
 import { DetailsMembre } from "../../../model/DetailsMembre";
@@ -61,22 +60,8 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
 
     const ownerTeams = collaboration.participants.find(p => p.idMembre === collaboration.idProprietaire)?.teams.map(team => team.idTeam) || [];
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        }).format(date);
-    };
-
-    const formattedDate = formatDate(collaboration.dateDepart);
-
     return (
         <div className="text-center mx-3 my-3 position-relative" style={{ cursor: 'pointer', width: '75%', height: 'auto' }} onClick={onClick}>
-            {/*<div className="font-weight-bold mb-2" data-bs-toggle="tooltip" data-bs-title="Date de départ">{formattedDate}</div>*/}
             <div className="mb-2 flex items-baseline">
                 <strong data-bs-toggle="tooltip" data-bs-title="Titre">{collaboration.titre}</strong>
 

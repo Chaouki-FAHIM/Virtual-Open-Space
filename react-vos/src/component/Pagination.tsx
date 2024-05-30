@@ -16,7 +16,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
     const pages = Array.from({ length: totalPages }, (_, i: number) => i + 1);
 
     return (
-        <nav aria-label="Page navigation">
+        <nav aria-label="Page navigation" className='mt-2'>
             <ul className="pagination justify-content-center">
                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                     <button

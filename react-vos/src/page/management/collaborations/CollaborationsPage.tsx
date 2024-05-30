@@ -47,31 +47,37 @@ const CollaborationsPage: React.FC = () => {
     };
 
     return (
-        <div className="container">
-            <h1 className="text-center my-4">Collaborations Page</h1>
-            <hr />
-            <div className="row justify-content-center">
-                {loading ? (
-                    Array.from({ length: collaborationsPerPage }).map((_, index) => (
-                        <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
-                            <PlaceholderMembreCard />
-                        </div>
-                    ))
-                ) : (
-                    currentCollaborations.map((collaborationItem) => (
-                        <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={collaborationItem.idCollaboration}>
-                            <CollaborationCard collaboration={collaborationItem} onClick={() => handleCollaborationClick(collaborationItem.idCollaboration)} />
-                        </div>
-                    ))
+        <>
+            <div className="container">
+                <h1 className="text-center my-4">Collaborations Page</h1>
+                <hr/>
+                <div className="row justify-content-center">
+                    {loading ? (
+                        Array.from({length: collaborationsPerPage}).map((_, index) => (
+                            <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4"
+                                 key={index}>
+                                <PlaceholderMembreCard/>
+                            </div>
+                        ))
+                    ) : (
+                        currentCollaborations.map((collaborationItem) => (
+                            <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4"
+                                 key={collaborationItem.idCollaboration}>
+                                <CollaborationCard collaboration={collaborationItem}
+                                                   onClick={() => handleCollaborationClick(collaborationItem.idCollaboration)}/>
+                            </div>
+                        ))
+                    )}
+                </div>
+                {!loading && collaborations.length > collaborationsPerPage && (
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
+                )}
+                {selectedCollaborationId && (
+                    <CollaborationModal show={!!selectedCollaborationId} collaborationId={selectedCollaborationId}
+                                        onClose={handleCloseModal}/>
                 )}
             </div>
-            {!loading && collaborations.length > collaborationsPerPage && (
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            )}
-            {selectedCollaborationId && (
-                <CollaborationModal show={!!selectedCollaborationId} collaborationId={selectedCollaborationId} onClose={handleCloseModal} />
-            )}
-        </div>
+        </>
     );
 };
 
