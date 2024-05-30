@@ -8,7 +8,7 @@ const MembreConnectedList: React.FC = () => {
     const [members, setMembers] = useState<Membre[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const membersPerPage = 5;
+    const membersPerPage = 12;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,7 +32,7 @@ const MembreConnectedList: React.FC = () => {
     const totalPages = Math.ceil(members.length / membersPerPage);
 
     return (
-        <div className="card m-2">
+        <div className="card m-2 shadow-2xl">
             <div
                 className="card-header"
                 data-bs-toggle="collapse"
@@ -62,10 +62,10 @@ const MembreConnectedList: React.FC = () => {
                                     className="rounded-circle border border-black border-2"
                                     style={{ width: '3.5rem', height: '3.5rem' }}
                                 />
-                                <div className="font-semibold text-base md:text-lg lg:text-xl">
+                                <div className="font-semibold text-sm md:text-lg lg:text-xl">
                                     {connected.nomMembre} {connected.prenom}
                                 </div>
-                                <p className="badge bg-warning text-base md:text-lg lg:text-xl">
+                                <p className="badge bg-danger text-sm md:text-lg lg:text-xl">
                                     {connected.roleHabilation}
                                 </p>
                             </div>

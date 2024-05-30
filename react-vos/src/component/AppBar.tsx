@@ -17,6 +17,7 @@ const navPageItems: Array<NavPageItem> = [
 
 function AppBar() {
     const [selectedPage, setSelectedPage] = useState<string>(navPageItems[0].name);
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const location = useLocation();
 
     useEffect(() => {
@@ -26,35 +27,12 @@ function AppBar() {
         }
     }, [location]);
 
-    // Fonction pour fermer le menu avec animation
-    const closeMenu = () => {
-        const nav = document.getElementById('navbarNavDropdown');
-        if (nav && nav.classList.contains('show')) {
-            nav.classList.remove('show');
-            nav.classList.add('collapsing');
-            setTimeout(() => {
-                nav.classList.remove('collapsing');
-                nav.classList.add('collapse');
-            }, 350); // Durée de l'animation en millisecondes
-        }
+    const handleTogglerClick = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
 
-    // Fonction pour gérer le clic sur le bouton de basculement de la barre de navigation
-    const handleTogglerClick = () => {
-        const nav = document.getElementById('navbarNavDropdown');
-        if (nav) {
-            if (nav.classList.contains('show')) {
-                nav.classList.remove('show');
-                nav.classList.add('collapsing');
-                setTimeout(() => {
-                    nav.classList.remove('collapsing');
-                    nav.classList.add('collapse');
-                }, 350); // Durée de l'animation en millisecondes
-            } else {
-                nav.classList.remove('collapse');
-                nav.classList.add('show');
-            }
-        }
+    const closeMenu = () => {
+        setIsMenuOpen(false);
     };
 
     return (
@@ -62,24 +40,22 @@ function AppBar() {
             <div className="container-fluid">
                 <Link className="navbar-brand" to="/">
                     <div className="flex-container">
-                        <img src="/logo/awb.png" alt="Logo" style={{ width: '50px', height: '50px' }} />
+                        <img src="/logo/awb.png" alt="Logo" style={{ width: '3rem', height: '3rem' }} />
                         <div className="text-center">
-                            <h6>Virtual <span className="text-warning">Open</span></h6>
-                            <h5>Space</h5>
+                            <div className='text-sm'>Virtual <span className="text-warning">Open</span></div>
+                            <div className='text-xl'><strong>Space</strong></div>
                         </div>
                     </div>
                 </Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
-                        aria-label="Toggle navigation" onClick={handleTogglerClick}>
+                <button className="navbar-toggler" type="button" onClick={handleTogglerClick}>
                     <span className="navbar-toggler-icon"></span>
                 </button>
-                <div className="collapse navbar-collapse" id="navbarNavDropdown">
+                <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNavDropdown">
                     <ul className="navbar-nav">
-                        {navPageItems.map((item, index) => (
+                        {navPageItems.map((item: NavPageItem, index: number) => (
                             <li className="nav-item m-1" key={index}>
                                 <Link
-                                    className={`btn nav-link ${selectedPage === item.name ? 'text-warning' : 'text-light'}`}
+                                    className={`btn nav-link text-start ${selectedPage === item.name ? 'text-warning' : 'text-light'}`}
                                     to={item.link}
                                     onClick={() => {
                                         setSelectedPage(item.name);
