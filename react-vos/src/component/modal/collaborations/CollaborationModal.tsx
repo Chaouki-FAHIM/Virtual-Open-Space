@@ -20,7 +20,7 @@ const CollaborationModal: React.FC<CollaborationModalProps> = ({ show, collabora
             try {
                 const collaborationData = await GetOneCollaboration(collaborationId);
                 setCurrentCollaboration(collaborationData);
-                console.log("Id de propriétaire : "+collaborationData.idProprietaire)
+                console.log("Id de propriétaire : " + collaborationData.idProprietaire);
                 // Fetch owner details
                 const ownerData = await GetOneMember(collaborationData.idProprietaire);
                 setOwnerName(`${ownerData.prenom} ${ownerData.nomMembre}`);
@@ -73,7 +73,6 @@ const CollaborationModal: React.FC<CollaborationModalProps> = ({ show, collabora
                 </div>
             </div>
         );
-
     }
 
     const { titre, dateCreationCollaboration, dateDepart, participants } = currentCollaboration;
@@ -98,37 +97,39 @@ const CollaborationModal: React.FC<CollaborationModalProps> = ({ show, collabora
                         <button type="button" className="btn-close btn-close-white" aria-label="Close" onClick={onClose}></button>
                     </div>
                     <div className="modal-body text-center">
-                        <FormRow label={"Titre"} value={titre} disabled/ >
-                            <FormRow label={"Date de création"} value={formatDate(dateCreationCollaboration)} disabled / >
-                                <FormRow label={"Date de départ"} value={formatDate(dateDepart)} disabled / >
-                                    <FormRow label={"Propriétaire"} value={ownerName} disabled / >
-                                        { participants.length !==0 &&
-                                            <>
-                                                <p><h5>Participants</h5></p>
-                                                {participants.map(participant => (
-                                                    <div key={participant.idMembre} className="participant-container border p-2 mb-2 rounded">
-                                                        <img
-                                                            src={participant.image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
-                                                            alt={`${participant.nomMembre} ${participant.prenom}`}
-                                                            className="rounded-circle mb-2 border border-black border-2"
-                                                            style={{width: '50px', height: '50px'}}/>
-                                                        <p>{participant.nomMembre} {participant.prenom}</p>
-                                                        <p>{participant.roleHabilation}</p>
-                                                    </div>
-                                                ))}
-                                            </>
-
-                                        }
-                                        { participants.length ===0 &&
-                                            <FormRow label={"Participants"} value='Aucun participant pour à ce monment' disabled / >
-
-                                                }
-
+                        <FormRow label="Titre" value={titre} disabled />
+                        <FormRow label="Date de création" value={formatDate(dateCreationCollaboration)} disabled />
+                        <FormRow label="Date de départ" value={formatDate(dateDepart)} disabled />
+                        <FormRow label="Propriétaire" value={ownerName} disabled />
+                        {participants.length !== 0 && (
+                            <>
+                                <h5>Participants</h5>
+                                <div className="flex overflow-x-auto d-flex flex-row flex-nowrap overflow-auto border broder-1 rounded-3 shadow-3xl">
+                                    {participants.map(participant => (
+                                        <div key={participant.idMembre} className="m-3 text-center">
+                                            <img
+                                                src={participant.image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
+                                                alt={`${participant.nomMembre} ${participant.prenom}`}
+                                                className="rounded-circle border border-black border-2"
+                                                style={{width: '3.5rem', height: '3.5rem'}}
+                                            />
+                                            <div className="font-semibold text-base md:text-lg lg:text-xl">
+                                                {participant.nomMembre} {participant.prenom}
+                                            </div>
+                                            <p className="badge bg-warning text-base md:text-lg lg:text-xl">{participant.roleHabilation}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                        {participants.length === 0 && (
+                            <FormRow label="Participants" value="Aucun participant pour à ce moment" disabled />
+                        )}
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 };
 
 export default CollaborationModal;

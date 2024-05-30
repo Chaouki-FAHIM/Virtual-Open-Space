@@ -18,18 +18,20 @@ const MembreCard: React.FC<MembreCardProps> = ({ membre, onClick }) => {
     }, []);
 
     return (
-        <div className="text-center my-1" onClick={onClick} style={{ cursor: 'pointer' }}>
+        <div className="text-center mt-2 my-1" onClick={onClick} style={{cursor: 'pointer'}}>
             <img
                 className="rounded-circle border border-black border-2"
                 src='https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'
                 alt={`${membre.nomMembre} ${membre.prenom}`}
-                style={{ width: '5.5rem', height: '5.5rem' }}
+                style={{width: '5.5rem', height: '5.5rem'}}
                 data-bs-toggle="tooltip"
                 data-bs-title="Image"
             />
             <div className="">
-                <div className="font-weight-bold" data-bs-toggle="tooltip" data-bs-title="Nom & Prénom">{membre.nomMembre} {membre.prenom}</div>
-                <p className="badge bg-warning text-muted" data-bs-toggle="tooltip" data-bs-title="Rôle d'habilation">{membre.roleHabilation}</p>
+                <div className="font-weight-bold" data-bs-toggle="tooltip"
+                     data-bs-title="Nom & Prénom">{membre.nomMembre} {membre.prenom}</div>
+                <p className="badge bg-warning text-muted" data-bs-toggle="tooltip"
+                   data-bs-title="Rôle d'habilation">{membre.roleHabilation}</p>
             </div>
         </div>
     );

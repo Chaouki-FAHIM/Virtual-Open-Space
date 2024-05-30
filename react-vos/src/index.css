@@ -23,3 +23,49 @@
 }
 
 
+.member-card-container {
+    position: relative;
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.scroll-container {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: lightgray; /* Ajout du fond gris clair */
+    position: relative;
+}
+
+.scroll-content {
+    display: flex;
+    animation: scroll 20s linear infinite;
+}
+
+.scroll-content.paused {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.scroll-item {
+    display: inline-block;
+    margin-right: 10px; /* Ajuster l'espacement entre les cartes si nécessaire */
+}

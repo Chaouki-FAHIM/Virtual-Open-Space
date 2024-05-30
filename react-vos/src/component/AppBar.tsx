@@ -83,7 +83,7 @@ function AppBar() {
                                     to={item.link}
                                     onClick={() => {
                                         setSelectedPage(item.name);
-                                        closeMenu(); // Fermer le menu après le clic
+                                        closeMenu();
                                     }}
                                 >
                                     {item.name}
