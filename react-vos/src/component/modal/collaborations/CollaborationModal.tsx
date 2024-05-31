@@ -104,8 +104,19 @@ const CollaborationModal: React.FC<CollaborationModalProps> = ({ show, collabora
                         <FormRow label="Propriétaire" value={ownerName} disabled />
                         {participants.length !== 0 && (
                             <>
-                                <h5>Participants</h5>
-                                <div className="flex overflow-x-auto d-flex flex-row flex-nowrap overflow-auto border broder-1 rounded-3 shadow-3xl">
+                                <div className="items-baseline space-x-2 mt-3">
+
+                                    <h5>Participants <span
+                                        className="badge rounded-pill text-start text-bg-dark flex items-center"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-title="Nombre de participants">
+                                        {participants.length} <i className="bi bi-person-fill"></i>
+                                    </span></h5>
+
+                                </div>
+
+                                <div
+                                    className="flex d-flex flex-row flex-nowrap overflow-auto border broder-1 rounded-3 shadow-3xl">
                                     {participants.map(participant => (
                                         <div key={participant.idMembre} className="m-3 text-center">
                                             <img
@@ -124,7 +135,7 @@ const CollaborationModal: React.FC<CollaborationModalProps> = ({ show, collabora
                             </>
                         )}
                         {participants.length === 0 && (
-                            <FormRow label="Participants" value="Aucun participant pour à ce moment" disabled />
+                            <FormRow label="Participants" value="Aucun participant pour à ce moment" disabled/>
                         )}
                     </div>
                 </div>

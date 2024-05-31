@@ -51,7 +51,6 @@ const MembresPage: React.FC = () => {
         <>
             <div className="container">
                 <h1 className="text-center my-4">Membres Page</h1>
-                <hr />
                 <div className="row justify-content-center">
                     {loading ? (
                         Array.from({ length: membersPerPage }).map((_, index) => (

@@ -68,15 +68,17 @@ const Home: React.FC = () => {
 
     return (
         <>
-            <p className="text-center text-muted m-2 mt-5 text-sm-start">Les membres ci-dessous sont actuellement connectés</p>
+            <p className="text-center text-muted m-2 mt-5 text-sm-start">Les membres actuellement connectés</p>
             <div
-                className="scroll-container flex overflow-x-auto d-flex flex-row flex-nowrap overflow-auto border border-1 rounded-3 shadow-3xl m-2"
+                className="scroll-container flex overflow-x-auto d-flex flex-row flex-nowrap border border-1 rounded-3 shadow-3xl m-2"
                 ref={scrollContainerRef}
             >
                 <div className={`scroll-content ${isScrolling ? '' : 'paused'}`}>
                     {
                         loading ? (
-                            <PlaceholderMembreCard/>
+                            Array.from({ length: 25 }).map((_, index) => (
+                                <PlaceholderMembreCard/>
+                            ))
                         ) : (
                             duplicatedMembers.map((membreItem, index) => (
                                 <div className="scroll-item" key={index}>

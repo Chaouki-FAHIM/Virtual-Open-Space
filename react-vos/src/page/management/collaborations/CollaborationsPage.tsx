@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import PlaceholderCollaborationCard from "../../../component/card/collaboration/PlaceholderCollaborationCard";
 import Pagination from "../../../component/Pagination";
 import { Collaboration } from "../../../model/Collaboration";
 import { GetAllCollaborations } from "../../../service/collaborations/GetAllCollaborations";
 import CollaborationCard from "../../../component/card/collaboration/CollaborationCard";
 import CollaborationModal from "../../../component/modal/collaborations/CollaborationModal";
+import PlaceholderCollaborationCard from "../../../component/card/collaboration/PlaceholderCollaborationCard";
+
 
 const CollaborationsPage: React.FC = () => {
     const [collaborations, setCollaborations] = useState<Collaboration[]>([]);
@@ -20,7 +21,7 @@ const CollaborationsPage: React.FC = () => {
                 setCollaborations(result);
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching data', error);
+                console.error('Error fetching collaboration data', error);
                 setLoading(false);
             }
         };

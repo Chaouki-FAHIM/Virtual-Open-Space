@@ -6,6 +6,7 @@ import com.attijarivos.dto.response.shorts.ShortMembreResponse;
 import com.attijarivos.dto.response.details.DetailMembreResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
+import com.attijarivos.exception.RededicationMembreException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.mapper.MembreMapper;
 import com.attijarivos.model.Membre;
@@ -40,7 +41,8 @@ public class MembreService extends WebClientOperations {
         return value == null || Objects.equals(value, "");
     }
 
-    private void verifyDataMembre(MembreRequest membreRequest) throws RequiredDataException {
+    private void verifyDataMembre(MembreRequest membreRequest) throws RequiredDataException, RededicationMembreException {
+
         if(isNotNullValue(membreRequest.getNomMembre())) {
             throw new RequiredDataException("Nom est obligatoire pour l'ajout d'un nouveau membre");
         }
@@ -50,9 +52,15 @@ public class MembreService extends WebClientOperations {
         if(membreRequest.getRoleHabilation()== null ) {
             throw new RequiredDataException("Rôle d'habilation est obligatoire pour l'ajout d'un nouveau membre");
         }
+
+        if(! membreRespository.findByNomMembreAndPrenom(
+                membreRequest.getNomMembre(), membreRequest.getPrenom()).isEmpty()
+        ) {
+            throw new RededicationMembreException("nom et prénom");
+        }
     }
 
-    public ShortMembreResponse createMembre(MembreRequest membreRequest) throws MicroserviceAccessFailureException, RequiredDataException {
+    public ShortMembreResponse createMembre(MembreRequest membreRequest) throws MicroserviceAccessFailureException, RequiredDataException, RededicationMembreException {
 
         verifyDataMembre(membreRequest);
 
@@ -89,7 +97,7 @@ public class MembreService extends WebClientOperations {
         );
     }
 
-    public DetailMembreResponse updateMembre(String idMembre, MembreUpdateRequest membreRequest) throws NotFoundDataException, MicroserviceAccessFailureException, RequiredDataException {
+    public DetailMembreResponse updateMembre(String idMembre, MembreUpdateRequest membreRequest) throws NotFoundDataException, MicroserviceAccessFailureException, RequiredDataException, RededicationMembreException {
         Optional<Membre> membre = Optional.of(receiveMembre(idMembre));
 
         verifyDataMembre(membreMapper.fromReqToUpdateMembre(membreRequest));

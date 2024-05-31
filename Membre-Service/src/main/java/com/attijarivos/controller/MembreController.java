@@ -4,6 +4,7 @@ import com.attijarivos.dto.request.MembreUpdateRequest;
 import com.attijarivos.dto.response.details.DetailMembreResponse;
 import com.attijarivos.exception.MicroserviceAccessFailureException;
 import com.attijarivos.exception.NotFoundDataException;
+import com.attijarivos.exception.RededicationMembreException;
 import com.attijarivos.exception.RequiredDataException;
 import com.attijarivos.dto.request.MembreRequest;
 import com.attijarivos.dto.response.shorts.ShortMembreResponse;
@@ -29,7 +30,7 @@ public class MembreController {
         try {
             ShortMembreResponse shortMembreResponse = membreService.createMembre(membreRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(shortMembreResponse);
-        } catch (RequiredDataException e) {
+        } catch (RequiredDataException | RededicationMembreException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (MicroserviceAccessFailureException e) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
@@ -67,7 +68,7 @@ public class MembreController {
         try {
             DetailMembreResponse membreResponse = membreService.updateMembre(idMembre,request);
             return ResponseEntity.ok(membreResponse);
-        } catch (NotFoundDataException e) {
+        } catch (NotFoundDataException | RededicationMembreException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (MicroserviceAccessFailureException e) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());

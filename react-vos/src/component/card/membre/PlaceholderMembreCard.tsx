@@ -5,7 +5,7 @@ const PlaceholderMembreCard: React.FC = () => {
     return (
         <div className="card text-center" aria-hidden="true">
             <div className="card-body">
-                <div className="rounded-circle bg-warning mb-3" style={{ width: '100px', height: '100px', margin: '0 auto' }}></div>
+                <div className="placeholder rounded-circle bg-warning mb-3" style={{ width: '100px', height: '100px', margin: '0 auto' }}></div>
                 <h5 className="card-title placeholder-glow">
                     <span className="placeholder col-6"></span>
                 </h5>
