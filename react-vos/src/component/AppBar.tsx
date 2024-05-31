@@ -38,7 +38,7 @@ function AppBar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
-                <Link className="navbar-brand" to="/">
+                <Link className="navbar-brand" to="/" onClick={closeMenu}>
                     <div className="flex-container">
                         <img src="/logo/awb.png" alt="Logo" style={{ width: '3rem', height: '3rem' }} />
                         <div className="text-center">
@@ -55,7 +55,7 @@ function AppBar() {
                         {navPageItems.map((item: NavPageItem, index: number) => (
                             <li className="nav-item m-1" key={index}>
                                 <Link
-                                    className={`btn nav-link text-start ${selectedPage === item.name ? 'text-warning' : 'text-light'}`}
+                                    className={`btn nav-link ${selectedPage === item.name ? 'text-warning' : 'text-light'}`}
                                     to={item.link}
                                     onClick={() => {
                                         setSelectedPage(item.name);

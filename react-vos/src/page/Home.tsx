@@ -81,6 +81,7 @@ const Home: React.FC = () => {
                             duplicatedMembers.map((membreItem, index) => (
                                 <div className="scroll-item" key={index}>
                                     <MembreCard membre={membreItem}
+                                                badgeColor='bg-dark'
                                                 onClick={() => handleMemberClick(membreItem.idMembre)}/>
                                 </div>
                             ))

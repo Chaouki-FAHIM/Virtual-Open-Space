@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import PlaceholderMembreCard from "../../../component/card/membre/PlaceholderMembreCard";
+import PlaceholderCollaborationCard from "../../../component/card/collaboration/PlaceholderCollaborationCard";
 import Pagination from "../../../component/Pagination";
 import { Collaboration } from "../../../model/Collaboration";
-import { GetAllCollaborations } from "../../../service/collaborations/GelAllCollaborations";
+import { GetAllCollaborations } from "../../../service/collaborations/GetAllCollaborations";
 import CollaborationCard from "../../../component/card/collaboration/CollaborationCard";
 import CollaborationModal from "../../../component/modal/collaborations/CollaborationModal";
 
@@ -48,15 +48,19 @@ const CollaborationsPage: React.FC = () => {
 
     return (
         <>
-            <div className="container">
-                <h1 className="text-center my-4">Collaborations Page</h1>
-                <hr/>
+            <div className="text-center my-4">
+                <h1>Espace de collaborations</h1>
+                <button className="btn btn-danger btn-lg mt-3 px-5 fw-bold">
+                    <i className="bi bi-cloud-plus mx-2"></i> Créer
+                </button>
+            </div>
+            <div className="container mx-auto px-4 py-3 border border-gray-300 rounded-4 my-4 max-w-6xl">
                 <div className="row justify-content-center">
                     {loading ? (
-                        Array.from({length: collaborationsPerPage}).map((_, index) => (
+                        Array.from({ length: collaborationsPerPage }).map((_, index) => (
                             <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4"
                                  key={index}>
-                                <PlaceholderMembreCard/>
+                                <PlaceholderCollaborationCard />
                             </div>
                         ))
                     ) : (
@@ -64,17 +68,17 @@ const CollaborationsPage: React.FC = () => {
                             <div className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4"
                                  key={collaborationItem.idCollaboration}>
                                 <CollaborationCard collaboration={collaborationItem}
-                                                   onClick={() => handleCollaborationClick(collaborationItem.idCollaboration)}/>
+                                                   onClick={() => handleCollaborationClick(collaborationItem.idCollaboration)} />
                             </div>
                         ))
                     )}
                 </div>
                 {!loading && collaborations.length > collaborationsPerPage && (
-                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
                 )}
                 {selectedCollaborationId && (
                     <CollaborationModal show={!!selectedCollaborationId} collaborationId={selectedCollaborationId}
-                                        onClose={handleCloseModal}/>
+                                        onClose={handleCloseModal} />
                 )}
             </div>
         </>

@@ -42,7 +42,7 @@
     display: flex;
     overflow: hidden;
     white-space: nowrap;
-    background-color: lightgray; /* Ajout du fond gris clair */
+    background: linear-gradient(to right, #ffffcc 0%, #ff6600 100%);
     position: relative;
 }
 
