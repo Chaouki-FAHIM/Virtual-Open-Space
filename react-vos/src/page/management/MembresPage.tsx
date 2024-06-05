@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { GetAllMembers } from '../../../service/members/GetAllMembers';
-import { Membre } from '../../../model/Membre';
-import MembreCard from '../../../component/card/membre/MembreCard';
-import PlaceholderMembreCard from '../../../component/card/membre/PlaceholderMembreCard';
-import Pagination from '../../../component/Pagination';
-import MemberModal from '../../../component/modal/members/MembreModal';
-import MembreConnectedList from "../../../component/list/membre/MembreConnectedList";
+import { GetAllMembers } from '../../service/members/GetAllMembers';
+import { DisplayMembreDTO } from '../../model/membre/DisplayMembreDTO';
+import MembreCard from '../../component/card/membre/MembreCard';
+import PlaceholderMembreCard from '../../component/card/membre/PlaceholderMembreCard';
+import Pagination from '../../component/Pagination';
+import DisplayMemberModal from '../../component/modal/member/DisplayMembreModal';
+import MembreConnectedList from "../../component/list/membre/MembreConnectedList";
 
 const MembresPage: React.FC = () => {
-    const [members, setMembers] = useState<Membre[]>([]);
+    const [members, setMembers] = useState<DisplayMembreDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [membersPerPage] = useState(6);
@@ -77,7 +77,7 @@ const MembresPage: React.FC = () => {
                     <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
                 )}
                 {selectedMemberId && (
-                    <MemberModal show={!!selectedMemberId} membreId={selectedMemberId} onClose={handleCloseModal} />
+                    <DisplayMemberModal show={!!selectedMemberId} membreId={selectedMemberId} onClose={handleCloseModal} />
                 )}
             </div>
             <hr />

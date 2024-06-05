@@ -1,4 +1,4 @@
-export interface Team {
+export interface TeamDTO {
     idTeam:string;
     nomTeam:string;
     descriptionTeam?:string;

@@ -1,11 +1,10 @@
 import axios, {AxiosResponse} from 'axios';
-
-const COLLABORATIONS_API_BASE_URL:string = 'http://localhost:8080/collaborations';
+import API_BASE_URL from "../../constant/URL";
 
 
 export const GetAllCollaborations = async ():Promise<any> => {
     try {
-        const response:AxiosResponse = await axios.get(`${COLLABORATIONS_API_BASE_URL}`);
+        const response:AxiosResponse = await axios.get(`${API_BASE_URL['collaboration']}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching collaboration list data', error);

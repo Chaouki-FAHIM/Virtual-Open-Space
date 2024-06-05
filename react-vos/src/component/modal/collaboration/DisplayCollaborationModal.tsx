@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GetOneCollaboration } from "../../../service/collaborations/GetOneCollaboration";
 import { GetOneMember } from "../../../service/members/GetOneMember";
-import { Collaboration } from "../../../model/Collaboration";
+import { DisplayCollaborationDTO } from "../../../model/collaboration/DisplayCollaborationDTO";
 import FormRow from "../../form/FormRow";
 
 interface CollaborationModalProps {
@@ -10,8 +10,8 @@ interface CollaborationModalProps {
     onClose: () => void;
 }
 
-const CollaborationModal: React.FC<CollaborationModalProps> = ({ show, collaborationId, onClose }) => {
-    const [currentCollaboration, setCurrentCollaboration] = useState<Collaboration | null>(null);
+const DisplayCollaborationModal: React.FC<CollaborationModalProps> = ({ show, collaborationId, onClose }) => {
+    const [currentCollaboration, setCurrentCollaboration] = useState<DisplayCollaborationDTO | null>(null);
     const [ownerName, setOwnerName] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -144,4 +144,4 @@ const CollaborationModal: React.FC<CollaborationModalProps> = ({ show, collabora
     );
 };
 
-export default CollaborationModal;
+export default DisplayCollaborationModal;

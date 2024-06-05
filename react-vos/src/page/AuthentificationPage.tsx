@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Authentification() {
+function AuthentificationPage() {
     return (
         <>
             <h1>Authentification</h1>
@@ -8,4 +8,4 @@ function Authentification() {
     )
 }
 
-export default Authentification;
+export default AuthentificationPage;

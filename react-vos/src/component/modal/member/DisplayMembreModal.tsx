@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { GetOneMember } from "../../../service/members/GetOneMember";
-import { Membre } from "../../../model/Membre";
-import { Team } from "../../../model/Team";
+import { DisplayMembreDTO } from "../../../model/membre/DisplayMembreDTO";
+import { TeamDTO } from "../../../model/TeamDTO";
 import FormRow from '../../form/FormRow';
 import FormSubRow from "../../form/FormSubRow";
-import './MemberModal.css';
+import './DisplayMemberModal.css';
 
 
 interface MemberModalProps {
@@ -13,15 +13,15 @@ interface MemberModalProps {
     onClose: () => void;
 }
 
-interface DetailMembre extends Membre {
-    teams: Team[];
+interface DetailMembre extends DisplayMembreDTO {
+    teams: TeamDTO[];
 }
 
 function replaceUnderscoresWithSpace(text: string) {
     return text.replace(/_/g, ' ');
 }
 
-const MemberModal: React.FC<MemberModalProps> = ({ show, membreId, onClose }) => {
+const DisplayMemberModal: React.FC<MemberModalProps> = ({ show, membreId, onClose }) => {
     const [memberDetail, setMemberDetail] = useState<DetailMembre | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -124,4 +124,4 @@ const MemberModal: React.FC<MemberModalProps> = ({ show, membreId, onClose }) =>
     );
 };
 
-export default MemberModal;
+export default DisplayMemberModal;

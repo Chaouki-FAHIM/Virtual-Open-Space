@@ -1,20 +1,20 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Home from './page/Home'
-import Authentification from './page/Authentification';
-import TeamsPage from './page/management/teams/TeamsPage';
-import MembresPage from './page/management/membres/MembresPage';
-import CollaborationsPage from './page/management/collaborations/CollaborationsPage';
+import HomePage from './page/HomePage'
+import AuthentificationPage from './page/AuthentificationPage';
+import TeamsPage from './page/management/TeamsPage';
+import MembresPage from './page/management/MembresPage';
+import CollaborationsPage from './page/management/CollaborationsPage';
 
 
 const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/equipes" element={<TeamsPage />} />
             <Route path="/membres" element={<MembresPage />} />
             <Route path="/collaborations" element={<CollaborationsPage />} />
-            <Route path="/auth" element={<Authentification />} />
+            <Route path="/auth" element={<AuthentificationPage />} />
         </Routes>
     );
 };

@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import { Membre } from "../../../model/Membre";
+import { DisplayMembreDTO } from "../../../model/membre/DisplayMembreDTO";
 import { Tooltip } from "bootstrap";
 import './MembreCard.css'
 
 interface MembreCardProps {
-    membre: Membre;
+    membre: DisplayMembreDTO;
     badgeColor?: string,
     onClick: () => void;
 }

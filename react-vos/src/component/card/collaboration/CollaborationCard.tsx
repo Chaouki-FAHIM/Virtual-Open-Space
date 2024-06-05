@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { Collaboration } from "../../../model/Collaboration";
+import { DisplayCollaborationDTO } from "../../../model/collaboration/DisplayCollaborationDTO";
 import { Tooltip } from "bootstrap";
-import { DetailsMembre } from "../../../model/DetailsMembre";
+import { DisplayMemberDetailDTO } from "../../../model/membre/DisplayMemberDetailDTO";
 import LitleMembreCard from "../membre/LitleMembreCard";
 
 interface CollaborationCardProps {
-    collaboration: Collaboration;
+    collaboration: DisplayCollaborationDTO;
     onClick: () => void;
 }
 
@@ -90,7 +90,7 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
             />
             <div className="position-relative" style={{ width: '100%', height: '100%' }}>
                 {collaboration.participants.length > 0 &&
-                    collaboration.participants.map((participant: DetailsMembre, index: number) => (
+                    collaboration.participants.map((participant: DisplayMemberDetailDTO, index: number) => (
                         <LitleMembreCard
                             membre={participant}
                             key={index}

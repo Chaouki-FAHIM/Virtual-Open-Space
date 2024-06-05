@@ -1,4 +1,4 @@
-export interface Membre {
+export interface DisplayMembreDTO {
     idMembre: string;
     image:string;
     nomMembre: string;

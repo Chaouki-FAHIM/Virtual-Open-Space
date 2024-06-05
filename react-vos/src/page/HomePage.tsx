@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { GetAllMembers } from "../service/members/GetAllMembers";
-import { Membre } from "../model/Membre";
+import { DisplayMembreDTO } from "../model/membre/DisplayMembreDTO";
 import MembreCard from "../component/card/membre/MembreCard";
 import PlaceholderMembreCard from "../component/card/membre/PlaceholderMembreCard";
-import MemberModal from "../component/modal/members/MembreModal";
+import DisplayMemberModal from "../component/modal/member/DisplayMembreModal";
 
-const Home: React.FC = () => {
-    const [members, setMembers] = useState<Membre[]>([]);
+const HomePage: React.FC = () => {
+    const [members, setMembers] = useState<DisplayMembreDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
     const [isScrolling, setIsScrolling] = useState(true);
@@ -93,10 +93,10 @@ const Home: React.FC = () => {
             </div>
 
             {selectedMemberId && (
-                <MemberModal show={!!selectedMemberId} membreId={selectedMemberId} onClose={handleCloseModal}/>
+                <DisplayMemberModal show={!!selectedMemberId} membreId={selectedMemberId} onClose={handleCloseModal}/>
             )}
         </>
     );
 };
 
-export default Home;
+export default HomePage;

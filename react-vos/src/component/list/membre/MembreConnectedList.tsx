@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { GetAllMembers } from '../../../service/members/GetAllMembers';
-import { Membre } from '../../../model/Membre';
+import { DisplayMembreDTO } from '../../../model/membre/DisplayMembreDTO';
 import PlaceholderMembreCard from '../../../component/card/membre/PlaceholderMembreCard';
 import Pagination from '../../../component/Pagination';
 
 const MembreConnectedList: React.FC = () => {
-    const [members, setMembers] = useState<Membre[]>([]);
+    const [members, setMembers] = useState<DisplayMembreDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const membersPerPage = 12;

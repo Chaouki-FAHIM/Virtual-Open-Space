@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { Tooltip } from "bootstrap";
-import { DetailsMembre } from "../../../model/DetailsMembre";
+import { DisplayMemberDetailDTO } from "../../../model/membre/DisplayMemberDetailDTO";
 
 interface LitleMembreCardProps {
-    membre: DetailsMembre;
+    membre: DisplayMemberDetailDTO;
     ownerTeams: string[]; // Nouvelle prop pour les équipes du propriétaire
     idProprietaire: string; // Nouvelle prop pour l'ID du propriétaire
     onClick?: () => void;
