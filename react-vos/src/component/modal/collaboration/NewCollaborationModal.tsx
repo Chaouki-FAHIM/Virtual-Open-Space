@@ -70,7 +70,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     <div className="col-12 col-md-6">
                         <Form.Group controlId="confidentielle">
                             <Form.Label className="block text-sm font-medium text-gray-700">
-                                Confidentielle <span className="text-danger">*</span>
+                                Confidentialité <span className="text-danger">*</span>
                             </Form.Label>
                             <Form.Switch
                                 type="checkbox"

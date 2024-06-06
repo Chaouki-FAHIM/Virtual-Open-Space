@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { GetAllMembers } from '../../../service/members/GetAllMembers';
-import { DisplayMembreDTO } from '../../../model/membre/DisplayMembreDTO';
-import PlaceholderMembreCard from '../../../component/card/membre/PlaceholderMembreCard';
-import Pagination from '../../../component/Pagination';
+import React, { useEffect, useState } from 'react'
+import { GetAllMembers } from '../../../service/members/GetAllMembers'
+import { DisplayMembreDTO } from '../../../model/membre/DisplayMembreDTO'
+import PlaceholderMembreCard from '../../../component/card/membre/PlaceholderMembreCard'
+import Pagination from '../../../component/Pagination'
 
 const MembreConnectedList: React.FC = () => {
     const [members, setMembers] = useState<DisplayMembreDTO[]>([]);
@@ -25,8 +25,8 @@ const MembreConnectedList: React.FC = () => {
         fetchData();
     }, []);
 
-    const indexOfLastMember = currentPage * membersPerPage;
-    const indexOfFirstMember = indexOfLastMember - membersPerPage;
+    const indexOfLastMember:number = currentPage * membersPerPage;
+    const indexOfFirstMember:number = indexOfLastMember - membersPerPage;
     const currentMembers = members.slice(indexOfFirstMember, indexOfLastMember);
 
     const totalPages = Math.ceil(members.length / membersPerPage);
