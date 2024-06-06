@@ -1,0 +1,8 @@
+.custom-switch .form-check-input:checked {
+    background-color: black; /* Couleur de fond noire quand le switch est activé */
+    border-color: #343a40;     /* Couleur de bordure noire quand le switch est activé */
+}
+
+.custom-switch .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.25); /* Ombre pour le focus */
+}

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { CreateCollaborationDTO } from '../../../model/collaboration/CreateCollaborationDTO';
-import { GetAllMembers } from '../../../service/members/GetAllMembers';
-import { DisplayMembreDTO } from '../../../model/membre/DisplayMembreDTO';
+import SelectMember from '../../form/SelectMember';
+import './NewCollaborationModal.css'
 
 interface NewCollaborationModalProps {
     show: boolean;
@@ -12,28 +12,13 @@ interface NewCollaborationModalProps {
 
 const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onClose, onSave }) => {
     const [titre, setTitre] = useState('');
-    const [dateDepart, setDateDepart] = useState('');
+    const [dateDepart, setDateDepart] = useState(getCurrentDateTime());
     const [confidentielle, setConfidentielle] = useState(false);
     const [idParticipants, setIdParticipants] = useState<string[]>([]);
-    const [members, setMembers] = useState<DisplayMembreDTO[]>([]);
-    const [loadingMembers, setLoadingMembers] = useState(true);
 
     useEffect(() => {
-        const fetchMembers = async () => {
-            try {
-                const result = await GetAllMembers();
-                setMembers(result);
-                setLoadingMembers(false);
-            } catch (error) {
-                console.error('Error fetching members data', error);
-                setLoadingMembers(false);
-            }
-        };
-
-        if (show) {
-            fetchMembers();
-        }
-    }, [show]);
+        setDateDepart(getCurrentDateTime());
+    }, []);
 
     const handleSubmit = () => {
         const newCollaboration: CreateCollaborationDTO = {
@@ -47,61 +32,67 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
         onClose();
     };
 
-    const handleParticipantChange = (id: string) => {
-        setIdParticipants(prev =>
-            prev.includes(id) ? prev.filter(pid => pid !== id) : [...prev, id]
-        );
-    };
-
     return (
-        <Modal show={show} onHide={onClose}>
+        <Modal show={show} onHide={onClose} centered>
             <Modal.Header closeButton className="bg-danger text-white">
-                <Modal.Title>Nouvelle Collaboration</Modal.Title>
+                <Modal.Title className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">Nouvelle Collaboration</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form>
-                    <Form.Group controlId="titre">
-                        <Form.Label>Titre</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={titre}
-                            onChange={(e) => setTitre(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-                    <Form.Group controlId="dateDepart">
-                        <Form.Label>Date de Départ</Form.Label>
-                        <Form.Control
-                            type="date"
-                            value={dateDepart}
-                            onChange={(e) => setDateDepart(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-                    <Form.Group controlId="confidentielle">
-                        <Form.Check
-                            type="checkbox"
-                            label="Confidentielle"
-                            checked={confidentielle}
-                            onChange={(e) => setConfidentielle(e.target.checked)}
-                        />
-                    </Form.Group>
-                    <Form.Group controlId="participants">
-                        <Form.Label>Participants</Form.Label>
-                        {loadingMembers ? (
-                            <div>Loading members...</div>
-                        ) : (
-                            members.map(member => (
-                                <Form.Check
-                                    key={member.idMembre}
-                                    type="checkbox"
-                                    label={`${member.nomMembre} ${member.prenom}`}
-                                    checked={idParticipants.includes(member.idMembre)}
-                                    onChange={() => handleParticipantChange(member.idMembre)}
+                <Form className="row g-3">
+                    <div className="col-12 col-md-6">
+                        <Form.Group controlId="titre">
+                            <Form.Label className="block text-sm font-medium text-gray-700">
+                                Titre <span className="text-danger">*</span>
+                            </Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={titre}
+                                onChange={(e) => setTitre(e.target.value)}
+                                required
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                        </Form.Group>
+                    </div>
+                    <div className="col-12 col-md-6">
+                        <Form.Group controlId="dateDepart">
+                            <Form.Label className="block text-sm font-medium text-gray-700">
+                                Date de Départ <span className="text-danger">*</span>
+                            </Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                value={dateDepart}
+                                onChange={(e) => setDateDepart(e.target.value)}
+                                required
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                        </Form.Group>
+                    </div>
+                    <div className="col-12 col-md-6">
+                        <Form.Group controlId="confidentielle">
+                            <Form.Label className="block text-sm font-medium text-gray-700">
+                                Confidentielle <span className="text-danger">*</span>
+                            </Form.Label>
+                            <Form.Switch
+                                type="checkbox"
+                                checked={confidentielle}
+                                onChange={(e) => setConfidentielle(e.target.checked)}
+                                className="mt-2"
+                            />
+                        </Form.Group>
+                    </div>
+                    <div className="col-12 col-md-6">
+                        <Form.Group controlId="participants">
+                            <Form.Label className="block text-sm font-medium text-gray-700">
+                                Invité(s) <span className="text-danger">*</span>
+                            </Form.Label>
+                            <div className="mt-1">
+                                <SelectMember
+                                    selectedMembers={idParticipants}
+                                    onChange={setIdParticipants}
                                 />
-                            ))
-                        )}
-                    </Form.Group>
+                            </div>
+                        </Form.Group>
+                    </div>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
@@ -113,3 +104,13 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
 };
 
 export default NewCollaborationModal;
+
+const getCurrentDateTime = () => {
+    const now: Date = new Date();
+    const day:string = String(now.getDate()).padStart(2, '0');
+    const month:string = String(now.getMonth() + 1).padStart(2, '0'); // Janvier est 0
+    const year:number = now.getFullYear();
+    const hours:string = String(now.getHours()).padStart(2, '0');
+    const minutes :string = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
