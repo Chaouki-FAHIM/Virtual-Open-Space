@@ -4,8 +4,9 @@ import { DisplayMembreDTO } from "../../../model/membre/DisplayMembreDTO";
 import { TeamDTO } from "../../../model/TeamDTO";
 import FormRow from '../../form/FormRow';
 import FormSubRow from "../../form/FormSubRow";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faIdBadge, faBuilding, faUsers } from '@fortawesome/free-solid-svg-icons';
 import './DisplayMemberModal.css';
-
 
 interface MemberModalProps {
     show: boolean;
@@ -91,31 +92,52 @@ const DisplayMemberModal: React.FC<MemberModalProps> = ({ show, membreId, onClos
                         <button type="button" className="btn-close btn-close-white" aria-label="Close" onClick={onClose}></button>
                     </div>
                     <div className="modal-body text-center">
-                        <img
-                            src={image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
-                            alt={`${nomMembre} ${prenom}`}
-                            className="rounded-circle mb-3 border border-black border-2"
-                            style={{ width: '100px', height: '100px' }}
-                        />
-                        <FormRow label="Nom" value={nomMembre} disabled />
-                        <FormRow label="Prénom" value={prenom} disabled />
-                        <FormRow label="Rôle" value={roleHabilation} disabled />
-                        { teams.length === 1 && (
-                            <>
-                                <FormRow label="Equipe" value={teams[0].nomTeam} disabled />
-                                <FormRow label="Siège" value={replaceUnderscoresWithSpace(teams[0].siege)} disabled />
-                            </>
+                        <div className="col-12">
+                            <img
+                                src={image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
+                                alt={`${nomMembre} ${prenom}`}
+                                className="rounded-circle mb-3 border border-black border-2"
+                                style={{width: '100px', height: '100px'}}
+                            />
+                        </div>
+
+                        <div className="row">
+                            <div className="col-12 col-md-6">
+                                <FormRow label="Nom" value={nomMembre} disabled icon={faUser}/>
+                            </div>
+                            <div className="col-12 col-md-6">
+                                <FormRow label="Prénom" value={prenom} disabled icon={faUser}/>
+                            </div>
+                        </div>
+
+                        {teams.length === 1 && (
+                            <div className="row">
+                                <div className="col-12 col-md-4">
+                                    <FormRow label="Rôle" value={roleHabilation} disabled icon={faIdBadge}/>
+                                </div>
+                                <div className="col-12 col-md-4">
+                                    <FormRow label="Equipe" value={teams[0].nomTeam} disabled icon={faUsers}/>
+                                </div>
+                                <div className="col-12 col-md-4">
+                                    <FormRow label="Siège" value={replaceUnderscoresWithSpace(teams[0].siege)} disabled icon={faBuilding}/>
+                                </div>
+                            </div>
                         )}
                         {teams.length > 1 && (
-                            <div className="mt-3">
-                                <h6>Squads</h6>
-                                {teams.map((team) => (
-                                    <div key={team.idTeam} className="team-container border p-3 mb-2 rounded">
-                                        <FormSubRow label="Equipe" value={team.nomTeam} />
-                                        <FormSubRow label="Siège" value={replaceUnderscoresWithSpace(team.siege)} />
-                                    </div>
-                                ))}
-                            </div>
+                            <>
+                                <div className="col-12">
+                                    <FormRow label="Rôle" value={roleHabilation} disabled icon={faIdBadge}/>
+                                </div>
+                                <div className="col-12 mt-3">
+                                    <h6>Squads</h6>
+                                    {teams.map((team) => (
+                                        <div key={team.idTeam} className="team-container border p-3 mb-2 rounded">
+                                            <FormSubRow label="Equipe" value={team.nomTeam} icon={faUsers}/>
+                                            <FormSubRow label="Siège" value={replaceUnderscoresWithSpace(team.siege)} icon={faBuilding}/>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>

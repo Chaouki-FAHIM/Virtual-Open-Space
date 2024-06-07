@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { CreateCollaborationDTO } from '../../../model/collaboration/CreateCollaborationDTO';
 import SelectMember from '../../form/SelectMember';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faUsers, faPen, faClock } from '@fortawesome/free-solid-svg-icons';
 import './NewCollaborationModal.css'
 
 interface NewCollaborationModalProps {
@@ -39,9 +41,11 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
             </Modal.Header>
             <Modal.Body>
                 <Form className="row g-3">
-                    <div className="col-12 col-md-6">
+                    <div className="col-12 sm:col-6">
                         <Form.Group controlId="titre">
-                            <Form.Label className="block text-sm font-medium text-gray-700">
+                            <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
+                                <FontAwesomeIcon icon={faPen}
+                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
                                 Titre <span className="text-danger">*</span>
                             </Form.Label>
                             <Form.Control
@@ -53,9 +57,11 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                             />
                         </Form.Group>
                     </div>
-                    <div className="col-12 col-md-6">
+                    <div className="col-12 sm:col-6">
                         <Form.Group controlId="dateDepart">
-                            <Form.Label className="block text-sm font-medium text-gray-700">
+                            <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
+                                <FontAwesomeIcon icon={faClock}
+                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
                                 Date de Départ <span className="text-danger">*</span>
                             </Form.Label>
                             <Form.Control
@@ -67,10 +73,12 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                             />
                         </Form.Group>
                     </div>
-                    <div className="col-12 col-md-6">
+                    <div className="col-12 sm:col-6">
                         <Form.Group controlId="confidentielle">
-                            <Form.Label className="block text-sm font-medium text-gray-700">
-                                Confidentialité <span className="text-danger">*</span>
+                            <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
+                                <FontAwesomeIcon icon={faLock}
+                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                Confidentialité
                             </Form.Label>
                             <Form.Switch
                                 type="checkbox"
@@ -80,10 +88,12 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                             />
                         </Form.Group>
                     </div>
-                    <div className="col-12 col-md-6">
+                    <div className="col-12 sm:col-6">
                         <Form.Group controlId="participants">
-                            <Form.Label className="block text-sm font-medium text-gray-700">
-                                Invité(s) <span className="text-danger">*</span>
+                            <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
+                                <FontAwesomeIcon icon={faUsers}
+                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                Invité(s)
                             </Form.Label>
                             <div className="mt-1">
                                 <SelectMember
@@ -107,10 +117,10 @@ export default NewCollaborationModal;
 
 const getCurrentDateTime = () => {
     const now: Date = new Date();
-    const day:string = String(now.getDate()).padStart(2, '0');
-    const month:string = String(now.getMonth() + 1).padStart(2, '0'); // Janvier est 0
-    const year:number = now.getFullYear();
-    const hours:string = String(now.getHours()).padStart(2, '0');
-    const minutes :string = String(now.getMinutes()).padStart(2, '0');
+    const day: string = String(now.getDate()).padStart(2, '0');
+    const month: string = String(now.getMonth() + 1).padStart(2, '0'); // Janvier est 0
+    const year: number = now.getFullYear();
+    const hours: string = String(now.getHours()).padStart(2, '0');
+    const minutes: string = String(now.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
+// import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import { GetOneCollaboration } from '../../../service/collaborations/GetOneCollaboration';
 import { GetOneMember } from '../../../service/members/GetOneMember';
 import { DisplayCollaborationDTO } from '../../../model/collaboration/DisplayCollaborationDTO';
 import FormRow from '../../form/FormRow';
+import { faCalendar, faUser, faLock, faUsers, faPen } from '@fortawesome/free-solid-svg-icons';
 
 interface CollaborationModalProps {
     show: boolean;
@@ -114,10 +115,10 @@ const DisplayCollaborationModal: React.FC<CollaborationModalProps> = ({
                         <button type="button" className="btn-close btn-close-white" aria-label="Close" onClick={onClose}></button>
                     </div>
                     <div className="modal-body text-center">
-                        <FormRow label="Titre" value={titre} disabled />
-                        <FormRow label="Date de création" value={formatDate(dateCreationCollaboration)} disabled />
-                        <FormRow label="Date de départ" value={formatDate(dateDepart)} disabled />
-                        <FormRow label="Propriétaire" value={ownerName} disabled />
+                        <FormRow label="Titre" value={titre} disabled icon={faPen} />
+                        <FormRow label="Date de création" value={formatDate(dateCreationCollaboration)} disabled icon={faCalendar} />
+                        <FormRow label="Date de départ" value={formatDate(dateDepart)} disabled icon={faCalendar} />
+                        <FormRow label="Propriétaire" value={ownerName} disabled icon={faUser} />
                         {participants.length !== 0 && (
                             <>
                                 <div className="items-baseline space-x-2 mt-3">
@@ -165,7 +166,7 @@ const DisplayCollaborationModal: React.FC<CollaborationModalProps> = ({
                             </>
                         )}
                         {participants.length === 0 && (
-                            <FormRow label="Participants" value="Aucun participant pour à ce moment" disabled />
+                            <FormRow label="Participants" value="Aucun participant pour à ce moment" disabled icon={faUsers} />
                         )}
                     </div>
                 </div>
