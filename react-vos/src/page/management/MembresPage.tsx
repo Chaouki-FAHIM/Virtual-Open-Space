@@ -11,8 +11,34 @@ const MembresPage: React.FC = () => {
     const [members, setMembers] = useState<DisplayMembreDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [membersPerPage] = useState(6);
+    const [membersPerPage,setMembersPerPage] = useState(24);
     const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+
+    const updateMembersPerPage = () => {
+        console.log(window.innerWidth)
+        if (window.innerWidth >= 1200) {
+            setMembersPerPage(24);
+        } else if (window.innerWidth >= 768) {
+            setMembersPerPage(9);
+        } else {
+            setMembersPerPage(12);
+        }
+    };
+
+    useEffect(() => {
+        const handleResize = () => {
+            updateMembersPerPage();
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // Initial call to set membersPerPage based on current window size
+        updateMembersPerPage();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,7 +90,7 @@ const MembresPage: React.FC = () => {
                     ) : (
                         currentMembers.map((membreItem) => (
                             <div
-                                className="col-6 col-sm-5 col-md-4 col-lg-2 d-flex justify-content-center"
+                                className="flex space-x-2 col-4 col-sm-3 col-md-2 col-lg-1 justify-content-center"
                                 key={membreItem.idMembre}
                             >
                                 <MembreCard membre={membreItem} onClick={() => handleMemberClick(membreItem.idMembre)} />

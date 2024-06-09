@@ -9,14 +9,14 @@ interface FormRowProps {
     icon?: IconProp;
 }
 
-const FormRow: React.FC<FormRowProps> = ({ label, value, disabled = false, icon }) => {
+const FormNameRow: React.FC<FormRowProps> = ({ label, value, disabled = false, icon }) => {
     return (
         <div className="mb-3 row align-items-center">
-            <div className="col-12 col-md-3 col-sm-2 d-flex align-items-center mb-2">
+            <div className="col-12 col-sm-5 d-flex align-items-center mb-2 mb-sm-0">
                 {icon && <FontAwesomeIcon icon={icon} className="me-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />}
                 <label className="fw-bold text-start">{label}</label>
             </div>
-            <div className="col-12 col-md-9 col-sm-10">
+            <div className="col-12 col-sm-7">
                 <input
                     className="form-control w-100"
                     type="text"
@@ -30,4 +30,4 @@ const FormRow: React.FC<FormRowProps> = ({ label, value, disabled = false, icon 
     );
 };
 
-export default FormRow;
+export default FormNameRow;

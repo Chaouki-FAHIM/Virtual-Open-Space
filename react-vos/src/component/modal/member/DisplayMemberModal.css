@@ -1,12 +1,12 @@
 .modal-header.bg-warning {
     font-weight: bold;
     font-family: 'Arial', sans-serif;
-    justify-content: center; /* Centrer le contenu horizontalement */
+    justify-content: center;
 }
 
 .modal-title {
     text-align: center;
-    flex: 1; /* Pour s'assurer que le titre occupe toute la largeur disponible */
+    flex: 1;
 }
 
 

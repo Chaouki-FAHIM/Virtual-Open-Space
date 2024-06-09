@@ -12,11 +12,11 @@ interface FormRowProps {
 const FormRow: React.FC<FormRowProps> = ({ label, value, disabled = false, icon }) => {
     return (
         <div className="mb-3 row items-center">
-            <label className="col-12 sm:col-3 col-form-label fw-bold text-start d-flex align-items-center">
-                {icon && <FontAwesomeIcon icon={icon} className="mr-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />}
+            <label className="col-12 col-sm-3 col-form-label fw-bold text-start d-flex align-items-center">
+                {icon && <FontAwesomeIcon icon={icon} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />}
                 {label}
             </label>
-            <div className="col-12 sm:col-9">
+            <div className="col-12 col-sm-9">
                 <input
                     className="form-control w-full sm:w-auto"
                     type="text"

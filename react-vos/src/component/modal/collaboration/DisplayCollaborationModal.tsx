@@ -4,7 +4,14 @@ import { GetOneCollaboration } from '../../../service/collaborations/GetOneColla
 import { GetOneMember } from '../../../service/members/GetOneMember';
 import { DisplayCollaborationDTO } from '../../../model/collaboration/DisplayCollaborationDTO';
 import FormRow from '../../form/FormRow';
-import { faCalendar, faUser, faLock, faUsers, faPen } from '@fortawesome/free-solid-svg-icons';
+import {
+    faLock,
+    faUsers,
+    faPen,
+    faCalendarDay,
+    faCalendarAlt,
+    faCrown
+} from '@fortawesome/free-solid-svg-icons';
 
 interface CollaborationModalProps {
     show: boolean;
@@ -92,7 +99,7 @@ const DisplayCollaborationModal: React.FC<CollaborationModalProps> = ({
         );
     }
 
-    const { titre, dateCreationCollaboration, dateDepart, participants } = currentCollaboration;
+    const { titre, dateCreationCollaboration, dateDepart,  confidentielle, participants } = currentCollaboration;
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -116,9 +123,10 @@ const DisplayCollaborationModal: React.FC<CollaborationModalProps> = ({
                     </div>
                     <div className="modal-body text-center">
                         <FormRow label="Titre" value={titre} disabled icon={faPen} />
-                        <FormRow label="Date de création" value={formatDate(dateCreationCollaboration)} disabled icon={faCalendar} />
-                        <FormRow label="Date de départ" value={formatDate(dateDepart)} disabled icon={faCalendar} />
-                        <FormRow label="Propriétaire" value={ownerName} disabled icon={faUser} />
+                        <FormRow label="Date de création" value={formatDate(dateCreationCollaboration)} disabled icon={faCalendarDay} />
+                        <FormRow label="Date de départ" value={formatDate(dateDepart)} disabled icon={faCalendarAlt} />
+                        <FormRow label="Confidentialité" value={confidentielle ? 'Oui' : 'Non'} disabled icon={faLock} />
+                        <FormRow label="Propriétaire" value={ownerName} disabled icon={faCrown} />
                         {participants.length !== 0 && (
                             <>
                                 <div className="items-baseline space-x-2 mt-3">

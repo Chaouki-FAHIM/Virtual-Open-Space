@@ -3,7 +3,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { CreateCollaborationDTO } from '../../../model/collaboration/CreateCollaborationDTO';
 import SelectMember from '../../form/SelectMember';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faUsers, faPen, faClock } from '@fortawesome/free-solid-svg-icons';
+import {faLock, faUsers, faPen, faCalendarAlt} from '@fortawesome/free-solid-svg-icons';
 import './NewCollaborationModal.css'
 
 interface NewCollaborationModalProps {
@@ -60,7 +60,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     <div className="col-12 sm:col-6">
                         <Form.Group controlId="dateDepart">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
-                                <FontAwesomeIcon icon={faClock}
+                                <FontAwesomeIcon icon={faCalendarAlt}
                                                  className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
                                 Date de Départ <span className="text-danger">*</span>
                             </Form.Label>
