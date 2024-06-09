@@ -1,6 +1,6 @@
 package com.attijarivos.unit.service;
 
-import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationCreateRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
@@ -62,15 +62,15 @@ public class CollaborationServiceUnitTest extends WebClientTest implements IColl
     }
 
     @Test
-    void createCollaboration() throws RequiredDataException, NotFoundDataException, MicroserviceAccessFailureException {
+    void createCollaboration() throws Exception {
 
         // Arrange
-        CollaborationRequest request = getCollaborationRequest();
+        CollaborationCreateRequest request = getCollaborationRequest();
         Collaboration collaboration = new Collaboration();
 
         CollaborationResponse expectedResponse = new CollaborationResponse();
 
-        when(collaborationMapper.fromReqToModel(any(CollaborationRequest.class))).thenReturn(collaboration);
+        when(collaborationMapper.fromReqToModel(any(CollaborationCreateRequest.class))).thenReturn(collaboration);
         when(collaborationRepository.save(any(Collaboration.class))).thenReturn(collaboration);
         when(collaborationMapper.fromModelToRes(any(Collaboration.class))).thenReturn(expectedResponse);
 

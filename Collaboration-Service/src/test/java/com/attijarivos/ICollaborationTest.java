@@ -1,6 +1,6 @@
 package com.attijarivos;
 
-import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationCreateRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.model.Collaboration;
@@ -10,8 +10,8 @@ import java.util.Random;
 
 public interface ICollaborationTest extends DataTest {
 
-    default CollaborationRequest getCollaborationRequest() {
-        return CollaborationRequest.builder()
+    default CollaborationCreateRequest getCollaborationRequest() {
+        return CollaborationCreateRequest.builder()
                 .confidentielle(true)
                 .dateDepart(new Date())
                 .titre("Collaboration Test")
@@ -29,7 +29,7 @@ public interface ICollaborationTest extends DataTest {
                 .build();
     }
 
-    default CollaborationResponse getCollaborationResponse(long idCollaboration, CollaborationRequest request) {
+    default CollaborationResponse getCollaborationResponse(long idCollaboration, CollaborationCreateRequest request) {
         return CollaborationResponse.builder()
                 .idCollaboration(idCollaboration)
                 .idProprietaire(request.getIdProprietaire())

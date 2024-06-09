@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfig implements WebFluxConfigurer {
 
     public static final String MEMBRE_SERVICE_URL = "http://membre-service/membres";
-    public static final String INVITATION_SERVICE_URL = "http://invitation-service/invitations";
+    public static final String INVITATION_SERVICE_URL = "http://collaboration-service/invitations";
 
     @Bean
     @Qualifier("webClient-layer-config")

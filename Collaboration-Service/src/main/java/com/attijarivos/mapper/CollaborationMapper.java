@@ -1,22 +1,22 @@
 package com.attijarivos.mapper;
 
 
-import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationCreateRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.model.Collaboration;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component("mapper-layer-collaboration")
-public class CollaborationMapper implements IMapper<Collaboration,CollaborationRequest,CollaborationResponse> {
+public class CollaborationMapper implements IMapper<Collaboration, CollaborationCreateRequest,CollaborationResponse> {
 
     @Override
-    public Collaboration fromReqToModel(CollaborationRequest collaborationRequest) {
+    public Collaboration fromReqToModel(CollaborationCreateRequest collaborationCreateRequest) {
         return Collaboration.builder()
-                .titre(collaborationRequest.getTitre())
-                .idProprietaire(collaborationRequest.getIdProprietaire())
-                .dateDepart(collaborationRequest.getDateDepart())
-                .confidentielle(collaborationRequest.getConfidentielle())
+                .titre(collaborationCreateRequest.getTitre())
+                .idProprietaire(collaborationCreateRequest.getIdProprietaire())
+                .dateDepart(collaborationCreateRequest.getDateDepart())
+                .confidentielle(collaborationCreateRequest.getConfidentielle())
                 .build();
     }
 

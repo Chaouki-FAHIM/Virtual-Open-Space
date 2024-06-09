@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -14,4 +15,11 @@ import java.util.List;
 public class InvitationListRequest {
     private Long idCollaboration;
     private List<String> idInvites;
+
+    public void addInvite(String guest) {
+        if (idInvites == null) {
+            idInvites = new ArrayList<>();
+        }
+        idInvites.add(guest);
+    }
 }

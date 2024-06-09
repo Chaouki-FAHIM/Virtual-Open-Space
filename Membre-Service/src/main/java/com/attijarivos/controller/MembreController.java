@@ -81,7 +81,7 @@ public class MembreController {
     public ResponseEntity<?> delete(@PathVariable("id") String idMembre) {
         try {
             membreService.deleteMembre(idMembre);
-            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de l'équipe d'id : "+idMembre);
+            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de membre d'id : "+idMembre);
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (MicroserviceAccessFailureException e) {

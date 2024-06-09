@@ -1,8 +1,9 @@
 package com.attijarivos.service;
 
 
-import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationCreateRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
+import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
 import com.attijarivos.DTO.response.MembreResponse;
@@ -18,9 +19,11 @@ import com.attijarivos.model.Participation;
 import com.attijarivos.repository.CollaborationRepository;
 import com.attijarivos.repository.InvitationRepository;
 import com.attijarivos.repository.ParticipationRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -32,7 +35,7 @@ import java.util.stream.Collectors;
 @Service("service-layer-collaboration")
 @RequiredArgsConstructor
 @Slf4j
-public class CollaborationService implements ICollaborationService<CollaborationRequest,CollaborationResponse,Long> {
+public class CollaborationService implements ICollaborationService<CollaborationCreateRequest,CollaborationResponse,Long> {
 
     @Qualifier("mapper-layer-collaboration")
     private final CollaborationMapper collaborationMapper;
@@ -73,21 +76,40 @@ public class CollaborationService implements ICollaborationService<Collaboration
         }
     }
 
+    private void createGuestList(InvitationListRequest invitationListRequest) throws Exception {
 
-    private void verifyDataCollaboration(CollaborationRequest collaborationRequest, String context) throws RequiredDataException {
+        try {
+             webClientBuilder.build().post().uri(WebClientConfig.INVITATION_SERVICE_URL+"/list")
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(invitationListRequest)
+                     .retrieve()
+                     .bodyToMono(Void.class)
+                     .subscribe();
+
+        } catch (WebClientRequestException e) {
+            log.error("Problème lors de connexion avec le Invitation-Service", e);
+            throw new MicroserviceAccessFailureException("Invitation");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new Exception(e);
+        }
+    }
+
+
+    private void verifyDataCollaboration(CollaborationCreateRequest collaborationCreateRequest, String context) throws RequiredDataException {
         String object = "de la collaboration";
 
-        if(isNotNullValue(collaborationRequest.getTitre())) {
+        if(isNotNullValue(collaborationCreateRequest.getTitre())) {
             log.warn("Titre est obligatoire pour "+context+" "+object);
             throw new RequiredDataException("Titre",context,object);
         }
 
-        if(isNotNullValue(collaborationRequest.getIdProprietaire())) {
+        if(isNotNullValue(collaborationCreateRequest.getIdProprietaire())) {
             log.warn("Identifiant de propriétaire est obligatoire pour "+context+" "+object);
             throw new RequiredDataException("Identifiant",context,object);
         }
 
-        if(collaborationRequest.getConfidentielle() == null) {
+        if(collaborationCreateRequest.getConfidentielle() == null) {
             log.warn("Confidentialité est obligatoire pour "+context+" "+object);
             throw new RequiredDataException("Confidentialité",context,object);
         }
@@ -137,15 +159,16 @@ public class CollaborationService implements ICollaborationService<Collaboration
     }
 
     @Override
-    public CollaborationResponse createOne(CollaborationRequest collaborationRequest) throws RequiredDataException, MicroserviceAccessFailureException, NotFoundDataException {
+    @Transactional
+    public CollaborationResponse createOne(CollaborationCreateRequest collaborationCreateRequest) throws Exception {
 
-        verifyDataCollaboration(collaborationRequest,"l'ajout");
+        verifyDataCollaboration(collaborationCreateRequest,"l'ajout");
 
         // vérification le propriétaire (membre) au niveau de base de données
-        if(receiveMembreById(collaborationRequest.getIdProprietaire()).isEmpty())
-            throw new NotFoundDataException("Proriétaire",collaborationRequest.getIdProprietaire());
+        if(receiveMembreById(collaborationCreateRequest.getIdProprietaire()).isEmpty())
+            throw new NotFoundDataException("Proriétaire", collaborationCreateRequest.getIdProprietaire());
 
-        Collaboration collaboration = collaborationMapper.fromReqToModel(collaborationRequest);
+        Collaboration collaboration = collaborationMapper.fromReqToModel(collaborationCreateRequest);
 
         // insertion les valeurs par défaut de colonne
         collaboration.setDateCreationCollaboration(new Date());
@@ -155,10 +178,19 @@ public class CollaborationService implements ICollaborationService<Collaboration
         if (isNotNullValue(collaboration.getDateDepart()) )
             collaboration.setDateDepart(collaboration.getDateCreationCollaboration());
 
+
+        Collaboration createdCollaboration = collaborationRepository.saveAndFlush(collaboration);
+        InvitationListRequest  invitationListRequest = new InvitationListRequest();
+
+        invitationListRequest.setIdCollaboration(createdCollaboration.getIdCollaboration());
+        collaborationCreateRequest.getIdInvites().forEach(invitationListRequest::addInvite);
+
+        createGuestList(invitationListRequest);
+
         log.info("Collaboration en ligne est enregistrée : {}", collaboration);
 
         return collaborationMapper.fromModelToRes(
-                collaborationRepository.save(collaboration)
+                createdCollaboration
         );
     }
 
@@ -203,7 +235,7 @@ public class CollaborationService implements ICollaborationService<Collaboration
 
         // vérification le titre et la confidentialité
         verifyDataCollaboration(
-                CollaborationRequest.builder()
+                CollaborationCreateRequest.builder()
                         .titre(collaborationUpdateRequest.getTitre())
                         .confidentielle(collaborationUpdateRequest.getConfidentielle())
                         .dateDepart(collaborationUpdateRequest.getDateDepart())

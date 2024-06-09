@@ -1,7 +1,7 @@
 package com.attijarivos.controller;
 
 
-import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationCreateRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
@@ -26,18 +26,18 @@ import java.util.Set;
 @CrossOrigin("http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
-public class CollaborationController implements ICollaborationController<CollaborationRequest, Long>{
+public class CollaborationController implements ICollaborationController<CollaborationCreateRequest, Long>{
 
     @Autowired
     @Qualifier("service-layer-collaboration")
-    private final ICollaborationService<CollaborationRequest,CollaborationResponse,Long> collaborationService;
+    private final ICollaborationService<CollaborationCreateRequest,CollaborationResponse,Long> collaborationService;
 
 
     @PostMapping
     @Override
-    public ResponseEntity<?> createOne(@RequestBody @Valid CollaborationRequest collaborationRequest) {
+    public ResponseEntity<?> createOne(@RequestBody @Valid CollaborationCreateRequest collaborationCreateRequest) {
         try {
-            CollaborationResponse collaborationResponse = collaborationService.createOne(collaborationRequest);
+            CollaborationResponse collaborationResponse = collaborationService.createOne(collaborationCreateRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(collaborationResponse);
         } catch (RequiredDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -73,10 +73,10 @@ public class CollaborationController implements ICollaborationController<Collabo
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<?> update(@PathVariable("id") Long idCollaboration,@RequestBody @Valid CollaborationUpdateRequest collaborationRequest) {
+    public ResponseEntity<?> update(@PathVariable("id") Long idCollaboration,@RequestBody @Valid CollaborationUpdateRequest collaborationUpdateRequest) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    collaborationService.update(idCollaboration,collaborationRequest)
+                    collaborationService.update(idCollaboration,collaborationUpdateRequest)
             );
         } catch (NotFoundDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

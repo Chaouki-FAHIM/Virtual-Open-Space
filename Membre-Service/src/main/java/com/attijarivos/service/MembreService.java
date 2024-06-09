@@ -41,7 +41,7 @@ public class MembreService extends WebClientOperations {
         return value == null || Objects.equals(value, "");
     }
 
-    private void verifyDataMembre(MembreRequest membreRequest) throws RequiredDataException, RededicationMembreException {
+    private void verifyDataMembre(MembreRequest membreRequest, boolean isUpdating) throws RequiredDataException, RededicationMembreException {
 
         if(isNotNullValue(membreRequest.getNomMembre())) {
             throw new RequiredDataException("Nom est obligatoire pour l'ajout d'un nouveau membre");
@@ -53,7 +53,7 @@ public class MembreService extends WebClientOperations {
             throw new RequiredDataException("Rôle d'habilation est obligatoire pour l'ajout d'un nouveau membre");
         }
 
-        if(! membreRespository.findByNomMembreAndPrenom(
+        if( ! isUpdating && ! membreRespository.findByNomMembreAndPrenom(
                 membreRequest.getNomMembre(), membreRequest.getPrenom()).isEmpty()
         ) {
             throw new RededicationMembreException("nom et prénom");
@@ -62,7 +62,7 @@ public class MembreService extends WebClientOperations {
 
     public ShortMembreResponse createMembre(MembreRequest membreRequest) throws MicroserviceAccessFailureException, RequiredDataException, RededicationMembreException {
 
-        verifyDataMembre(membreRequest);
+        verifyDataMembre(membreRequest,false);
 
         if(isNotNullValue(membreRequest.getIdTeam())) {
             throw new RequiredDataException("Identifiant d'équipe est obligatoire pour l'ajout d'un nouveau membre");
@@ -100,7 +100,7 @@ public class MembreService extends WebClientOperations {
     public DetailMembreResponse updateMembre(String idMembre, MembreUpdateRequest membreRequest) throws NotFoundDataException, MicroserviceAccessFailureException, RequiredDataException, RededicationMembreException {
         Optional<Membre> membre = Optional.of(receiveMembre(idMembre));
 
-        verifyDataMembre(membreMapper.fromReqToUpdateMembre(membreRequest));
+        verifyDataMembre(membreMapper.fromReqToUpdateMembre(membreRequest), true);
 
         membre.get().setNomMembre(membreRequest.getNomMembre());
         membre.get().setPrenom(membreRequest.getPrenom());

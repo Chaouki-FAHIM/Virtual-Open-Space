@@ -4,10 +4,9 @@ import { DisplayMembreDTO } from "../../../model/membre/DisplayMembreDTO";
 import { TeamDTO } from "../../../model/TeamDTO";
 import FormRow from '../../form/FormRow';
 import FormSubRow from "../../form/FormSubRow";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faIdBadge, faBuilding, faUsers } from '@fortawesome/free-solid-svg-icons';
-import './DisplayMemberModal.css';
 import FormNameRow from "../../form/FormNameRow";
+import './DisplayMemberModal.css';
 
 interface MemberModalProps {
     show: boolean;

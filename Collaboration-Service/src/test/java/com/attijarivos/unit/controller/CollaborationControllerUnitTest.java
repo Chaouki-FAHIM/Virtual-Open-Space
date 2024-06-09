@@ -1,6 +1,6 @@
 package com.attijarivos.unit.controller;
 
-import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationCreateRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DTO.response.CollaborationResponse;
@@ -33,7 +33,7 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private ICollaborationService<CollaborationRequest, CollaborationResponse, Long> collaborationService;
+    private ICollaborationService<CollaborationCreateRequest, CollaborationResponse, Long> collaborationService;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -47,10 +47,10 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
 
     @Test
     void createCollaborationSuccess() throws Exception {
-        CollaborationRequest request = getCollaborationRequest();
+        CollaborationCreateRequest request = getCollaborationRequest();
         CollaborationResponse response = getCollaborationResponse(1L,request);
 
-        when(collaborationService.createOne(any(CollaborationRequest.class))).thenReturn(response);
+        when(collaborationService.createOne(any(CollaborationCreateRequest.class))).thenReturn(response);
 
         mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,10 +67,10 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
 
     @Test
     void createCollaborationWithRequiredTitle() throws Exception {
-        CollaborationRequest request = getCollaborationRequest();
+        CollaborationCreateRequest request = getCollaborationRequest();
         request.setTitre(null);
 
-        when(collaborationService.createOne(any(CollaborationRequest.class)))
+        when(collaborationService.createOne(any(CollaborationCreateRequest.class)))
                 .thenThrow(new RequiredDataException("Titre", "l'ajout", "de la collaboration"));
 
         mockMvc.perform(post(URI)
@@ -83,10 +83,10 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
 
     @Test
     void createCollaborationWithRequiredConfidentielle() throws Exception {
-        CollaborationRequest request = getCollaborationRequest();
+        CollaborationCreateRequest request = getCollaborationRequest();
         request.setConfidentielle(null);
 
-        when(collaborationService.createOne(any(CollaborationRequest.class)))
+        when(collaborationService.createOne(any(CollaborationCreateRequest.class)))
                 .thenThrow(new RequiredDataException("Confidentialité", "l'ajout", "de la collaboration"));
 
         mockMvc.perform(post(URI)
@@ -99,10 +99,10 @@ public class CollaborationControllerUnitTest implements ICollaborationTest {
 
     @Test
     void createCollaborationWithRequiredOwnerID() throws Exception {
-        CollaborationRequest request = getCollaborationRequest();
+        CollaborationCreateRequest request = getCollaborationRequest();
         request.setIdProprietaire(null);
 
-        when(collaborationService.createOne(any(CollaborationRequest.class)))
+        when(collaborationService.createOne(any(CollaborationCreateRequest.class)))
                 .thenThrow(new RequiredDataException("Identifiant de propriétaire", "l'ajout", "de la collaboration"));
 
         mockMvc.perform(post(URI)

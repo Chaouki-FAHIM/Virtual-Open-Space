@@ -3,8 +3,9 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { CreateCollaborationDTO } from '../../../model/collaboration/CreateCollaborationDTO';
 import SelectMember from '../../form/SelectMember';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faLock, faUsers, faPen, faCalendarAlt} from '@fortawesome/free-solid-svg-icons';
-import './NewCollaborationModal.css'
+import { faLock, faUsers, faPen, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import './NewCollaborationModal.css';
+import {CreateNewCollaboration} from "../../../service/collaborations/CreateNewCollaboration";
 
 interface NewCollaborationModalProps {
     show: boolean;
@@ -22,16 +23,21 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
         setDateDepart(getCurrentDateTime());
     }, []);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const newCollaboration: CreateCollaborationDTO = {
             titre,
             confidentielle,
             dateDepart,
             idProprietaire: '', // Remplir avec l'ID du propriétaire actuel
-            idParticipants
+            idInvites: idParticipants
         };
-        onSave(newCollaboration);
-        onClose();
+        try {
+            await CreateNewCollaboration(newCollaboration);
+            onSave(newCollaboration);
+            onClose();
+        } catch (error) {
+            console.error("Error saving the new collaboration", error);
+        }
     };
 
     return (
@@ -44,8 +50,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     <div className="col-12 sm:col-6">
                         <Form.Group controlId="titre">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
-                                <FontAwesomeIcon icon={faPen}
-                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                <FontAwesomeIcon icon={faPen} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
                                 Titre <span className="text-danger">*</span>
                             </Form.Label>
                             <Form.Control
@@ -60,8 +65,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     <div className="col-12 sm:col-6">
                         <Form.Group controlId="dateDepart">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
-                                <FontAwesomeIcon icon={faCalendarAlt}
-                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                <FontAwesomeIcon icon={faCalendarAlt} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
                                 Date de Départ <span className="text-danger">*</span>
                             </Form.Label>
                             <Form.Control
@@ -76,8 +80,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     <div className="col-12 sm:col-6">
                         <Form.Group controlId="confidentielle">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
-                                <FontAwesomeIcon icon={faLock}
-                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                <FontAwesomeIcon icon={faLock} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
                                 Confidentialité
                             </Form.Label>
                             <Form.Switch
@@ -91,8 +94,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     <div className="col-12 sm:col-6">
                         <Form.Group controlId="participants">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
-                                <FontAwesomeIcon icon={faUsers}
-                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                <FontAwesomeIcon icon={faUsers} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
                                 Invité(s)
                             </Form.Label>
                             <div className="mt-1">

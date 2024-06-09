@@ -1,6 +1,6 @@
 package com.attijarivos.intergration;
 
-import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationCreateRequest;
 import com.attijarivos.DTO.request.CollaborationUpdateRequest;
 import com.attijarivos.DTO.request.JoinCollaborationRequest;
 import com.attijarivos.DataTest;
@@ -74,7 +74,7 @@ class CollaborationAPIApplicationTests implements DataTest, ICollaborationTest {
 
 	@Test
 	void testCreateCollaboration() throws Exception {
-		CollaborationRequest request = getCollaborationRequest();
+		CollaborationCreateRequest request = getCollaborationRequest();
 
 		mockMvc.perform(
 				MockMvcRequestBuilders.post(URI)

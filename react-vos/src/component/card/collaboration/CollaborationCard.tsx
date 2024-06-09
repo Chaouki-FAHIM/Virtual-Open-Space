@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { DisplayCollaborationDTO } from "../../../model/collaboration/DisplayCollaborationDTO";
 import { Tooltip } from "bootstrap";
+import { DisplayCollaborationDTO } from "../../../model/collaboration/DisplayCollaborationDTO";
 import { DisplayMemberDetailDTO } from "../../../model/membre/DisplayMemberDetailDTO";
 import LitleMembreCard from "../membre/LitleMembreCard";
 
@@ -58,28 +58,23 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
         else return getPositionFor8(index);
     };
 
-    const ownerTeams = collaboration.participants.find(p => p.idMembre === collaboration.idProprietaire)?.teams.map(team => team.idTeam) || [];
+    // Récupérer les équipes du propriétaire
+    const ownerTeams = collaboration.participants
+        .find(p => p.idMembre === collaboration.idProprietaire)
+        ?.teams.map(team => team.idTeam) || [];
 
     return (
         <div className="text-center mx-3 my-3 position-relative" style={{ cursor: 'pointer', width: '75%', height: 'auto' }} onClick={onClick}>
             <div className="mb-2 flex items-baseline">
                 <strong data-bs-toggle="tooltip" data-bs-title="Titre">{collaboration.titre}</strong>
-
-                <span className="badge rounded-pill text-bg-warning mx-1" data-bs-toggle="tooltip"
-                      data-bs-title="Nombre de participants">
+                <span className="badge rounded-pill text-bg-warning mx-1" data-bs-toggle="tooltip" data-bs-title="Nombre de participants">
                     {collaboration.participants.length} <i className="bi bi-person-fill"></i>
                 </span>
-                {
-                    collaboration.confidentielle && (
-                        <span className="badge rounded-pill text-bg-danger m-1" data-bs-toggle="tooltip"
-                              data-bs-title="Confidentielle">
-                            <i className="bi bi-lock-fill"></i>
-                        </span>
-
-                    )
-                }
-
-
+                {collaboration.confidentielle && (
+                    <span className="badge rounded-pill text-bg-danger m-1" data-bs-toggle="tooltip" data-bs-title="Confidentielle">
+                        <i className="bi bi-lock-fill"></i>
+                    </span>
+                )}
             </div>
             <img
                 src={getImageSrc(collaboration.participants.length)}
@@ -95,11 +90,9 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
                             membre={participant}
                             key={index}
                             ownerTeams={ownerTeams}
-                            idProprietaire={collaboration.idProprietaire}
                             position={getPosition(index)}
                         />
-                    ))
-                }
+                    ))}
             </div>
         </div>
     );

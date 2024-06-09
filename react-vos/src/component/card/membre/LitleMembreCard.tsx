@@ -4,14 +4,14 @@ import { DisplayMemberDetailDTO } from "../../../model/membre/DisplayMemberDetai
 
 interface LitleMembreCardProps {
     membre: DisplayMemberDetailDTO;
-    ownerTeams: string[]; // Nouvelle prop pour les équipes du propriétaire
-    idProprietaire: string; // Nouvelle prop pour l'ID du propriétaire
+    ownerTeams: string[];
     onClick?: () => void;
     position: { top: string, left: string };
 }
 
-const LitleMembreCard: React.FC<LitleMembreCardProps> = ({ membre, ownerTeams, idProprietaire, onClick, position }) => {
+const LitleMembreCard: React.FC<LitleMembreCardProps> = ({ membre, ownerTeams, onClick, position }) => {
     useEffect(() => {
+
         const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
         return () => {
@@ -19,22 +19,15 @@ const LitleMembreCard: React.FC<LitleMembreCardProps> = ({ membre, ownerTeams, i
         };
     }, []);
 
-    // Vérifier si le membre est le propriétaire
-    const isOwner = membre.idMembre === idProprietaire;
-
     // Vérifier si le membre est dans au moins une des équipes du propriétaire
     const isInOwnerTeam = membre.teams.some(team => ownerTeams.includes(team.idTeam));
 
-    // Définir la couleur de la bordure et l'ombre
-    let borderColor = 'black';
-    let boxShadow = 'none';
-    let borderWidth = '2px';
+    // Définir la couleur de la bordure et l'ombre pour les membres étrangers
+    let borderColor:string = 'black';
+    let boxShadow:string = 'none';
+    let borderWidth:string = '2px';
 
-    if (isOwner) {
-        borderColor = 'gold';
-        boxShadow = '0 0 10px gold';
-        borderWidth = '3px';
-    } else if (!isInOwnerTeam) {
+    if (!isInOwnerTeam) {
         borderColor = 'red';
         boxShadow = '0 0 10px red';
     }

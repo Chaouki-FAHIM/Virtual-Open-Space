@@ -1,7 +1,7 @@
 package com.attijarivos.intergration;
 
 
-import com.attijarivos.DTO.request.CollaborationRequest;
+import com.attijarivos.DTO.request.CollaborationCreateRequest;
 import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DataTest;
@@ -86,14 +86,14 @@ class InvitationAPIApplicationTests implements DataTest, ICollaborationTest {
 
 
 	Collaboration createCollaboration(long collaborationId) {
-		CollaborationRequest collaborationRequest = getCollaborationRequest();
+		CollaborationCreateRequest collaborationCreateRequest = getCollaborationRequest();
 		return collaborationRepository.save(
 				Collaboration.builder()
 						.idCollaboration(collaborationId)
-						.confidentielle(collaborationRequest.getConfidentielle())
-						.dateDepart(collaborationRequest.getDateDepart())
-						.titre(collaborationRequest.getTitre())
-						.idProprietaire(collaborationRequest.getIdProprietaire())
+						.confidentielle(collaborationCreateRequest.getConfidentielle())
+						.dateDepart(collaborationCreateRequest.getDateDepart())
+						.titre(collaborationCreateRequest.getTitre())
+						.idProprietaire(collaborationCreateRequest.getIdProprietaire())
 						.dateCreationCollaboration(new Date())
 						.build()
 		);

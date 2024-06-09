@@ -173,7 +173,7 @@ public class InvitationService implements IInvitationService<InvitationRequest,I
 
     @Override
     public Set<InvitationResponse> getAll() throws NotFoundDataException {
-        Set<Invitation> invitations = (Set<Invitation>) invitationRepository.findAll();
+        List<Invitation> invitations = invitationRepository.findAll();
         if(invitations.isEmpty()) throw new NotFoundDataException("Liste des invitations est vide !!");
         log.info("Invitations de la collaboration en ligne tourvées sont : {}",invitations);
         return invitations.stream().map(invitationMapper::fromModelToRes).collect(Collectors.toSet());

@@ -4,5 +4,5 @@ export interface CreateCollaborationDTO {
     confidentielle:boolean;
     dateDepart:string;
     idProprietaire:string;
-    idParticipants: string[];
+    idInvites: string[];
 }
