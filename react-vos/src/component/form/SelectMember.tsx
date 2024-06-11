@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
+import { Tooltip } from 'bootstrap';
 import { DisplayMembreDTO } from '../../model/membre/DisplayMembreDTO';
 import { GetAllMembers } from '../../service/members/GetAllMembers';
 
@@ -32,10 +33,31 @@ const SelectMember: React.FC<SelectMemberProps> = ({ selectedMembers, onChange }
         fetchMembers();
     }, []);
 
+    useEffect(() => {
+        const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
+        return () => {
+            tooltipList.forEach(tooltip => tooltip.dispose());
+        };
+    }, [members, selectedMembers]);
+
     const handleSelectChange = (selectedOptions: any) => {
         const selectedIds = selectedOptions.map((option: any) => option.value);
         onChange(selectedIds);
     };
+
+    const MultiValueContainer = (props: any) => (
+        <components.MultiValueContainer {...props}>
+            <img
+                src={props.data.image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
+                alt={props.data.label}
+                className="rounded-circle border border-danger border-2 mx-1"
+                style={{ width: '2.5rem', height: '2.5rem' }}
+                data-bs-toggle="tooltip"
+                title={props.data.label}
+            />
+        </components.MultiValueContainer>
+    );
 
     if (loading) {
         return <div>Loading members...</div>;
@@ -49,18 +71,38 @@ const SelectMember: React.FC<SelectMemberProps> = ({ selectedMembers, onChange }
             onChange={handleSelectChange}
             formatOptionLabel={(option: any) => (
                 <div className="flex items-center">
-                    <img src={option.image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
-                         alt={option.label}
-                         className="rounded-circle border border-danger border-2 mx-2"
-                         style={{ width: '2.5rem', height: '2.5rem' }} />
-                    <span>{option.label}</span>
+                    <img
+                        src={option.image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
+                        alt={option.label}
+                        className="rounded-circle border border-danger border-2 mx-2"
+                        style={{ width: '2.5rem', height: '2.5rem' }}
+                    />
+                    <span className='text-wrap text-dark'>{option.label}</span>
                 </div>
             )}
             noOptionsMessage={() => 'Aucun invité trouvé'}
+            components={{ MultiValueContainer }}
             styles={{
-                multiValue: (styles) => ({ ...styles, backgroundColor: 'black' }),
-                multiValueLabel: (styles) => ({ ...styles, color: 'white' }),
+                multiValue: (styles) => ({ ...styles, backgroundColor: 'transparent' }),
+                multiValueLabel: (styles) => ({ ...styles, display: 'none' }),
                 container: (styles) => ({ ...styles, color: 'grey' }),
+                control: (styles, state) => ({
+                    ...styles,
+                    boxShadow: state.isFocused ? '0 0 0 0.05rem rgba(108, 117, 125, 0.25)' : styles.boxShadow,
+                    borderColor: state.isFocused ? 'var(--bs-secondary)' : styles.borderColor,
+                    '&:hover': {
+                        borderColor: state.isFocused ? 'var(--bs-secondary)' : styles.borderColor,
+                    },
+                }),
+                option: (styles, state) => ({
+                    ...styles,
+                    backgroundColor: state.isFocused ? 'orange' : state.isSelected ? 'orange' : styles.backgroundColor,
+                    color: state.isFocused || state.isSelected ? 'white' : styles.color,
+                    '&:hover': {
+                        backgroundColor: 'orange',
+                        color: 'white',
+                    },
+                }),
             }}
         />
     );

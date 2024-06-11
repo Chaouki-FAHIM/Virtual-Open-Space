@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { Tooltip } from 'bootstrap';
+import { faLock, faUsers, faPen, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { CreateCollaborationDTO } from '../../../model/collaboration/CreateCollaborationDTO';
 import SelectMember from '../../form/SelectMember';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faUsers, faPen, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { CreateNewCollaboration } from '../../../service/collaborations/CreateNewCollaboration';
 import './NewCollaborationModal.css';
-import {CreateNewCollaboration} from "../../../service/collaborations/CreateNewCollaboration";
+import TimePicker from "../../form/TimePicker";
 
 interface NewCollaborationModalProps {
     show: boolean;
@@ -13,32 +15,76 @@ interface NewCollaborationModalProps {
     onSave: (collaboration: CreateCollaborationDTO) => void;
 }
 
+const getCurrentDate = () => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    return `${year}-${month}-${day}`;
+};
+
+const calculateTimeRemaining = (dateString: string, timeString: string) => {
+    const now = new Date();
+    const [year, month, day] = dateString.split('-').map(Number);
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const startDate = new Date(year, month - 1, day, hours, minutes);
+    const timeDiff = startDate.getTime() - now.getTime();
+    const daysRemaining = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hoursRemaining = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutesRemaining = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    return { daysRemaining, hoursRemaining, minutesRemaining };
+};
+
 const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onClose, onSave }) => {
     const [titre, setTitre] = useState('');
-    const [dateDepart, setDateDepart] = useState(getCurrentDateTime());
-    const [confidentielle, setConfidentielle] = useState(false);
+    const [date, setDate] = useState(getCurrentDate());
+    const [time, setTime] = useState('');
+    const [confidentielle, setConfidentielle] = useState(true);
     const [idParticipants, setIdParticipants] = useState<string[]>([]);
+    const [timeRemaining, setTimeRemaining] = useState<{ daysRemaining: number, hoursRemaining: number, minutesRemaining: number } | null>(null);
 
-    useEffect(() => {
-        setDateDepart(getCurrentDateTime());
-    }, []);
+    const handleTimeChange = (value: string) => {
+        setTime(value);
+        updateTimeRemaining(date, value);
+    };
+
+    const handleDateChange = (value: string) => {
+        setDate(value);
+        setTime('');
+        setTimeRemaining(null);
+    };
 
     const handleSubmit = async () => {
+        const dateDepart = `${date}T${time}`;
         const newCollaboration: CreateCollaborationDTO = {
             titre,
             confidentielle,
             dateDepart,
-            idProprietaire: '', // Remplir avec l'ID du propriétaire actuel
+            idProprietaire: '66512b04ee881f13a4e14d4d',
             idInvites: idParticipants
         };
+
         try {
             await CreateNewCollaboration(newCollaboration);
             onSave(newCollaboration);
             onClose();
         } catch (error) {
-            console.error("Error saving the new collaboration", error);
+            console.error('Error saving the new collaboration', error);
         }
     };
+
+    const updateTimeRemaining = (date: string, time: string) => {
+        const remaining = calculateTimeRemaining(date, time);
+        setTimeRemaining(remaining);
+    };
+
+    useEffect(() => {
+        const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
+        return () => {
+            tooltipList.forEach(tooltip => tooltip.dispose());
+        };
+    }, [idParticipants]);
 
     return (
         <Modal show={show} onHide={onClose} centered>
@@ -47,7 +93,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
             </Modal.Header>
             <Modal.Body>
                 <Form className="row g-3">
-                    <div className="col-12 sm:col-6">
+                    <div className="col-12 col-sm-5">
                         <Form.Group controlId="titre">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
                                 <FontAwesomeIcon icon={faPen} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
@@ -58,51 +104,75 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                                 value={titre}
                                 onChange={(e) => setTitre(e.target.value)}
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary custom-input sm:text-sm"
                             />
                         </Form.Group>
                     </div>
-                    <div className="col-12 sm:col-6">
-                        <Form.Group controlId="dateDepart">
+                    <div className="col-12 col-sm-7">
+                        <Form.Group controlId="date">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
                                 <FontAwesomeIcon icon={faCalendarAlt} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
-                                Date de Départ <span className="text-danger">*</span>
+                                Date et Heure de Départ <span className="text-danger">*</span>
+                                { date !== '' && time !== '' && timeRemaining && (
+                                    <span className="badge rounded-pill text-bg-dark mx-1 ease-in-out duration-300"
+                                          data-bs-toggle="tooltip" data-bs-title="Temps resté">
+                                    {timeRemaining.daysRemaining > 0 && `${timeRemaining.daysRemaining}j `}
+                                        {timeRemaining.hoursRemaining > 0 && `${timeRemaining.hoursRemaining}h `}
+                                        {timeRemaining.minutesRemaining > 0 && `${timeRemaining.minutesRemaining}m `}
+                                        <i className="bi bi-hourglass-top"></i>
+                                </span>
+                                )}
                             </Form.Label>
-                            <Form.Control
-                                type="datetime-local"
-                                value={dateDepart}
-                                onChange={(e) => setDateDepart(e.target.value)}
-                                required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            />
+                            <div className='d-flex align-items-center'>
+                                <div className="col-7 mx-1">
+                                    <Form.Control
+                                        type="date"
+                                        value={date}
+                                        onChange={(e) => handleDateChange(e.target.value)} // Update date and reset time
+                                        min={getCurrentDate()}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary custom-input sm:text-sm"
+                                        required
+                                    />
+                                </div>
+                                <div className="col-5">
+                                    <TimePicker selectedTime={time} onTimeChange={handleTimeChange} selectedDate={date} />
+                                </div>
+                            </div>
                         </Form.Group>
                     </div>
-                    <div className="col-12 sm:col-6">
-                        <Form.Group controlId="confidentielle">
-                            <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
-                                <FontAwesomeIcon icon={faLock} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
-                                Confidentialité
-                            </Form.Label>
-                            <Form.Switch
-                                type="checkbox"
-                                checked={confidentielle}
-                                onChange={(e) => setConfidentielle(e.target.checked)}
-                                className="mt-2"
-                            />
-                        </Form.Group>
-                    </div>
-                    <div className="col-12 sm:col-6">
+                    <div className="col-12">
                         <Form.Group controlId="participants">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
-                                <FontAwesomeIcon icon={faUsers} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                <FontAwesomeIcon icon={faUsers}
+                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl"/>
                                 Invité(s)
                             </Form.Label>
+                            {idParticipants.length > 0 && (
+                                <span className="badge rounded-pill text-bg-dark mx-1 ease-in-out duration-300"
+                                      data-bs-toggle="tooltip" data-bs-title="Nombre des invités sélectionnés">
+                                    {idParticipants.length} <i className="bi bi-person-fill"></i>
+                                </span>
+                            )}
                             <div className="mt-1">
                                 <SelectMember
                                     selectedMembers={idParticipants}
                                     onChange={setIdParticipants}
                                 />
                             </div>
+                        </Form.Group>
+                    </div>
+                    <div className="col-12">
+                        <Form.Group controlId="confidentielle" className="d-flex align-items-center">
+                            <Form.Label className="block text-sm font-medium text-gray-700 flex items-center mb-0">
+                                <FontAwesomeIcon icon={faLock} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                Confidentialité
+                            </Form.Label>
+                            <Form.Switch
+                                className="ms-3 custom-switch"
+                                type="checkbox"
+                                checked={confidentielle}
+                                onChange={(e) => setConfidentielle(e.target.checked)}
+                            />
                         </Form.Group>
                     </div>
                 </Form>
@@ -116,13 +186,3 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
 };
 
 export default NewCollaborationModal;
-
-const getCurrentDateTime = () => {
-    const now: Date = new Date();
-    const day: string = String(now.getDate()).padStart(2, '0');
-    const month: string = String(now.getMonth() + 1).padStart(2, '0'); // Janvier est 0
-    const year: number = now.getFullYear();
-    const hours: string = String(now.getHours()).padStart(2, '0');
-    const minutes: string = String(now.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-}

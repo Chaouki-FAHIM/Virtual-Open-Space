@@ -69,4 +69,7 @@
     margin-right: 10px; /* Ajuster l'espacement entre les cartes si nécessaire */
 }
 
+.custom-input:focus {
+    border-color: var(--bs-secondary) !important;
+}
 
