@@ -15,7 +15,6 @@ const MembresPage: React.FC = () => {
     const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
     const updateMembersPerPage = () => {
-        console.log(window.innerWidth)
         if (window.innerWidth >= 1200) {
             setMembersPerPage(24);
         } else if (window.innerWidth >= 768) {

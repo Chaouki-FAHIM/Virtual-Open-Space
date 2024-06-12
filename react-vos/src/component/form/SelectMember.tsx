@@ -46,16 +46,30 @@ const SelectMember: React.FC<SelectMemberProps> = ({ selectedMembers, onChange }
         onChange(selectedIds);
     };
 
+    const handleRemoveMember = (memberId: string) => {
+        const updatedSelectedMembers = selectedMembers.filter(id => id !== memberId);
+        onChange(updatedSelectedMembers);
+    };
+
     const MultiValueContainer = (props: any) => (
         <components.MultiValueContainer {...props}>
-            <img
-                src={props.data.image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
-                alt={props.data.label}
-                className="rounded-circle border border-danger border-2 mx-1"
-                style={{ width: '2.5rem', height: '2.5rem' }}
-                data-bs-toggle="tooltip"
-                title={props.data.label}
-            />
+            <div style={{ position: 'relative', display: 'inline-block', width: '8vw', height: '8vw', maxWidth: '50px', maxHeight: '50px' }}>
+                <img
+                    src={props.data.image || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'}
+                    alt={props.data.label}
+                    className="rounded-circle border border-danger border-2 mx-1"
+                    style={{ width: '100%', height: '100%' }}
+                    data-bs-toggle="tooltip"
+                    title={props.data.label}
+                />
+                <span
+                    className="badge rounded-pill text-bg-danger"
+                    style={{ position: 'absolute', top: '0.2vw', right: '0.2vw', transform: 'translate(50%, -50%)', fontSize: '0.4em', cursor: 'pointer' }}
+                    onClick={() => handleRemoveMember(props.data.idMembre)}
+                >
+                    <i className="bi bi-x-lg"></i>
+                </span>
+            </div>
         </components.MultiValueContainer>
     );
 

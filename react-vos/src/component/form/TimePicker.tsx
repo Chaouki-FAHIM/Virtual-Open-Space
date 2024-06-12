@@ -70,6 +70,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ selectedTime, onTimeChange, sel
             options={times}
             styles={customStyles}
             className="mt-1 block w-full rounded-md shadow-sm focus:border-secondary focus:ring-secondary custom-input sm:text-sm"
+            required
         />
     );
 };

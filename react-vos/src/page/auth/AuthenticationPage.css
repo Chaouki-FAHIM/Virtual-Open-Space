@@ -1,0 +1,41 @@
+/* AuthenticationPage.css */
+.login {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-signin {
+    max-width: 500px; /* Augmenter la largeur maximale */
+    padding: 2rem; /* Augmenter le padding */
+}
+
+.form-signin .form-floating:focus-within {
+    z-index: 2;
+}
+
+.form-signin input[type="email"], .form-signin input[type="password"] {
+    padding: 1.5rem;
+    font-size: 1.25rem;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}

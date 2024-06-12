@@ -1,16 +1,25 @@
 import React from 'react';
 import './App.css';
 import AppBar from "./component/AppBar";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
 
-
-export default function MyApp() {
+const MyApp = () => {
+    const location = useLocation();
+    const isAuthPage = location.pathname === '/auth';
 
     return (
-        <Router>
-            <AppBar />
+        <>
+            {!isAuthPage && <AppBar />}
             <AppRoutes />
+        </>
+    );
+};
+
+export default function AppWrapper() {
+    return (
+        <Router>
+            <MyApp />
         </Router>
     );
 }

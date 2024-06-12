@@ -6,6 +6,7 @@ import { CreateCollaborationDTO } from '../../../model/collaboration/CreateColla
 import SelectMember from '../../form/SelectMember';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CreateNewCollaboration } from '../../../service/collaborations/CreateNewCollaboration';
+import Alert from "../../Alert";
 import './NewCollaborationModal.css';
 import TimePicker from "../../form/TimePicker";
 
@@ -42,6 +43,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
     const [confidentielle, setConfidentielle] = useState(true);
     const [idParticipants, setIdParticipants] = useState<string[]>([]);
     const [timeRemaining, setTimeRemaining] = useState<{ daysRemaining: number, hoursRemaining: number, minutesRemaining: number } | null>(null);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
     const handleTimeChange = (value: string) => {
         setTime(value);
@@ -86,6 +88,10 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
         };
     }, [idParticipants]);
 
+    useEffect(() => {
+        setIsButtonDisabled(titre === '' || date === '' || time === '');
+    }, [titre, date, time]);
+
     return (
         <Modal show={show} onHide={onClose} centered>
             <Modal.Header closeButton className="bg-danger text-white">
@@ -96,7 +102,8 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     <div className="col-12 col-sm-5">
                         <Form.Group controlId="titre">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
-                                <FontAwesomeIcon icon={faPen} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
+                                <FontAwesomeIcon icon={faPen}
+                                                 className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl"/>
                                 Titre <span className="text-danger">*</span>
                             </Form.Label>
                             <Form.Control
@@ -106,19 +113,23 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                                 required
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary custom-input sm:text-sm"
                             />
+                            <div className="invalid-tooltip">
+                                Entrer un titre
+                            </div>
                         </Form.Group>
                     </div>
                     <div className="col-12 col-sm-7">
-                        <Form.Group controlId="date">
+                    <Form.Group controlId="date">
                             <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
                                 <FontAwesomeIcon icon={faCalendarAlt} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
-                                Date et Heure de Départ <span className="text-danger">*</span>
+                                Date de départ <span className="text-danger">*</span>
                                 { date !== '' && time !== '' && timeRemaining && (
                                     <span className="badge rounded-pill text-bg-dark mx-1 ease-in-out duration-300"
                                           data-bs-toggle="tooltip" data-bs-title="Temps resté">
-                                    {timeRemaining.daysRemaining > 0 && `${timeRemaining.daysRemaining}j `}
+                                        {timeRemaining.daysRemaining > 0 && `${timeRemaining.daysRemaining}j `}
                                         {timeRemaining.hoursRemaining > 0 && `${timeRemaining.hoursRemaining}h `}
                                         {timeRemaining.minutesRemaining > 0 && `${timeRemaining.minutesRemaining}m `}
+                                        {timeRemaining.minutesRemaining === 0 && timeRemaining.hoursRemaining === 0 && timeRemaining.minutesRemaining === 0 && `maintenant `}
                                         <i className="bi bi-hourglass-top"></i>
                                 </span>
                                 )}
@@ -128,7 +139,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                                     <Form.Control
                                         type="date"
                                         value={date}
-                                        onChange={(e) => handleDateChange(e.target.value)} // Update date and reset time
+                                        onChange={(e) => handleDateChange(e.target.value)}
                                         min={getCurrentDate()}
                                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary custom-input sm:text-sm"
                                         required
@@ -177,9 +188,10 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     </div>
                 </Form>
             </Modal.Body>
+
             <Modal.Footer>
                 <Button variant="secondary" onClick={onClose}>Annuler</Button>
-                <Button variant="danger" onClick={handleSubmit}>Enregistrer</Button>
+                <Button variant="danger" onClick={handleSubmit} disabled={isButtonDisabled}>Enregistrer</Button>
             </Modal.Footer>
         </Modal>
     );

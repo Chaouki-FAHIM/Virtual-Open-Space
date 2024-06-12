@@ -1,13 +1,17 @@
-import axios, { AxiosResponse } from 'axios';
-import API_BASE_URL from "../../constant/URL";
-import { CreateCollaborationDTO } from "../../model/collaboration/CreateCollaborationDTO";
+import axios from 'axios';
+import {CreateCollaborationDTO} from "../../model/collaboration/CreateCollaborationDTO";
 
-export const CreateNewCollaboration = async (newCollaboration: CreateCollaborationDTO): Promise<any> => {
+export const CreateNewCollaboration = async (newCollaboration:CreateCollaborationDTO) => {
     try {
-        const response: AxiosResponse = await axios.post(`${API_BASE_URL['collaboration']}`, newCollaboration);
+        const response = await axios.post('http://localhost:8080/collaborations', newCollaboration, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            withCredentials: true,
+        });
         return response.data;
     } catch (error) {
-        console.error(`Error creating a new collaboration: `, error);
+        console.error('Error creating a new collaboration: ', error);
         throw error;
     }
 };
