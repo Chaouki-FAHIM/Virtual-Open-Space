@@ -6,7 +6,6 @@ import { CreateCollaborationDTO } from '../../../model/collaboration/CreateColla
 import SelectMember from '../../form/SelectMember';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CreateNewCollaboration } from '../../../service/collaborations/CreateNewCollaboration';
-import Alert from "../../Alert";
 import './NewCollaborationModal.css';
 import TimePicker from "../../form/TimePicker";
 
