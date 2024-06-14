@@ -100,7 +100,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                 <Form className="row g-3">
                     <div className="col-12 col-sm-5">
                         <Form.Group controlId="titre">
-                            <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
+                            <Form.Label className="text-sm font-medium text-gray-700 flex items-center">
                                 <FontAwesomeIcon icon={faPen}
                                                  className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl"/>
                                 Titre <span className="text-danger">*</span>
@@ -119,7 +119,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                     </div>
                     <div className="col-12 col-sm-7">
                     <Form.Group controlId="date">
-                            <Form.Label className="block text-sm font-medium text-gray-700 flex items-center">
+                            <Form.Label className="text-sm font-medium text-gray-700 flex items-center">
                                 <FontAwesomeIcon icon={faCalendarAlt} className="mx-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl" />
                                 Date de départ <span className="text-danger">*</span>
                                 { date !== '' && time !== '' && timeRemaining && (

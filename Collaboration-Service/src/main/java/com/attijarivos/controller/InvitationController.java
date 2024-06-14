@@ -1,6 +1,5 @@
 package com.attijarivos.controller;
 
-
 import com.attijarivos.DTO.request.InvitationListRequest;
 import com.attijarivos.DTO.request.InvitationRequest;
 import com.attijarivos.DTO.response.InvitationResponse;
@@ -23,25 +22,20 @@ import java.util.Set;
 @CrossOrigin("http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
-public class InvitationController implements IInvitationController<InvitationRequest,Long> {
+public class InvitationController implements IInvitationController<InvitationRequest, Long> {
 
     @Autowired
     @Qualifier("service-layer-invitation")
-    private final IInvitationService<InvitationRequest,InvitationResponse,Long> invitationService;
-
+    private final IInvitationService<InvitationRequest, InvitationResponse, Long> invitationService;
 
     @PostMapping
     @Override
-    public ResponseEntity<?> createOne(@RequestBody @Valid InvitationRequest invitationRequest) {
+    public ResponseEntity<?> createOne(@RequestBody @Valid InvitationRequest invitationRequest) throws RequiredDataException, RededicationInvitationException, NotFoundDataException, MicroserviceAccessFailureException, NotValidOwnerInviteException {
         try {
             InvitationResponse invitationResponse = invitationService.createOne(invitationRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(invitationResponse);
-        } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (MicroserviceAccessFailureException e) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
-        } catch (RequiredDataException | NotValidOwnerInviteException | RededicationInvitationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NotFoundDataException | MicroserviceAccessFailureException | RequiredDataException | NotValidOwnerInviteException | RededicationInvitationException e) {
+            throw e;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -49,12 +43,12 @@ public class InvitationController implements IInvitationController<InvitationReq
 
     @PostMapping("/list")
     @Override
-    public ResponseEntity<?> createInvitationList(@RequestBody InvitationListRequest invitationListRequest) {
+    public ResponseEntity<?> createInvitationList(@RequestBody InvitationListRequest invitationListRequest) throws RequiredDataException {
         try {
             List<InvitationResponse> invitationResponseList = invitationService.createInvitationList(invitationListRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(invitationResponseList);
         } catch (RequiredDataException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            throw e;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -62,12 +56,12 @@ public class InvitationController implements IInvitationController<InvitationReq
 
     @GetMapping
     @Override
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll() throws NotFoundDataException {
         try {
             Set<InvitationResponse> invitationsResponse = invitationService.getAll();
             return ResponseEntity.status(HttpStatus.OK).body(invitationsResponse);
         } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            throw e;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -75,11 +69,11 @@ public class InvitationController implements IInvitationController<InvitationReq
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<?> getOne(@PathVariable("id") Long idInvitation) {
+    public ResponseEntity<?> getOne(@PathVariable("id") Long idInvitation) throws NotFoundDataException {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(invitationService.getOne(idInvitation));
         } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            throw e;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -87,15 +81,14 @@ public class InvitationController implements IInvitationController<InvitationReq
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<?> delete(@PathVariable("id") Long idInvitation) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long idInvitation) throws NotFoundDataException {
         try {
             invitationService.delete(idInvitation);
-            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de l'invitation d'id : "+idInvitation);
+            return ResponseEntity.status(HttpStatus.OK).body("Bonne Suppression de l'invitation d'id : " + idInvitation);
         } catch (NotFoundDataException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            throw e;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
 }

@@ -300,6 +300,15 @@ public class CollaborationService implements ICollaborationService<Collaboration
     }
 
     @Override
+    public List<CollaborationResponse> searchCollaboration(String collaborationTitle) throws NotFoundDataException {
+
+        if(isNotNullValue(collaborationTitle)) throw new NotFoundDataException("Nom de collaboration est obligatoire pour la recherche");
+        List<Collaboration> collaborationList = collaborationRepository.findByTitreContainingIgnoreCase(collaborationTitle);
+
+        return collaborationList.stream().map(collaborationMapper::fromModelToRes).toList();
+    }
+
+    @Override
     public boolean delete(Long idCollaboration) throws NotFoundDataException {
         Optional<Collaboration> collaboration = Optional.of(receiveCollaboration(idCollaboration));
         log.info("Collaboration d'id est bien supprimée : {}",idCollaboration);
