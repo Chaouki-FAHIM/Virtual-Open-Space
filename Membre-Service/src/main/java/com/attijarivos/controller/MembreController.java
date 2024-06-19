@@ -63,6 +63,16 @@ public class MembreController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchMembres(@RequestParam String fullName) {
+        try {
+            List<ShortMembreResponse> membresResponse = membreService.searchMembres(fullName);
+            return ResponseEntity.ok(membresResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMembre(@PathVariable("id") String idMembre, @RequestBody MembreUpdateRequest request) {
         try {

@@ -1,5 +1,10 @@
 spring:
   cloud:
+#    discovery:
+#      enabled: true
+    #    loadbalancer:
+#      retry:
+#        enabled: true
     gateway:
 #      globalcors:
 #        add-to-simple-url-handler-mapping: true

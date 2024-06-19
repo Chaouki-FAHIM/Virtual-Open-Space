@@ -1,10 +1,10 @@
-import axios, {AxiosResponse} from 'axios';
-import API_BASE_URL from "../../constant/URL";
+import {AxiosResponse} from 'axios';
+import APIClient from "../APIClient";
 
 
 export const GetOneMember = async (id:string):Promise<any> => {
     try {
-        const response:AxiosResponse = await axios.get(`${API_BASE_URL['membre']}/${id}`);
+        const response:AxiosResponse = await APIClient.get(`membres/${id}`);
         return response.data;
     } catch (error) {
         console.error(`Error fetching membre data who have ${id} : `, error);

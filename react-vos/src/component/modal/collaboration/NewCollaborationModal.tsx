@@ -159,7 +159,7 @@ const NewCollaborationModal: React.FC<NewCollaborationModalProps> = ({ show, onC
                             </Form.Label>
                             {idParticipants.length > 0 && (
                                 <span className="badge rounded-pill text-bg-dark mx-1 ease-in-out duration-300"
-                                      data-bs-toggle="tooltip" data-bs-title="Nombre des invités sélectionnés">
+                                      data-bs-toggle="tooltip" data-bs-title="Invités sélectionnés">
                                     {idParticipants.length} <i className="bi bi-person-fill"></i>
                                 </span>
                             )}

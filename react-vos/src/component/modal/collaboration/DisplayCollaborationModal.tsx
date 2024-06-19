@@ -100,7 +100,6 @@ const DisplayCollaborationModal: React.FC<CollaborationModalProps> = ({
     }
 
     const { titre, dateCreationCollaboration, dateDepart,  confidentielle, participants } = currentCollaboration;
-
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('fr-FR', {
@@ -147,7 +146,7 @@ const DisplayCollaborationModal: React.FC<CollaborationModalProps> = ({
                                         ref={sliderRef}
                                         id="slider"
                                         className="flex overflow-auto d-flex flex-row flex-nowrap border border-1 rounded-3 shadow-3xl"
-                                        style={{ margin: '0 30px' }} // Adjust margin to make space for the arrows
+                                        style={{ margin: '0 30px' }}
                                     >
                                         {participants.map((participant) => (
                                             <div key={participant.idMembre} className="m-3 text-center">
@@ -157,7 +156,7 @@ const DisplayCollaborationModal: React.FC<CollaborationModalProps> = ({
                                                         'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png'
                                                     }
                                                     alt={`${participant.nomMembre} ${participant.prenom}`}
-                                                    className="rounded-circle border border-black border-2"
+                                                    className="rounded-circle border-black border-2"
                                                     style={{ width: '3.5rem', height: '3.5rem' }}
                                                 />
                                                 <div className="font-semibold text-base md:text-lg lg:text-xl">

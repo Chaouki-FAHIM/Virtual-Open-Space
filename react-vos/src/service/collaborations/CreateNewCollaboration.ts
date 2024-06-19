@@ -1,14 +1,10 @@
-import axios from 'axios';
 import {CreateCollaborationDTO} from "../../model/collaboration/CreateCollaborationDTO";
+import APIClient from "../APIClient";
+import {AxiosResponse} from "axios";
 
 export const CreateNewCollaboration = async (newCollaboration:CreateCollaborationDTO) => {
     try {
-        const response = await axios.post('http://localhost:8080/collaborations', newCollaboration, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            withCredentials: true,
-        });
+        const response:AxiosResponse = await APIClient.post('collaborations', newCollaboration);
         return response.data;
     } catch (error) {
         console.error('Error creating a new collaboration: ', error);

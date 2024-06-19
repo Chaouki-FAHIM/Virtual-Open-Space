@@ -12,7 +12,6 @@ interface CollaborationCardProps {
 
 const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, onClick, nombreCollabParligne }) => {
 
-    console.log(nombreCollabParligne)
     useEffect(() => {
         const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
@@ -110,7 +109,7 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
                 { top: '-30%', left: '5%' },
                 { top: '-30%', left: '75%' },
                 { top: '-15%', left: '40%' } // Bottom
-        ];
+            ];
         return positions[index % positions.length];
     };
 
@@ -127,7 +126,9 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
     return (
         <div className="text-center position-relative">
             <div className="mb-3 flex items-baseline">
-                <strong data-bs-toggle="tooltip" data-bs-title="Titre">{collaboration.titre}</strong>
+                <strong data-bs-toggle="tooltip" data-bs-title={collaboration.titre} className="title-ellipsis">
+                    {collaboration.titre}
+                </strong>
                 <span className="badge rounded-pill text-bg-warning mx-1" data-bs-toggle="tooltip" data-bs-title="Nombre de participants">
                     {collaboration.participants.length} <i className="bi bi-person-fill"></i>
                 </span>
@@ -145,7 +146,7 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration, on
                 data-bs-title="Collaboration"
                 onClick={onClick}
                 style={{ cursor: 'pointer',
-                    width: nombreCollabParligne == 4 ? '60%' : (nombreCollabParligne == 18 ? '1000%' : (nombreCollabParligne == 24 ? '100%' : '50rem') ),  // end is nombreCollabParligne 8
+                    width: nombreCollabParligne == 4 ? '60%' : (nombreCollabParligne == 18 ? '1000%' : (nombreCollabParligne == 24 ? '100%' : '50rem') ),
                     height: 'auto'}}
             />
             <div className="position-relative" style={{ width: '100%', height: '100%' }}>

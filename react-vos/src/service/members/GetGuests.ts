@@ -1,9 +1,9 @@
-import axios, {AxiosResponse} from 'axios';
-import API_BASE_URL from "../../constant/URL";
+import {AxiosResponse} from 'axios';
+import APIClient from "../APIClient";
 
 export const GetGuests = async (idCollaboration:string):Promise<any> => {
     try {
-        const response:AxiosResponse = await axios.get(`${API_BASE_URL['membre']}/${idCollaboration}/uninvited-members`);
+        const response:AxiosResponse = await APIClient.get(`membres/${idCollaboration}/uninvited-members`);
         return response.data;
     } catch (error) {
         console.error('Error fetching membre list data', error);

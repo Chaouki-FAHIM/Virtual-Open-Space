@@ -23,7 +23,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/collaborations")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
 public class CollaborationController implements ICollaborationController<CollaborationCreateRequest, Long> {
@@ -96,7 +96,7 @@ public class CollaborationController implements ICollaborationController<Collabo
 
     @GetMapping("/search")
     @Override
-    public ResponseEntity<?> searchCollaboration(@RequestParam String titleCollaboration) throws NotFoundDataException {
+    public ResponseEntity<?> searchCollaboration(@RequestParam("title") String titleCollaboration) throws NotFoundDataException {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(collaborationService.searchCollaboration(titleCollaboration));
         } catch (NotFoundDataException e) {

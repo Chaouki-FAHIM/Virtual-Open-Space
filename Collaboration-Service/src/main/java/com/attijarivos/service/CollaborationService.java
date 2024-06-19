@@ -300,12 +300,19 @@ public class CollaborationService implements ICollaborationService<Collaboration
     }
 
     @Override
-    public List<CollaborationResponse> searchCollaboration(String collaborationTitle) throws NotFoundDataException {
+    public Set<CollaborationResponse> searchCollaboration(String collaborationTitle) throws NotFoundDataException, MicroserviceAccessFailureException {
 
         if(isNotNullValue(collaborationTitle)) throw new NotFoundDataException("Nom de collaboration est obligatoire pour la recherche");
         List<Collaboration> collaborationList = collaborationRepository.findByTitreContainingIgnoreCase(collaborationTitle);
 
-        return collaborationList.stream().map(collaborationMapper::fromModelToRes).toList();
+        Set<CollaborationResponse> collaborationResponseSet = new HashSet<>(collaborationList.size());
+
+        for(Collaboration collaboration : collaborationList)
+            collaborationResponseSet.add(
+                    getOne(collaboration.getIdCollaboration())
+            );
+
+        return collaborationResponseSet;
     }
 
     @Override

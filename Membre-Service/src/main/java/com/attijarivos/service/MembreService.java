@@ -97,6 +97,12 @@ public class MembreService extends WebClientOperations {
         );
     }
 
+    public List<ShortMembreResponse> searchMembres(String fullName) throws NotFoundDataException, MicroserviceAccessFailureException {
+        return membreRespository.findByNomMembreContainingIgnoreCaseOrPrenomContainingIgnoreCase(fullName,fullName)
+                .stream()
+                .map(membreMapper::fromMembreToRes)
+                .toList();
+    }
     public DetailMembreResponse updateMembre(String idMembre, MembreUpdateRequest membreRequest) throws NotFoundDataException, MicroserviceAccessFailureException, RequiredDataException, RededicationMembreException {
         Optional<Membre> membre = Optional.of(receiveMembre(idMembre));
 

@@ -9,6 +9,7 @@ import com.attijarivos.exception.NotFoundDataException;
 import com.attijarivos.exception.RequiredDataException;
 
 import java.util.List;
+import java.util.Set;
 
 
 public interface ICollaborationService<RequestDTO,ResponseDTO,ID> extends  IService <RequestDTO,ResponseDTO,ID>{
@@ -16,5 +17,5 @@ public interface ICollaborationService<RequestDTO,ResponseDTO,ID> extends  IServ
     ResponseDTO update(ID id, CollaborationUpdateRequest requestDTO) throws NotFoundDataException,RequiredDataException;
     ResponseDTO joindre(ID id, JoinCollaborationRequest joinRequest) throws Exception;
     List<MembreResponse> getMembersForJoiningCollaboration(ID id) throws NotFoundDataException, MicroserviceAccessFailureException;
-    List<ResponseDTO> searchCollaboration(String collaborationTitle) throws NotFoundDataException;
+    Set<ResponseDTO> searchCollaboration(String collaborationTitle) throws NotFoundDataException, MicroserviceAccessFailureException;
 }
