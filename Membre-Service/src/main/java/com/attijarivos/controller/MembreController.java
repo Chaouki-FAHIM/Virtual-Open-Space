@@ -12,6 +12,7 @@ import com.attijarivos.service.MembreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class MembreController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> getAllMembres() {
         try {
             List<ShortMembreResponse> membresResponse = membreService.getAllMembres();
@@ -50,6 +52,7 @@ public class MembreController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getMembre(@PathVariable String id) {
         try {
             DetailMembreResponse membreResponse = membreService.getOneMembreDetail(id);

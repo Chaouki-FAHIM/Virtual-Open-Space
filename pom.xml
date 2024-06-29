@@ -22,6 +22,7 @@
     <module>Team-Service</module>
     <module>Discovery-Service</module>
     <module>Gateway-Service</module>
+      <module>Authentication-Service</module>
   </modules>
 
   <properties>
@@ -72,6 +73,14 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Unit Test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
 

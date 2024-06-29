@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="collaboration-service" />
+        <module name="authentication-service" />
         <module name="team-service" />
         <module name="membre-service" />
         <module name="discovery-service" />
@@ -23,6 +24,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Discovery-Service" options="" />
+      <module name="authentication-service" options="-parameters" />
       <module name="collaboration-service" options="-parameters" />
       <module name="collaboration-service (1)" options="-parameters" />
       <module name="discovery-Service" options="-parameters" />
