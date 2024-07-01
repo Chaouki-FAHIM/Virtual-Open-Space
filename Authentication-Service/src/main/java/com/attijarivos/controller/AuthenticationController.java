@@ -9,23 +9,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            return ResponseEntity.ok()
-                    .body(authenticationService.login(loginRequest));
+            return ResponseEntity.ok().body(authenticationService.login(loginRequest));
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
 
@@ -41,4 +39,5 @@ public class AuthenticationController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
 }

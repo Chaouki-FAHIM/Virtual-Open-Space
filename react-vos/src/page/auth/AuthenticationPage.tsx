@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AuthenticationPage.css';
 import { useNavigate } from 'react-router-dom';
+import { LoginService } from "../../service/authentication/LoginService";
 
 function AuthenticationPage() {
     const [email, setEmail] = useState('');
@@ -16,17 +17,24 @@ function AuthenticationPage() {
     const handleEmailChange = (e: { target: { value: any; }; }) => {
         const value = e.target.value;
         setEmail(value);
-        setEmailIsValid(value.endsWith('@attijariwafa.com'));
+        //setEmailIsValid(value.endsWith('@attijariwafa.com'));
+        setEmailIsValid(value !=='' && value != null);
     };
 
     const handlePasswordChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
         setPassword(e.target.value);
     };
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        // Logique d'authentification ici, puis redirection vers la page d'accueil
-        navigate('/');
+        const loginRequestDTO = { username: email, password: password };
+
+        try {
+            await LoginService(loginRequestDTO);
+            navigate('/'); // Redirect to homepage after successful login
+        } catch (error) {
+            console.error('Login failed', error);
+        }
     };
 
     return (
@@ -38,14 +46,14 @@ function AuthenticationPage() {
 
                     <div className="form-floating">
                         <input
-                            type="email"
+                            type="text"
                             className={`form-control ${email ? (emailIsValid ? 'is-valid' : 'is-invalid') : ''}`}
                             id="floatingInput"
                             placeholder="name@attijariwafa.com"
                             value={email}
                             onChange={handleEmailChange}
                         />
-                        <label htmlFor="floatingInput">Adresse Email</label>
+                        <label htmlFor="floatingInput">Username</label>
                     </div>
                     <div className="form-floating">
                         <input
@@ -59,7 +67,8 @@ function AuthenticationPage() {
                         <label htmlFor="floatingPassword">Mot de passe</label>
                     </div>
 
-                    <button className="btn btn-warning w-100 py-2" type="submit" disabled={isButtonDisabled}>Connecter
+                    <button className="btn btn-warning w-100 py-2" type="submit" disabled={isButtonDisabled}>
+                        Connecter
                     </button>
                     <p className="mt-5 mb-3 text-body-secondary">© 2024</p>
                 </form>

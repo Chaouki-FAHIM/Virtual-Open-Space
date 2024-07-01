@@ -23,7 +23,6 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/collaborations")
-@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
 public class CollaborationController implements ICollaborationController<CollaborationCreateRequest, Long> {

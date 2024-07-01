@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/membres")
-@CrossOrigin("http://localhost:3000")
 public class MembreController {
 
     private final MembreService membreService;

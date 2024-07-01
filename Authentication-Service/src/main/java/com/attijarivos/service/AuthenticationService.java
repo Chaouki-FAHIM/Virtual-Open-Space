@@ -3,71 +3,58 @@ package com.attijarivos.service;
 import com.attijarivos.dto.request.AccountRequest;
 import com.attijarivos.dto.request.LoginRequest;
 import com.attijarivos.dto.response.AccountResponse;
-import com.attijarivos.dto.response.LoginResponse;
 import com.attijarivos.exception.RededicationAccountException;
-import com.attijarivos.mapper.AccountMapper;
-import com.attijarivos.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationService {
 
-    private final AccountMapper accountMapper;
-    @Autowired
-    private AccountRepository accountRepository;
+    @Value("${keycloak.auth-server-url}")
+    private String authServerUrl;
 
-//    private final PasswordEncoder passwordEncoder;
-//
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
-//    @Autowired
-//    private JwtEncoder jwtEncoder;
+    @Value("${keycloak.realm}")
+    private String realm;
 
-    public LoginResponse login(LoginRequest loginRequest) {
-        log.debug("Start authenticating by {}", loginRequest);
+    @Value("${keycloak.client-id}")
+    private String clientId;
 
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-//        );
-//
-//        log.debug("End authentication successfully : {}", authentication);
-//
-//        log.debug("Start creating Token for user {}", loginRequest.getUsername());
-//
-//        Instant instant = Instant.now();
-//        Set<String> roles = authentication.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .map(role -> "ROLE_" + role)
-//                .collect(Collectors.toSet());
-//
-//        JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
-//                .issuedAt(instant)
-//                .expiresAt(instant.plus(5, ChronoUnit.MINUTES))
-//                .subject(loginRequest.getUsername())
-//                .claim("scope", String.join(" ", roles))
-//                .build();
-//
-//        JwtEncoderParameters jwtEncoderParameters =
-//                JwtEncoderParameters.from(
-//                        JwsHeader.with(MacAlgorithm.HS512).build(),
-//                        jwtClaimsSet
-//                );
-//        log.info("End creating Token for user {}", loginRequest.getUsername());
-//
-//        return LoginResponse.builder()
-//                .username(loginRequest.getUsername())
-//                .password(loginRequest.getPassword())
-//                .roles(roles)
-//                .token(jwtEncoder.encode(jwtEncoderParameters).getTokenValue())
-//                .build();
-        return null;
+    public Map<String, Object> login(LoginRequest loginRequest) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "password");
+        body.add("client_id", clientId);
+        body.add("username", loginRequest.getUsername());
+        body.add("password", loginRequest.getPassword());
+
+        log.debug("URL for sending login request: {}", url);
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Invalid credentials");
+        }
     }
 
     public AccountResponse register(AccountRequest accountRequest) throws RededicationAccountException {

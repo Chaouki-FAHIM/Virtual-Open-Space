@@ -19,7 +19,6 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/invitations")
-@CrossOrigin("http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
 public class InvitationController implements IInvitationController<InvitationRequest, Long> {

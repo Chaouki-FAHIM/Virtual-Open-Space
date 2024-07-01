@@ -1,4 +1,4 @@
-package com.attijarivos.configration;
+package com.attijarivos.configuration;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 
-@Configuration("swagger-layer-config")
+@Configuration("swagger-config-layer")
 public class SwaggerConfig {
     
     @Bean
